@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>False</DebugSymbols>
     <DebugType>None</DebugType>
-    <vid>full</vid>
+    <vid>off</vid>
     <check_stack>False</check_stack>
     <check_index>False</check_index>
     <GenerateMap>True</GenerateMap>

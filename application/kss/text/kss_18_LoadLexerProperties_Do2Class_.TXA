@@ -1,51 +1,20 @@
-
-
-   MEMBER('kss.clw')                                       ! This is a MEMBER module
-
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
-!!! <summary>
-!!! Generated from procedure template - Source
-!!! </summary>
-LoadLexerProperties  PROCEDURE  (csciControl sciControl, STRING lexer) ! Declare Procedure
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
+[PROCEDURE]
+NAME LoadLexerProperties
+PROTOTYPE '(csciControl sciControl, STRING lexer),LONG,PROC'
+PARAMETERS '(csciControl sciControl, STRING lexer)'
+[COMMON]
+FROM ABC Source
+MODIFIED '2014/03/04' '10:22:11'
+[PROMPTS]
+%GenerateOpenClose LONG  (0)
+%GenerateSaveRestore LONG  (0)
+[EMBED]
+EMBED %DataSection
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 50
+PROPERTY:END
 DOO CLASS                      !Created 05/24/20  1:32PM by Do2Class by Carl Barnes
 ProcessFilePatterns PROCEDURE()
 ProcessKeywords     PROCEDURE()
@@ -53,6 +22,32 @@ ProcessOptions      PROCEDURE()
 ProcessStyles       PROCEDURE()
 ProcessToken        PROCEDURE()
     END  !5 Routines Found
+
+
+!region Notices
+! ================================================================================
+! Notice : Copyright (C) 2017, Devuna
+!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
+!
+!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
+!
+!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
+!    it under the terms of the MIT License as published by
+!    the Open Source Initiative.
+!
+!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    MIT License for more details.
+!
+!    You should have received a copy of the MIT License
+!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
+! ================================================================================
+!endregion Notices
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 50
+PROPERTY:END
 returnCode           LONG(Level:Fatal)
 
 szAAFileName         CSTRING(260),STATIC
@@ -70,9 +65,13 @@ szKeywords           &CSTRING
 
 styleNumber          LONG
 thisToken            CSTRING(33)
-oHH           &tagHTMLHelp
-
-  CODE
+[END]
+EMBED %ProcessedCode
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
   szAAFilename = svSpecialFolder.GetDir(SV:CSIDL_APPDATA, 'Devuna' & '\' & 'KSS') & '\' & lexer & '.properties'
   OPEN(A_A,ReadOnly+DenyWrite)
   IF ERRORCODE()
@@ -107,6 +106,13 @@ oHH           &tagHTMLHelp
      MESSAGE('Unexpected error opening ' & szAAFilename & '|' & ERROR(),'Load Lexer Properties',ICON:HAND)
   END
   RETURN returnCode
+[END]
+EMBED %LocalProcedures
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
 DOO.ProcessFilePatterns  PROCEDURE()
   CODE
    NEXT(A_A)
@@ -300,67 +306,16 @@ caseOpt  LONG
         !sciControl.StyleSetHotSpot(styleNumber,TRUE)
         sciControl.StyleSetHotSpot(styleNumber,glo:bHotSpotsEnabled)
    END
-!!! <summary>
-!!! Generated from procedure template - Source
-!!! </summary>
-GetPropertyFileLexer PROCEDURE  (*CSTRING szPropertyFile) !,STRING ! Declare Procedure
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
-szAAFileName         CSTRING(260),STATIC
-A_A                  FILE,DRIVER('ASCII'),NAME(szAAFileName),PRE(AA)
-Record                  RECORD
-Buffer                     STRING(1024)
-                        END
-                     END
-szBuffer             CSTRING(1025)
-szLexer              CSTRING(65)
-oHH           &tagHTMLHelp
-
-  CODE
-  szLexer = 'text'
-  szAAFilename = svSpecialFolder.GetDir(SV:CSIDL_APPDATA, 'Devuna' & '\' & 'KSS') & '\' & szPropertyFile & '.properties'
-  OPEN(A_A,ReadOnly+DenyWrite)
-  IF ERRORCODE()
-     szAAFilename = szPropertyFile & '.properties'
-     OPEN(A_A,ReadOnly+DenyWrite)
-  END
-  IF ~ERRORCODE()
-     SET(A_A)
-     NEXT(A_A)
-     LOOP UNTIL ERRORCODE()
-        szBuffer = CLIP(LEFT(A_A.Buffer))
-        IF UPPER(szBuffer[1 : 6]) = 'LEXER='
-           szLexer = szBuffer[7 : LEN(szBuffer)]
-           BREAK
-        ELSE
-           NEXT(A_A)
-        END
-     END
-     CLOSE(A_A)
-  ELSE
-     CASE ERRORCODE()
-       OF NoFileErr
-          glo:szDefaultPropertyFile = 'text'
-     ELSE
-          MESSAGE('Unexpected error opening ' & szAAFilename & '|' & ERROR(),'Load Lexer Properties',ICON:HAND)
-     END
-  END
-  RETURN szLexer
+[END]
+[END]
+[ADDITION]
+NAME ABC cwHHProc
+[INSTANCE]
+INSTANCE 1
+OWNER 2
+[PROMPTS]
+%cwHHFileName DEFAULT  ('')
+%cwHHContextURL DEFAULT  ('')
+%cwHHAltTrapKey DEFAULT  ('')
+[CALLS]
+ColourRGB

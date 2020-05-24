@@ -1,0 +1,65 @@
+Paste Class Declaration into Data Section -----
+DOO CLASS                      !Created 05/24/20  1:32PM by Do2Class by Carl Barnes
+ProcessFilePatterns PROCEDURE()
+ProcessOptions      PROCEDURE()
+ProcessKeywords     PROCEDURE()
+ProcessStyles       PROCEDURE()
+ProcessToken        PROCEDURE()
+    END  !5 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\kss_18_LoadLexerProperties_Do2Class_.TXA                                                                                                                                                                                      
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\kss_18_LoadLexerProperties.txa                                                                                                                                                                                                
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/24/20  1:32PM by Do2Class by Carl Barnes
+ProcessFilePatterns PROCEDURE()
+ProcessKeywords     PROCEDURE()
+ProcessOptions      PROCEDURE()
+ProcessStyles       PROCEDURE()
+ProcessToken        PROCEDURE()
+    END  !5 Routines Found
+!=======================================================
+
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+ProcessFilePatterns                          107  ProcessFilePatterns  ROUTINE
+           *PROCEDURE*                        80  DOO.ProcessFilePatterns()
+ProcessKeywords                              161  ProcessKeywords      ROUTINE
+           *PROCEDURE*                        84  DOO.ProcessKeywords()
+ProcessOptions                               122  ProcessOptions ROUTINE
+           *PROCEDURE*                        82  DOO.ProcessOptions()
+ProcessStyles                                211  ProcessStyles        ROUTINE
+           *PROCEDURE*                        86  DOO.ProcessStyles()
+ProcessToken                                 257  ProcessToken   ROUTINE
+           ProcessStyles                     233  DOO.ProcessToken()
+           ProcessStyles                     236  DOO.ProcessToken()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                   66  LoadLexerProperties   Procedure()
+           ProcessFilePatterns                80  DOO.ProcessFilePatterns()
+           ProcessOptions                     82  DOO.ProcessOptions()
+           ProcessKeywords                    84  DOO.ProcessKeywords()
+           ProcessStyles                      86  DOO.ProcessStyles()
+ProcessFilePatterns                          107  ProcessFilePatterns  ROUTINE
+ProcessKeywords                              161  ProcessKeywords      ROUTINE
+ProcessOptions                               122  ProcessOptions ROUTINE
+ProcessStyles                                211  ProcessStyles        ROUTINE
+           ProcessToken                      233  DOO.ProcessToken()
+           ProcessToken                      236  DOO.ProcessToken()
+ProcessToken                                 257  ProcessToken   ROUTINE
+========================================  ======  ==============================
+
