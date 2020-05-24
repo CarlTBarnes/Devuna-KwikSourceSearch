@@ -1,0 +1,59 @@
+ Paste Class Declaration into Data Section -----
+DOO CLASS                      !Created 05/24/20  3:04PM by Do2Class by Carl Barnes
+GetFileExtensions PROCEDURE()
+AddClarionDefault PROCEDURE()
+AddTextDefault    PROCEDURE()
+SetupFileModeMenu PROCEDURE()
+    END  !4 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\kss_19_LoadFileExtensionQueue_Do2Class_.TXA                                                                                                                                                                                   
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\kss_19_LoadFileExtensionQueue.txa                                                                                                                                                                                             
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/24/20  3:04PM by Do2Class by Carl Barnes
+AddClarionDefault PROCEDURE()
+AddTextDefault    PROCEDURE()
+GetFileExtensions PROCEDURE()
+SetupFileModeMenu PROCEDURE()
+    END  !4 Routines Found
+!=======================================================
+
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+AddClarionDefault                            200  AddClarionDefault    ROUTINE
+           *PROCEDURE*                        69  DOO.AddClarionDefault()
+AddTextDefault                               249  AddTextDefault    ROUTINE
+           *PROCEDURE*                        75  DOO.AddTextDefault()
+GetFileExtensions                             89  GetFileExtensions    ROUTINE
+           *PROCEDURE*                        59  DOO.GetFileExtensions()
+           *PROCEDURE*                        63  DOO.GetFileExtensions()
+SetupFileModeMenu                            278  SetupFileModeMenu    ROUTINE
+           *PROCEDURE*                        79  DOO.SetupFileModeMenu()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                   55  LoadFileExtensionQueue   Procedure()
+           GetFileExtensions                  59  DOO.GetFileExtensions()
+           GetFileExtensions                  63  DOO.GetFileExtensions()
+           AddClarionDefault                  69  DOO.AddClarionDefault()
+           AddTextDefault                     75  DOO.AddTextDefault()
+           SetupFileModeMenu                  79  DOO.SetupFileModeMenu()
+AddClarionDefault                            200  AddClarionDefault    ROUTINE
+AddTextDefault                               249  AddTextDefault    ROUTINE
+GetFileExtensions                             89  GetFileExtensions    ROUTINE
+SetupFileModeMenu                            278  SetupFileModeMenu    ROUTINE
+========================================  ======  ==============================
+
