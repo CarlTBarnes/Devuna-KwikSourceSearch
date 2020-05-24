@@ -46,8 +46,8 @@ _CSciViewerClassPresent_ EQUATE(1)
     INCLUDE('ABPOPUP.INC'),ONCE
     INCLUDE('cwHH.INC'),ONCE
 
-ERROR_SUCCESS        EQUATE(0)
-ERROR_NO_MORE_ITEMS  EQUATE(259)
+!Carl Label DupE Error -->  ERROR_SUCCESS        EQUATE(0)
+!Carl Label DupE Error -->ERROR_NO_MORE_ITEMS  EQUATE(259)
 
 
 
