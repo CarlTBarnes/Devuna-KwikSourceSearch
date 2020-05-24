@@ -32,6 +32,13 @@
 !!! </summary>
 MacroPlayer PROCEDURE 
 
+DOO CLASS                      !Created 05/24/20  3:16PM by Do2Class by Carl Barnes
+FillLocalQueue    PROCEDURE()
+FormatQueueRecord PROCEDURE()
+SaveMacroQueue    PROCEDURE()
+    END  !3 Routines Found
+
+
 !region Notices
 ! ================================================================================
 ! Notice : Copyright (C) 2017, Devuna
@@ -126,107 +133,6 @@ DefineListboxStyle ROUTINE
   !------------------------------------
   ?MacroList{PROP:IconList,1} = '~check-green.ico'
 !---------------------------------------------------------------------------
-FillLocalQueue    ROUTINE
-   DATA
-i     LONG
-j     LONG
-
-   CODE
-      FREE(loc:MacroQueue)
-      j = RECORDS(MacroQueue)
-      LOOP i = 1 TO j
-         GET(MacroQueue,i)
-         DO FormatQueueRecord
-         ADD(loc:MacroQueue)
-      END
-   EXIT
-
-FormatQueueRecord ROUTINE
-   CASE MacroQueue.feqButton
-     OF BUTTON:NextFolder
-        loc:MacroQueue.MacroName = 'Next Folder'
-     OF BUTTON:PreviousFolder
-        loc:MacroQueue.MacroName = 'Previous Folder'
-     OF BUTTON:NextFile
-        loc:MacroQueue.MacroName = 'Next File'
-     OF BUTTON:PreviousFile
-        loc:MacroQueue.MacroName = 'Previous File'
-     OF BUTTON:DeleteLine
-        loc:MacroQueue.MacroName = 'Delete Line'
-     OF BUTTON:DeleteFile
-        loc:MacroQueue.MacroName = 'Delete File'
-     OF BUTTON:DeleteExtension
-        loc:MacroQueue.MacroName = 'Delete Extension'
-     OF BUTTON:DeletePath
-        loc:MacroQueue.MacroName = 'Delete Path'
-     OF BUTTON:DeleteComments
-        loc:MacroQueue.MacroName = 'Delete Comments'
-     OF BUTTON:DeleteLabels
-        loc:MacroQueue.MacroName = 'Delete Labels'
-     OF BUTTON:DeleteCode
-        loc:MacroQueue.MacroName = 'Delete Code'
-     OF BUTTON:DeleteData
-        loc:MacroQueue.MacroName = 'Delete Data'
-     OF BUTTON:FindAndDelete
-        loc:MacroQueue.MacroName = 'Find and Delete'
-   END
-   loc:MacroQueue.feqButton = MacroQueue.feqButton
-   CASE loc:MacroQueue.feqButton
-     OF BUTTON:DELETEFILE
-        loc:MacroQueue.szField1  = MacroQueue.szField1 & MacroQueue.szField2
-        loc:MacroQueue.szField2  = MacroQueue.szField3
-   ELSE
-        loc:MacroQueue.szField1  = MacroQueue.szField1
-        loc:MacroQueue.szField2  = MacroQueue.szField2
-   END
-   loc:MacroQueue.mark      = FALSE
-   loc:MacroQueue.MacroNameStyle = 0
-   loc:MacroQueue.szField1Style  = 0
-   loc:MacroQueue.szField2Style  = 0
-   EXIT
-
-SaveMacroQueue ROUTINE
-   DATA
-i        LONG
-j        LONG
-n        LONG
-p        LONG
-   CODE
-      FREE(MacroQueue)
-      j = POINTER(loc:MacroQueue)
-      LOOP i = 1 TO RECORDS(loc:MacroQueue)
-         GET(loc:MacroQueue,i)
-         MacroQueue.feqButton = loc:MacroQueue.feqButton
-         CASE loc:MacroQueue.feqButton
-           OF BUTTON:DeleteFile
-              n = LEN(loc:MacroQueue.szField1)
-              LOOP p = n to 1 BY -1
-                 IF loc:MacroQueue.szField1[p] = '.'
-                    BREAK
-                 END
-              END
-              IF p > 0
-                 MacroQueue.szField1  = loc:MacroQueue.szField1[1 : p-1]
-                 MacroQueue.szField2  = loc:MacroQueue.szField1[p : n]
-                 MacroQueue.szField3  = loc:MacroQueue.szField2
-              ELSE
-                 MacroQueue.szField1  = loc:MacroQueue.szField1
-                 MacroQueue.szField2  = ''
-                 MacroQueue.szField3  = loc:MacroQueue.szField2
-              END
-         ELSE
-            MacroQueue.szField1  = loc:MacroQueue.szField1
-            MacroQueue.szField2  = loc:MacroQueue.szField2
-            MacroQueue.szField3  = ''
-         END
-         MacroQueue.mark      = loc:MacroQueue.mark
-         ADD(MacroQueue)
-         loc:MacroQueue.feqButtonIcon = loc:MacroQueue.mark
-         PUT(loc:MacroQueue)
-      END
-      GET(loc:MacroQueue,j)
-      ?MacroList{PROP:Selected} = j
-   EXIT
 
 ThisWindow.Init PROCEDURE
 
@@ -242,10 +148,10 @@ j        LONG
   SELF.FirstField = ?MacroList
   SELF.VCRRequest &= VCRRequest
   SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
+  SELF.AddItem(Toolbar)
   CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
   CLEAR(GlobalResponse)
-  SELF.AddItem(Toolbar)
-  DO FillLocalQueue
+  DOO.FillLocalQueue()
   SELF.Open(Window,glo:MainWindow)
   OMIT('***')
   SELF.Open(Window)                                        ! Open window
@@ -320,7 +226,7 @@ Looped BYTE
       i = POINTER(loc:MacroQueue)
       DELETE(loc:MacroQueue)
       ADD(loc:MacroQueue,i-1)
-      DO SaveMacroQueue
+      DOO.SaveMacroQueue()
       ?MacroList{PROP:Selected} = i-1
       POST(EVENT:NewSelection,?MacroList)
     OF ?cmdMoveDown
@@ -329,7 +235,7 @@ Looped BYTE
       i = POINTER(loc:MacroQueue)
       DELETE(loc:MacroQueue)
       ADD(loc:MacroQueue,i+1)
-      DO SaveMacroQueue
+      DOO.SaveMacroQueue()
       ?MacroList{PROP:Selected} = i+1
       POST(EVENT:NewSelection,?MacroList)
     OF ?cmdDelete
@@ -338,7 +244,7 @@ Looped BYTE
       IF RetVal = RequestCompleted
          GET(loc:MacroQueue,CHOICE(?MacroList))
          DELETE(loc:MacroQueue)
-         DO SaveMacroQueue
+         DOO.SaveMacroQueue()
          IF CHOICE(?MacroList) = 0
             GET(loc:MacroQueue,RECORDS(loc:MacroQueue))
             ?MacroList{PROP:Selected} = POINTER(loc:MacroQueue)
@@ -352,7 +258,7 @@ Looped BYTE
          GET(MacroSetQueue,RetVal)
          FREE(loc:MacroQueue)
          INIMgr.FetchQueue(MacroSetQueue.MacroSetName,'Macro',loc:MacroQueue,loc:MacroQueue.feqButton,loc:MacroQueue.szField1,loc:MacroQueue.szField2,loc:MacroQueue.szField3)
-         DO SaveMacroQueue
+         DOO.SaveMacroQueue()
          POST(EVENT:NewSelection,?MacroList)
       END
     OF ?cmdSave
@@ -536,7 +442,7 @@ Looped BYTE
   ReturnValue = PARENT.TakeWindowEvent()
     CASE EVENT()
     OF EVENT:CloseWindow
-      DO SaveMacroQueue
+      DOO.SaveMacroQueue()
       POST(EVENT:MACROPLAYERCLOSED,,1)
     OF EVENT:DoResize
       ?MacroList{PROPLIST:Width,3} = (?MacroList{PROP:Width} - 60)/2
@@ -546,6 +452,106 @@ Looped BYTE
   ReturnValue = Level:Fatal
   RETURN ReturnValue
 
+DOO.FillLocalQueue    PROCEDURE()
+i     LONG
+j     LONG
+
+   CODE
+      FREE(loc:MacroQueue)
+      j = RECORDS(MacroQueue)
+      LOOP i = 1 TO j
+         GET(MacroQueue,i)
+         DOO.FormatQueueRecord()
+         ADD(loc:MacroQueue)
+      END
+   RETURN
+
+DOO.FormatQueueRecord PROCEDURE()
+  CODE
+   CASE MacroQueue.feqButton
+     OF BUTTON:NextFolder
+        loc:MacroQueue.MacroName = 'Next Folder'
+     OF BUTTON:PreviousFolder
+        loc:MacroQueue.MacroName = 'Previous Folder'
+     OF BUTTON:NextFile
+        loc:MacroQueue.MacroName = 'Next File'
+     OF BUTTON:PreviousFile
+        loc:MacroQueue.MacroName = 'Previous File'
+     OF BUTTON:DeleteLine
+        loc:MacroQueue.MacroName = 'Delete Line'
+     OF BUTTON:DeleteFile
+        loc:MacroQueue.MacroName = 'Delete File'
+     OF BUTTON:DeleteExtension
+        loc:MacroQueue.MacroName = 'Delete Extension'
+     OF BUTTON:DeletePath
+        loc:MacroQueue.MacroName = 'Delete Path'
+     OF BUTTON:DeleteComments
+        loc:MacroQueue.MacroName = 'Delete Comments'
+     OF BUTTON:DeleteLabels
+        loc:MacroQueue.MacroName = 'Delete Labels'
+     OF BUTTON:DeleteCode
+        loc:MacroQueue.MacroName = 'Delete Code'
+     OF BUTTON:DeleteData
+        loc:MacroQueue.MacroName = 'Delete Data'
+     OF BUTTON:FindAndDelete
+        loc:MacroQueue.MacroName = 'Find and Delete'
+   END
+   loc:MacroQueue.feqButton = MacroQueue.feqButton
+   CASE loc:MacroQueue.feqButton
+     OF BUTTON:DELETEFILE
+        loc:MacroQueue.szField1  = MacroQueue.szField1 & MacroQueue.szField2
+        loc:MacroQueue.szField2  = MacroQueue.szField3
+   ELSE
+        loc:MacroQueue.szField1  = MacroQueue.szField1
+        loc:MacroQueue.szField2  = MacroQueue.szField2
+   END
+   loc:MacroQueue.mark      = FALSE
+   loc:MacroQueue.MacroNameStyle = 0
+   loc:MacroQueue.szField1Style  = 0
+   loc:MacroQueue.szField2Style  = 0
+   RETURN
+
+DOO.SaveMacroQueue PROCEDURE()
+i        LONG
+j        LONG
+n        LONG
+p        LONG
+   CODE
+      FREE(MacroQueue)
+      j = POINTER(loc:MacroQueue)
+      LOOP i = 1 TO RECORDS(loc:MacroQueue)
+         GET(loc:MacroQueue,i)
+         MacroQueue.feqButton = loc:MacroQueue.feqButton
+         CASE loc:MacroQueue.feqButton
+           OF BUTTON:DeleteFile
+              n = LEN(loc:MacroQueue.szField1)
+              LOOP p = n to 1 BY -1
+                 IF loc:MacroQueue.szField1[p] = '.'
+                    BREAK
+                 END
+              END
+              IF p > 0
+                 MacroQueue.szField1  = loc:MacroQueue.szField1[1 : p-1]
+                 MacroQueue.szField2  = loc:MacroQueue.szField1[p : n]
+                 MacroQueue.szField3  = loc:MacroQueue.szField2
+              ELSE
+                 MacroQueue.szField1  = loc:MacroQueue.szField1
+                 MacroQueue.szField2  = ''
+                 MacroQueue.szField3  = loc:MacroQueue.szField2
+              END
+         ELSE
+            MacroQueue.szField1  = loc:MacroQueue.szField1
+            MacroQueue.szField2  = loc:MacroQueue.szField2
+            MacroQueue.szField3  = ''
+         END
+         MacroQueue.mark      = loc:MacroQueue.mark
+         ADD(MacroQueue)
+         loc:MacroQueue.feqButtonIcon = loc:MacroQueue.mark
+         PUT(loc:MacroQueue)
+      END
+      GET(loc:MacroQueue,j)
+      ?MacroList{PROP:Selected} = j
+   RETURN
 
 Resizer.Init PROCEDURE(BYTE AppStrategy=AppStrategy:Resize,BYTE SetWindowMinSize=False,BYTE SetWindowMaxSize=False)
 
@@ -629,9 +635,9 @@ ReturnValue          BYTE,AUTO
   SELF.FirstField = ?cmdOK
   SELF.VCRRequest &= VCRRequest
   SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
+  SELF.AddItem(Toolbar)
   CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
   CLEAR(GlobalResponse)
-  SELF.AddItem(Toolbar)
   loc:MacroSetName = MacroSetName
   SELF.Open(Window)                                        ! Open window
   !Setting the LineHeight for every control of type LIST/DROP or COMBO in the window using the global setting.
@@ -759,9 +765,9 @@ ReturnValue          BYTE,AUTO
   SELF.FirstField = ?MacroSetList
   SELF.VCRRequest &= VCRRequest
   SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
+  SELF.AddItem(Toolbar)
   CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
   CLEAR(GlobalResponse)
-  SELF.AddItem(Toolbar)
   SELF.Open(Window)                                        ! Open window
   !Setting the LineHeight for every control of type LIST/DROP or COMBO in the window using the global setting.
   ?MacroSetList{PROP:LineHeight} = 10
