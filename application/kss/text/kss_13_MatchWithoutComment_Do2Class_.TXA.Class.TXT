@@ -1,0 +1,75 @@
+ Paste Class Declaration into Data Section -----
+DOO CLASS                      !Created 05/24/20  2:52PM by Do2Class by Carl Barnes
+ProcessText             PROCEDURE()
+SplitTextIntoStatements PROCEDURE()
+LookForCommentMarker    PROCEDURE()
+LookForMatch            PROCEDURE()
+    END  !4 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\kss_13_MatchWithoutComment_Do2Class_.TXA                                                                                                                                                                                      
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\kss_13_MatchWithoutComment.txa                                                                                                                                                                                                
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/24/20  2:52PM by Do2Class by Carl Barnes
+LookForCommentMarker    PROCEDURE()
+LookForMatch            PROCEDURE()
+ProcessText             PROCEDURE()
+SplitTextIntoStatements PROCEDURE()
+    END  !4 Routines Found
+!=======================================================
+
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+LookForCommentMarker                         241  LookForCommentMarker    ROUTINE
+           *PROCEDURE*                       122  DOO.LookForCommentMarker()
+           *PROCEDURE*                       125  DOO.LookForCommentMarker()
+           *PROCEDURE*                       128  DOO.LookForCommentMarker()
+           *PROCEDURE*                       131  DOO.LookForCommentMarker()
+           *PROCEDURE*                       134  DOO.LookForCommentMarker()
+           *PROCEDURE*                       137  DOO.LookForCommentMarker()
+LookForMatch                                 293  LookForMatch   ROUTINE
+           *PROCEDURE*                       141  DOO.LookForMatch()
+ProcessText                                  108  ProcessText   ROUTINE
+           *PROCEDURE*                        76  DOO.ProcessText()
+           *PROCEDURE*                        82  DOO.ProcessText()
+           *PROCEDURE*                        88  DOO.ProcessText()
+           *PROCEDURE*                        94  DOO.ProcessText()
+           *PROCEDURE*                       100  DOO.ProcessText()
+SplitTextIntoStatements                      163  SplitTextIntoStatements ROUTINE
+           *PROCEDURE*                       114  DOO.SplitTextIntoStatements()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                   61  MatchWithoutComment   Procedure()
+           ProcessText                        76  DOO.ProcessText()
+           ProcessText                        82  DOO.ProcessText()
+           ProcessText                        88  DOO.ProcessText()
+           ProcessText                        94  DOO.ProcessText()
+           ProcessText                       100  DOO.ProcessText()
+           SplitTextIntoStatements           114  DOO.SplitTextIntoStatements()
+           LookForCommentMarker              122  DOO.LookForCommentMarker()
+           LookForCommentMarker              125  DOO.LookForCommentMarker()
+           LookForCommentMarker              128  DOO.LookForCommentMarker()
+           LookForCommentMarker              131  DOO.LookForCommentMarker()
+           LookForCommentMarker              134  DOO.LookForCommentMarker()
+           LookForCommentMarker              137  DOO.LookForCommentMarker()
+           LookForMatch                      141  DOO.LookForMatch()
+LookForCommentMarker                         241  LookForCommentMarker    ROUTINE
+LookForMatch                                 293  LookForMatch   ROUTINE
+ProcessText                                  108  ProcessText   ROUTINE
+SplitTextIntoStatements                      163  SplitTextIntoStatements ROUTINE
+========================================  ======  ==============================
+

@@ -1,7 +1,20 @@
-
-
-   MEMBER('kss.clw')                                       ! This is a MEMBER module
-
+[PROCEDURE]
+NAME MatchWithoutComment
+PROTOTYPE '(*CSTRING szText, *CSTRING szPattern, BYTE bMatchMode, * CSTRING szExtension),LONG'
+PARAMETERS '(*CSTRING szText, *CSTRING szPattern, BYTE bMatchMode, * CSTRING szExtension)'
+[COMMON]
+FROM ABC Source
+MODIFIED '2012/03/01' ' 7:38:38'
+[PROMPTS]
+%GenerateOpenClose LONG  (0)
+%GenerateSaveRestore LONG  (0)
+[EMBED]
+EMBED %DataSection
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 50
+PROPERTY:END
 !region Notices
 ! ================================================================================
 ! Notice : Copyright (C) 2017, Devuna
@@ -22,37 +35,10 @@
 !    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
 ! ================================================================================
 !endregion Notices
-!!! <summary>
-!!! Generated from procedure template - Source
-!!! </summary>
-MatchWithoutComment  PROCEDURE  (*CSTRING szText, *CSTRING szPattern, BYTE bMatchMode, * CSTRING szExtension) ! Declare Procedure
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
-DOO CLASS                      !Created 05/24/20  2:52PM by Do2Class by Carl Barnes
-LookForCommentMarker    PROCEDURE()
-LookForMatch            PROCEDURE()
-ProcessText             PROCEDURE()
-SplitTextIntoStatements PROCEDURE()
-    END  !4 Routines Found
-oHH           &tagHTMLHelp
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
 CommentStyle         LONG
 bInstring            BOOL(FALSE)
 pCommentMarker       LONG
@@ -65,8 +51,13 @@ statement               &CSTRING
 clText               &CSTRING
 i                    LONG
 j                    LONG
-
-  CODE
+[END]
+EMBED %ProcessedCode
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
       CommentStyle = GetCommentStyle(szExtension)
       clText &= NEW CSTRING(SIZE(szText)+1)
       clText = szText
@@ -82,31 +73,31 @@ j                    LONG
            IF clText[1 : 2] = '//'
               pMatch = 0
            ELSE
-              DOO.ProcessText()
+              DO ProcessText
            END
       ELSIF CommentStyle = CommentStyleClarion
            IF clText[1] = '!'
               pMatch = 0
            ELSE
-              DOO.ProcessText()
+              DO ProcessText
            END
       ELSIF CommentStyle = CommentStyleVB
            IF clText[1] = ''''
               pMatch = 0
            ELSE
-              DOO.ProcessText()
+              DO ProcessText
            END
       ELSIF CommentStyle = CommentStylePython
            IF clText[1] = '#'
               pMatch = 0
            ELSE
-              DOO.ProcessText()
+              DO ProcessText
            END
       ELSIF CommentStyle = CommentStyleSQL
            IF clText[1 : 2] = '--'
               pMatch = 0
            ELSE
-              DOO.ProcessText()
+              DO ProcessText
            END
       ELSE
          pMatch = TRUE
@@ -114,12 +105,13 @@ j                    LONG
       DISPOSE(clText)
       RETURN pMatch
 
-DOO.ProcessText   PROCEDURE()
+ProcessText   ROUTINE
+   DATA
 indx                LONG
 
    CODE
       !break text into multiple statements
-      DOO.SplitTextIntoStatements()
+      DO SplitTextIntoStatements
       !now loop through the queue and examine each statement on the line
       LOOP indx = 1 TO RECORDS(StatementQueue)
          GET(StatementQueue,indx)
@@ -127,26 +119,26 @@ indx                LONG
          !find comment marker not in a string
          IF CommentStyle = CommentStyleCpp
               CommentMarker = '//'
-              DOO.LookForCommentMarker()
+              DO LookForCommentMarker
          ELSIF CommentStyle = CommentStyleVB
               CommentMarker = ''''
-              DOO.LookForCommentMarker()
+              DO LookForCommentMarker
          ELSIF CommentStyle = CommentStylePython
               CommentMarker = '#'
-              DOO.LookForCommentMarker()
+              DO LookForCommentMarker
          ELSIF CommentStyle = CommentStyleSQL
               CommentMarker = '--'
-              DOO.LookForCommentMarker()
+              DO LookForCommentMarker
          ELSE
               CommentMarker = '|'
-              DOO.LookForCommentMarker()
+              DO LookForCommentMarker
               IF NOT pCommentMarker
                  CommentMarker = '!'
-                 DOO.LookForCommentMarker()
+                 DO LookForCommentMarker
               END
          END
 
-         DOO.LookForMatch()
+         DO LookForMatch
          IF pMatch
             BREAK
          END
@@ -161,9 +153,17 @@ indx                LONG
          PUT(StatementQueue)
       END
       FREE(StatementQueue)
-DOO.SplitTextIntoStatements PROCEDURE()
-!Dups Local-->  i           LONG
-!Dups Local-->  j           LONG
+[END]
+EMBED %ProcedureRoutines
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
+SplitTextIntoStatements ROUTINE
+   DATA
+i           LONG
+j           LONG
 chString    CSTRING(2)
 chSeparator CSTRING(2)
 
@@ -233,8 +233,13 @@ chSeparator CSTRING(2)
          StatementQueue.statement = szText[j : i-1]
          ADD(StatementQueue)
       END
-   RETURN
-DOO.LookForCommentMarker    PROCEDURE()
+   EXIT
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
+LookForCommentMarker    ROUTINE
+   DATA
 pStringEnd          LONG
 pStringStart        LONG
 
@@ -280,9 +285,12 @@ pStringStart        LONG
             BREAK
          END
       END
-   RETURN
-DOO.LookForMatch   PROCEDURE()
-  CODE
+   EXIT
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
+LookForMatch   ROUTINE
       IF pCommentMarker
          szMatchText = StatementQueue.statement[1 : pCommentMarker-1]
       ELSE
@@ -298,53 +306,17 @@ DOO.LookForMatch   PROCEDURE()
             pMatch = INSTRING(szPattern,szMatchText,1)
          END
       END
-   RETURN
-!!! <summary>
-!!! Generated from procedure template - Source
-!!! </summary>
-GetCommentStyle      PROCEDURE  (*CSTRING szExtension)     ! Declare Procedure
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
-oHH           &tagHTMLHelp
-ReturnValue   LONG
-
-  CODE
-      FileExtensionQueue.Extension = '*' & UPPER(szExtension)
-      GET(FileExtensionQueue,FileExtensionQueue.Extension)
-      IF ERRORCODE()
-         ReturnValue = -1
-      ELSE
-         CASE FileExtensionQueue.nLexer
-           OF SCLEX_CLWNOCASE OROF SCLEX_CLARION
-              ReturnValue = CommentStyleClarion
-           OF SCLEX_CPP OROF SCLEX_CPPNOCASE
-              ReturnValue = CommentStyleCpp
-           OF SCLEX_VB OROF SCLEX_VBSCRIPT
-              ReturnValue = CommentStyleVB
-           OF SCLEX_PYTHON
-              ReturnValue = CommentStylePython
-           OF SCLEX_SQL OROF SCLEX_MSSQL OROF SCLEX_MYSQL
-              ReturnValue = CommentStyleSQL
-         ELSE
-              ReturnValue = -1
-         END
-      END
-      RETURN ReturnValue
+   EXIT
+[END]
+[END]
+[ADDITION]
+NAME ABC cwHHProc
+[INSTANCE]
+INSTANCE 1
+OWNER 2
+[PROMPTS]
+%cwHHFileName DEFAULT  ('')
+%cwHHContextURL DEFAULT  ('')
+%cwHHAltTrapKey DEFAULT  ('')
+[CALLS]
+GetCommentStyle
