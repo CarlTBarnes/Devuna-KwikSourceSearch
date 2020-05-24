@@ -1,0 +1,63 @@
+ Paste Class Declaration into Data Section -----
+DOO CLASS                      !Created 05/24/20  3:45PM by Do2Class by Carl Barnes
+AddEditCommand        PROCEDURE()
+FillPropertyFileQueue PROCEDURE()
+GetFilenames          PROCEDURE()
+GetFontDescription    PROCEDURE()
+    END  !4 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\kss_06_UserOptions_Do2Class_.TXA                                                                                                                                                                                              
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\kss_06_UserOptions.txa                                                                                                                                                                                                        
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/24/20  3:45PM by Do2Class by Carl Barnes
+AddEditCommand        PROCEDURE()
+FillPropertyFileQueue PROCEDURE()
+GetFilenames          PROCEDURE()
+GetFontDescription    PROCEDURE()
+    END  !4 Routines Found
+!=======================================================
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+AddEditCommand                             1,435  AddEditCommand    ROUTINE
+           *PROCEDURE*                       997  DOO.AddEditCommand()
+FillPropertyFileQueue                      1,463  FillPropertyFileQueue  ROUTINE
+           *PROCEDURE*                       787  DOO.FillPropertyFileQueue()
+           *PROCEDURE*                     1,075  DOO.FillPropertyFileQueue()
+           *PROCEDURE*                     1,280  DOO.FillPropertyFileQueue()
+GetFilenames                               1,483  GetFilenames   ROUTINE
+           FillPropertyFileQueue           1,471  DOO.GetFilenames()
+           FillPropertyFileQueue           1,476  DOO.GetFileNames()
+GetFontDescription                         1,522  GetFontDescription   ROUTINE
+           *PROCEDURE*                       846  DOO.GetFontDescription()
+           *PROCEDURE*                       896  DOO.GetFontDescription()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                  782  UserOptions   Procedure()
+           FillPropertyFileQueue             787  DOO.FillPropertyFileQueue()
+           GetFontDescription                846  DOO.GetFontDescription()
+           GetFontDescription                896  DOO.GetFontDescription()
+           AddEditCommand                    997  DOO.AddEditCommand()
+           FillPropertyFileQueue           1,075  DOO.FillPropertyFileQueue()
+           FillPropertyFileQueue           1,280  DOO.FillPropertyFileQueue()
+AddEditCommand                             1,435  AddEditCommand    ROUTINE
+FillPropertyFileQueue                      1,463  FillPropertyFileQueue  ROUTINE
+           GetFilenames                    1,471  DOO.GetFilenames()
+           GetFilenames                    1,476  DOO.GetFileNames()
+GetFilenames                               1,483  GetFilenames   ROUTINE
+GetFontDescription                         1,522  GetFontDescription   ROUTINE
+========================================  ======  ==============================

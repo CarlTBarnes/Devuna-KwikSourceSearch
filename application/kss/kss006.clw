@@ -53,6 +53,12 @@ UserOptions PROCEDURE (LONG MaxStyleIndex, *CSTRING szInstallProgram)
 !    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
 ! ================================================================================
 !endregion Notices
+DOO CLASS                      !Created 05/24/20  3:45PM by Do2Class by Carl Barnes
+AddEditCommand        PROCEDURE()
+FillPropertyFileQueue PROCEDURE()
+GetFilenames          PROCEDURE()
+GetFontDescription    PROCEDURE()
+    END  !4 Routines Found
 STYLE:NORMAL      EQUATE(0)
 STYLE:BOLD        EQUATE(1)
 STYLE:ITALIC      EQUATE(2)
@@ -286,111 +292,6 @@ DefineListboxStyle ROUTINE
   ?lbPropertyFiles{PROPSTYLE:BackSelected, 3}  = -1
   !------------------------------------
 !---------------------------------------------------------------------------
-AddEditCommand    ROUTINE
-   DATA
-i     LONG
-j     LONG
-
-   CODE
-      UPDATE()
-      IF thisEditCommand <> ''
-         j = RECORDS(EditorQueue)
-         LOOP i = 1 TO j
-            GET(EditorQueue,i)
-            IF EditorQueue.szValue = thisEditCommand
-               BREAK
-            END
-         END
-         IF i > j
-            IF j = MAXMRU
-               GET(EditorQueue,j)
-               DELETE(EditorQueue)
-            END
-            EditorQueue.szValue = thisEditCommand
-            ADD(EditorQueue,+EditorQueue.szValue)
-         END
-      END
-FillPropertyFileQueue  ROUTINE
-   DATA
-
-   CODE
-      FREE(PropertyFileQueue)
-      !get user properties
-      szSearchFolder = svSpecialFolder.GetDir(SV:CSIDL_APPDATA, 'Devuna' & '\' & 'KSS\')
-      bReadOnly = FALSE
-      DO GetFilenames
-
-      !get system properties
-      szSearchFolder = LONGPATH() & '\'
-      bReadOnly = TRUE
-      DO GetFileNames
-
-      GET(PropertyFileQueue,1)
-GetFilenames   ROUTINE
-   DATA
-i              LONG
-j              LONG
-cc             LONG
-szPath         CSTRING(MAXPATH+1)
-szDrive        CSTRING(MAXDRIVE+1)
-szDir          CSTRING(MAXDIR+1)
-szName         CSTRING(MAXFILE+1)
-szExtension    CSTRING(MAXEXT+1)
-FileModes      QUEUE(FILE:queue),PRE(fm)
-               END
-   CODE
-      DIRECTORY(FileModes,szSearchFolder & '*.properties',0)
-      j = RECORDS(FileModes)
-      IF j > 0
-         LOOP i = 1 TO j
-            GET(FileModes,i)
-            szPath = szSearchFolder & CLIP(FileModes.Name)
-            cc = kcr_fnSplit(szPath, szDrive, szDir, szName, szExtension)
-            PropertyFileQueue.FileName = LOWER(szName)
-            GET(PropertyFileQueue,+PropertyFileQueue.FileName)
-            IF ERRORCODE()
-               PropertyFileQueue.FileName = LOWER(szName)
-               PropertyFileQueue.FilePath = szPath
-               PropertyFileQueue.IsReadOnly = bReadOnly
-               IF PropertyFileQueue.FileName = glo:szDefaultPropertyFile
-                  PropertyFileQueue.FilenameStyle = STYLE:BOLD + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
-               ELSE
-                  PropertyFileQueue.FilenameStyle = STYLE:NORMAL + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
-               END
-               ADD(PropertyFileQueue,+PropertyFileQueue.FileName)
-            END
-         END
-      END
-GetFontDescription   ROUTINE
-   IF szFontName
-      szFontDescription = CLIP(szFontName) & ','
-   END
-
-   IF nFontSize
-      szFontDescription = szFontDescription & nFontSize & ','
-   END
-
-   IF BAND(nFontStyle,0FFFh) >= FONT:bold
-      szFontDescription = szFontDescription & 'Bold,'
-   ELSIF BAND(nFontStyle,0FFFh) >= FONT:regular
-      szFontDescription = szFontDescription & 'Regular,'
-   ELSE
-      szFontDescription = szFontDescription & 'Thin,'
-   END
-
-   IF BAND(nFontStyle,FONT:italic) = FONT:italic
-      szFontDescription = szFontDescription & 'Italic,'
-   END
-
-   IF BAND(nFontStyle,FONT:underline) = FONT:underline
-      szFontDescription = szFontDescription & 'Underline,'
-   END
-
-   IF szFontDescription[LEN(szFontDescription)] = ','
-      szFontDescription[LEN(szFontDescription)] = '<0>'
-   END
-   DISPLAY(?szFontDescription)
-   EXIT
 
 ThisWindow.Init PROCEDURE
 
@@ -405,10 +306,10 @@ ReturnValue          BYTE,AUTO
   SELF.FirstField = ?Panel1
   SELF.VCRRequest &= VCRRequest
   SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
+  SELF.AddItem(Toolbar)
   CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
   CLEAR(GlobalResponse)
-  SELF.AddItem(Toolbar)
-  DO FillPropertyFileQueue
+  DOO.FillPropertyFileQueue()
   
   loc:MinusKeyString = 'Previous Result Line assigned to ' & CLIP(KeyCodeName.ToName(glo:MinusKey))
   loc:MinusKeyTipString = 'The ''Jump to Previous Line in Results List'' function is assigned to the ' & CLIP(KeyCodeName.ToName(glo:MinusKey))
@@ -459,7 +360,7 @@ ReturnValue          BYTE,AUTO
   nFontSize   = glo:ResultListFontSize
   lForeColor  = glo:ResultListForeColor
   nFontStyle  = glo:ResultListFontStyle
-  DO GetFontDescription
+  DOO.GetFontDescription()
   
   CASE glo:ApplicationColor
     OF COLOR:GRADIENTACTIVECAPTION
@@ -546,7 +447,7 @@ ThisWindow.Reset PROCEDURE(BYTE Force=0)
   loc:sToolbarColor = srcGetColorString(loc:ToolbarColor)
   
   ?loc:sResultListColorBox{PROP:Fill} = lForeColor
-  DO GetFontDescription
+  DOO.GetFontDescription()
   
   ?loc:sSelectedBackColorBox{PROP:Fill} = loc:SelectedBack
   loc:sSelectedBackColor = srcGetColorString(loc:SelectedBack)
@@ -616,7 +517,7 @@ Looped BYTE
   ReturnValue = PARENT.TakeAccepted()
     CASE ACCEPTED()
     OF ?thisEditCommand
-      DO AddEditCommand
+      DOO.AddEditCommand()
     OF ?LookupSendToCommand
       ThisWindow.Update()
       thisEditCommand = FileLookup4.Ask(1)
@@ -691,7 +592,7 @@ Looped BYTE
       ELSE
          PropertyEditor(PropertyFileQueue.FilePath,MaxStyleIndex)
       END
-      DO FillPropertyFileQueue
+      DOO.FillPropertyFileQueue()
       ThisWindow.Reset
     OF ?loc:nDeleteWarningCount
       ThisWindow.Reset()
@@ -766,7 +667,7 @@ Looped BYTE
       ThisWindow.Update()
       IF GlobalErrors.ThrowFile(Msg:ConfirmDelete,PropertyFileQueue.FileName) = Level:Benign
          REMOVE(PropertyFileQueue.FilePath)
-         DO FillPropertyFileQueue
+         DOO.FillPropertyFileQueue()
          ThisWindow.Reset
       END
     OF ?cmdGetMinusKey
@@ -1200,6 +1101,109 @@ ReturnValue BYTE,AUTO
   END
   RETURN(ReturnValue)
 
+DOO.AddEditCommand    PROCEDURE()
+i     LONG
+j     LONG
+
+   CODE
+      UPDATE()
+      IF thisEditCommand <> ''
+         j = RECORDS(EditorQueue)
+         LOOP i = 1 TO j
+            GET(EditorQueue,i)
+            IF EditorQueue.szValue = thisEditCommand
+               BREAK
+            END
+         END
+         IF i > j
+            IF j = MAXMRU
+               GET(EditorQueue,j)
+               DELETE(EditorQueue)
+            END
+            EditorQueue.szValue = thisEditCommand
+            ADD(EditorQueue,+EditorQueue.szValue)
+         END
+      END
+DOO.FillPropertyFileQueue  PROCEDURE()
+
+   CODE
+      FREE(PropertyFileQueue)
+      !get user properties
+      szSearchFolder = svSpecialFolder.GetDir(SV:CSIDL_APPDATA, 'Devuna' & '\' & 'KSS\')
+      bReadOnly = FALSE
+      DOO.GetFilenames()
+
+      !get system properties
+      szSearchFolder = LONGPATH() & '\'
+      bReadOnly = TRUE
+      DOO.GetFileNames()
+
+      GET(PropertyFileQueue,1)
+DOO.GetFilenames   PROCEDURE()
+i              LONG
+j              LONG
+cc             LONG
+szPath         CSTRING(MAXPATH+1)
+szDrive        CSTRING(MAXDRIVE+1)
+szDir          CSTRING(MAXDIR+1)
+szName         CSTRING(MAXFILE+1)
+szExtension    CSTRING(MAXEXT+1)
+FileModes      QUEUE(FILE:queue),PRE(fm)
+               END
+   CODE
+      DIRECTORY(FileModes,szSearchFolder & '*.properties',0)
+      j = RECORDS(FileModes)
+      IF j > 0
+         LOOP i = 1 TO j
+            GET(FileModes,i)
+            szPath = szSearchFolder & CLIP(FileModes.Name)
+            cc = kcr_fnSplit(szPath, szDrive, szDir, szName, szExtension)
+            PropertyFileQueue.FileName = LOWER(szName)
+            GET(PropertyFileQueue,+PropertyFileQueue.FileName)
+            IF ERRORCODE()
+               PropertyFileQueue.FileName = LOWER(szName)
+               PropertyFileQueue.FilePath = szPath
+               PropertyFileQueue.IsReadOnly = bReadOnly
+               IF PropertyFileQueue.FileName = glo:szDefaultPropertyFile
+                  PropertyFileQueue.FilenameStyle = STYLE:BOLD + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
+               ELSE
+                  PropertyFileQueue.FilenameStyle = STYLE:NORMAL + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
+               END
+               ADD(PropertyFileQueue,+PropertyFileQueue.FileName)
+            END
+         END
+      END
+DOO.GetFontDescription   PROCEDURE()
+  CODE
+   IF szFontName
+      szFontDescription = CLIP(szFontName) & ','
+   END
+
+   IF nFontSize
+      szFontDescription = szFontDescription & nFontSize & ','
+   END
+
+   IF BAND(nFontStyle,0FFFh) >= FONT:bold
+      szFontDescription = szFontDescription & 'Bold,'
+   ELSIF BAND(nFontStyle,0FFFh) >= FONT:regular
+      szFontDescription = szFontDescription & 'Regular,'
+   ELSE
+      szFontDescription = szFontDescription & 'Thin,'
+   END
+
+   IF BAND(nFontStyle,FONT:italic) = FONT:italic
+      szFontDescription = szFontDescription & 'Italic,'
+   END
+
+   IF BAND(nFontStyle,FONT:underline) = FONT:underline
+      szFontDescription = szFontDescription & 'Underline,'
+   END
+
+   IF szFontDescription[LEN(szFontDescription)] = ','
+      szFontDescription[LEN(szFontDescription)] = '<0>'
+   END
+   DISPLAY(?szFontDescription)
+   RETURN
 QEIP1::FileExtension.CreateControl    PROCEDURE
    CODE
       PARENT.CreateControl()

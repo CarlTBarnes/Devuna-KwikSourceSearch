@@ -1,0 +1,1961 @@
+[PROCEDURE]
+NAME UserOptions
+PROTOTYPE '(LONG MaxStyleIndex, *CSTRING szInstallProgram),BOOL'
+PARAMETERS '(LONG MaxStyleIndex, *CSTRING szInstallProgram)'
+[COMMON]
+DESCRIPTION 'User Options'
+FROM ABC Window
+MODIFIED '2019/02/18' '14:59:24'
+[DATA]
+[SCREENCONTROLS]
+! PROMPT('this Edit Command:'),USE(?thisEditCommand:Prompt)
+! ENTRY(@s20),USE(thisEditCommand)
+[REPORTCONTROLS]
+! STRING(@s20),USE(thisEditCommand)
+thisEditCommand          LIKE(glo:szEditorCommand)
+!!> GUID('e768b143-0f6e-41fa-97d4-acaf79871073'),PROMPT('this Edit Command:'),HEADER('this Edit Command'),PICTURE(@s20),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('b Properties Changed:'),USE(?bPropertiesChanged:Prompt)
+! ENTRY(@s20),USE(bPropertiesChanged)
+[REPORTCONTROLS]
+! STRING(@s20),USE(bPropertiesChanged)
+bPropertiesChanged       BOOL
+!!> GUID('549d02b6-c5ef-48d1-afd2-008881182b3b'),INITIAL('FALSE'),PROMPT('b Properties Changed:'),HEADER('b Properties Changed'),PICTURE(@s20),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('loc : Splitter Orientation:'),USE(?loc:SplitterOrientation:Prompt)
+! ENTRY(@n3),USE(loc:SplitterOrientation)
+[REPORTCONTROLS]
+! STRING(@n3),USE(loc:SplitterOrientation)
+loc:SplitterOrientation  BYTE
+!!> GUID('a7c1389c-3476-4b5b-8891-eecc3d70de06'),PROMPT('loc : Splitter Orientation:'),HEADER('loc : Splitter Orientation'),PICTURE(@n3),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('loc : sz Clarion Help File:'),USE(?loc:szClarionHelpFile:Prompt)
+! ENTRY(@s255),USE(loc:szClarionHelpFile)
+[REPORTCONTROLS]
+! STRING(@s255),USE(loc:szClarionHelpFile)
+loc:szClarionHelpFile    CSTRING(260)
+!!> GUID('5acc2535-ed32-47a4-ab7f-db6119cf830d'),PROMPT('loc : sz Clarion Help File:'),HEADER('loc : sz Clarion Help File'),PICTURE(@s255),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('loc : sz Versio:'),USE(?loc:szVersio:Prompt)
+! ENTRY(@s22),USE(loc:szVersio)
+[REPORTCONTROLS]
+! STRING(@s22),USE(loc:szVersio)
+loc:szVersion            CSTRING(23)
+!!> GUID('312ffd7c-8e81-4ed9-a0c5-9d4c88e49da2'),PROMPT('loc : sz Versio:'),HEADER('loc : sz Versio'),PICTURE(@s22),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('loc : n Delete Warning Count:'),USE(?loc:nDeleteWarningCount:Prompt)
+! ENTRY(@n-14),USE(loc:nDeleteWarningCount),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(loc:nDeleteWarningCount),RIGHT(1)
+loc:nDeleteWarningCount  LONG
+!!> GUID('eab68bba-e020-436c-879a-81f405c6014f'),PROMPT('loc : n Delete Warning Count:'),HEADER('loc : n Delete Warning Count'),PICTURE(@n-14),TYPEMODE(INS),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('loc : Plus Key String:'),USE(?loc:PlusKeyString:Prompt)
+! ENTRY(@s80),USE(loc:PlusKeyString)
+[REPORTCONTROLS]
+! STRING(@s80),USE(loc:PlusKeyString)
+loc:PlusKeyString        CSTRING(81)
+!!> GUID('b1b34e41-bee4-4ed9-9080-dca055c6bb54'),PROMPT('loc : Plus Key String:'),HEADER('loc : Plus Key String'),PICTURE(@s80),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('loc : Plus Key String:'),USE(?loc:PlusKeyTipString:Prompt)
+! ENTRY(@s127),USE(loc:PlusKeyTipString)
+[REPORTCONTROLS]
+! STRING(@s127),USE(loc:PlusKeyTipString)
+loc:PlusKeyTipString     CSTRING(128)
+!!> GUID('de727e1c-98c7-40ae-91ff-7ebd94efed8b'),PROMPT('loc : Plus Key String:'),HEADER('loc : Plus Key String'),PICTURE(@s127),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('loc : Minus Key String:'),USE(?loc:MinusKeyString:Prompt)
+! ENTRY(@s80),USE(loc:MinusKeyString)
+[REPORTCONTROLS]
+! STRING(@s80),USE(loc:MinusKeyString)
+loc:MinusKeyString       CSTRING(81)
+!!> GUID('0e4494f7-c69d-4c8d-a3ce-aff40fe1def4'),PROMPT('loc : Minus Key String:'),HEADER('loc : Minus Key String'),PICTURE(@s80),TYPEMODE(INS)
+[SCREENCONTROLS]
+! PROMPT('loc : Minus Key String:'),USE(?loc:MinusKeyTipString:Prompt)
+! ENTRY(@s127),USE(loc:MinusKeyTipString)
+[REPORTCONTROLS]
+! STRING(@s127),USE(loc:MinusKeyTipString)
+loc:MinusKeyTipString    CSTRING(128)
+!!> GUID('827d7d39-8edc-47d8-872f-ac9a4ea91183'),PROMPT('loc : Minus Key String:'),HEADER('loc : Minus Key String'),PICTURE(@s127),TYPEMODE(INS)
+[PROMPTS]
+%ClassItem UNIQUE DEFAULT  ('Default', 'WindowToolbar')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('WindowManager')
+WHEN  ('WindowToolbar') ('ToolbarClass')
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('')
+WHEN  ('WindowToolbar') ('')
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 1
+WHEN  ('Default') ('Init {19}PROCEDURE(),BYTE,PROC,DERIVED', 'Kill {19}PROCEDURE(),BYTE,PROC,DERIVED', |
+  'Reset {18}PROCEDURE(BYTE Force=0),DERIVED', 'TakeAccepted {11}PROCEDURE(),BYTE,PROC,DERIVED', |
+  'TakeFieldEvent {9}PROCEDURE(),BYTE,PROC,DERIVED', 'TakeNewSelection       PROCEDURE(),BYTE,PROC,DERIVED', |
+  'TakeWindowEvent        PROCEDURE(),BYTE,PROC,DERIVED')
+
+%ReturnValue FIELD  (bPropertiesChanged)
+%WindowOperationMode DEFAULT  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+%ProcedureDisableEnhanceFocus LONG  (0)
+%ProcedureUseEnterInsteadTabOverride LONG  (0)
+%WindowUseEnterInsteadTab LONG  (1)
+%ProcedureUseEnterInsteadTabExcludeListCombo LONG  (0)
+%ProcedureUseEnterInsteadTabEnableNextTabStop LONG  (0)
+%ProcedureUseEnterInsteadTabExcludeG LONG  (1)
+%WindowUseEnterInsteadTabExclude MULTI DEFAULT  ()
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('NO')
+WHEN  ('WindowToolbar') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('ThisWindow')
+WHEN  ('WindowToolbar') ('Toolbar')
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('')
+WHEN  ('WindowToolbar') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (0)
+WHEN  ('WindowToolbar') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 1
+WHEN  ('WindowToolbar')TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 1
+WHEN  ('WindowToolbar')TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%WindowStyles MULTI LONG  (1, 2, 3)
+%WindowStyleFontName DEPEND %WindowStyles DEFAULT TIMES 3
+WHEN  (1) ('Segoe UI')
+WHEN  (2) ('Segoe UI')
+WHEN  (3) ('Segoe UI')
+
+%WindowStyleFontNameVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStyleFontNameIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStyleFontSize DEPEND %WindowStyles DEFAULT TIMES 3
+WHEN  (1) ('10')
+WHEN  (2) ('10')
+WHEN  (3) ('10')
+
+%WindowStyleFontSizeVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStyleFontSizeIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStyleFontStyle DEPEND %WindowStyles DEFAULT TIMES 3
+WHEN  (1) ('700')
+WHEN  (2) ('4496')
+WHEN  (3) ('4796')
+
+%WindowStyleFontStyleVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStyleFontStyleIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStyleFontColor DEPEND %WindowStyles DEFAULT TIMES 3
+WHEN  (1) ('0')
+WHEN  (2) ('0')
+WHEN  (3) ('0')
+
+%WindowStyleFontCharSet DEPEND %WindowStyles DEFAULT TIMES 3
+WHEN  (1) ('1')
+WHEN  (2) ('1')
+WHEN  (3) ('1')
+
+%WindowStyleForegroundNormal DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (-1)
+WHEN  (2) (-1)
+WHEN  (3) (-1)
+
+%WindowStyleForegroundNormalVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStyleForegroundNormalIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStyleBackgroundNormal DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (-1)
+WHEN  (2) (-1)
+WHEN  (3) (-1)
+
+%WindowStyleBackgroundNormalVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStyleBackgroundNormalIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStyleForegroundSelected DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (-1)
+WHEN  (2) (-1)
+WHEN  (3) (-1)
+
+%WindowStyleForegroundSelectedVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStyleForegroundSelectedIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStyleBackgroundSelected DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (-1)
+WHEN  (2) (-1)
+WHEN  (3) (-1)
+
+%WindowStyleBackgroundSelectedVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStyleBackgroundSelectedIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStylePicture DEPEND %WindowStyles DEFAULT TIMES 3
+WHEN  (1) ('')
+WHEN  (2) ('')
+WHEN  (3) ('')
+
+%WindowStylePictureVariable DEPEND %WindowStyles DEFAULT TIMES 0
+
+%WindowStylePictureIsVariable DEPEND %WindowStyles LONG TIMES 3
+WHEN  (1) (0)
+WHEN  (2) (0)
+WHEN  (3) (0)
+
+%WindowStyleOtherListboxes MULTI DEFAULT  ()
+%ProcedureAutoBindFields MULTI LONG  ()
+%ProcedureAutoBindField DEPEND %ProcedureAutoBindFields DEFAULT TIMES 0
+
+%ProcedureAutoBindFieldTPL DEPEND %ProcedureAutoBindFields DEFAULT TIMES 0
+
+%ProcedureAutoBindProcedures MULTI LONG  ()
+%ProcedureAutoBindProcedure DEPEND %ProcedureAutoBindProcedures DEFAULT TIMES 0
+
+%ProcedureAutoBindProcedureTPL DEPEND %ProcedureAutoBindProcedures DEFAULT TIMES 0
+
+%ProcedureAutoBindFieldsIgnored MULTI LONG  ()
+%ProcedureAutoBindFieldIgnored DEPEND %ProcedureAutoBindFieldsIgnored DEFAULT TIMES 0
+
+%ProcedureAutoBindProceduresIgnored MULTI LONG  ()
+%ProcedureAutoBindProcedureIgnored DEPEND %ProcedureAutoBindProceduresIgnored DEFAULT TIMES 0
+
+%ProcedureAutoBindValidToAddField LONG  (0)
+%ProcedureUserBindFields MULTI LONG  ()
+%ProcedureUserBindField DEPEND %ProcedureUserBindFields FIELD TIMES 0
+
+%ProcedureAutoBindFieldIgnore DEPEND %ProcedureAutoBindFields LONG TIMES 0
+
+%ProcedureUserBindProcedures MULTI LONG  ()
+%ProcedureUserBindProcedure DEPEND %ProcedureUserBindProcedures PROCEDURE TIMES 0
+
+%ProcedureAutoBindProcedureIgnore DEPEND %ProcedureAutoBindProcedures LONG TIMES 0
+
+%ProcedureUserBindExpressions MULTI LONG  ()
+%ProcedureUserBindExpressionName DEPEND %ProcedureUserBindExpressions DEFAULT TIMES 0
+
+%ProcedureUserBindExpression DEPEND %ProcedureUserBindExpressions DEFAULT TIMES 0
+
+%ExtUITabIcon DEPEND %Control DEFAULT TIMES 0
+
+%ExtUITabStyleOverrideGlobal DEPEND %Control LONG TIMES 0
+
+%ExtUITabStyle DEPEND %Control DEFAULT TIMES 7
+WHEN  ('') ('Default')
+WHEN  ('?LookupFile') ('Default')
+WHEN  ('?LookupSendToCommand') ('Default')
+WHEN  ('?cmdApply') ('Default')
+WHEN  ('?cmdPropertyEditor') ('Default')
+WHEN  ('?cmdRegisterNow') ('Default')
+WHEN  ('?thisEditCommand') ('Default')
+
+%ButtonAction DEPEND %Control DEFAULT TIMES 19
+WHEN  ('') ('No Special Action')
+WHEN  ('?ApplicationColorButton') ('No Special Action')
+WHEN  ('?BookmarkBackColorButton') ('No Special Action')
+WHEN  ('?Change') ('No Special Action')
+WHEN  ('?Delete') ('No Special Action')
+WHEN  ('?Insert') ('No Special Action')
+WHEN  ('?LookupFile') ('No Special Action')
+WHEN  ('?LookupSendToCommand') ('No Special Action')
+WHEN  ('?SelectedBackColorButton') ('No Special Action')
+WHEN  ('?ToolbarColorButton') ('No Special Action')
+WHEN  ('?cmdApply') ('No Special Action')
+WHEN  ('?cmdDefault') ('No Special Action')
+WHEN  ('?cmdDeletePropertyFile') ('No Special Action')
+WHEN  ('?cmdFontDialog') ('No Special Action')
+WHEN  ('?cmdGetMinusKey') ('No Special Action')
+WHEN  ('?cmdGetPlusKey') ('No Special Action')
+WHEN  ('?cmdPropertyEditor') ('No Special Action')
+WHEN  ('?cmdRegisterNow') ('No Special Action')
+WHEN  ('?thisEditCommand') ('No Special Action')
+
+%ButtonRunName DEPEND %Control DEFAULT TIMES 3
+WHEN  ('?LookupFile') ('')
+WHEN  ('?LookupSendToCommand') ('')
+WHEN  ('?cmdPropertyEditor') ('')
+
+%ButtonRunParameters DEPEND %Control DEFAULT TIMES 3
+WHEN  ('?LookupFile') ('')
+WHEN  ('?LookupSendToCommand') ('')
+WHEN  ('?cmdPropertyEditor') ('')
+
+%ButtonProcedure DEPEND %Control PROCEDURE TIMES 3
+WHEN  ('?LookupFile') ()
+WHEN  ('?LookupSendToCommand') ()
+WHEN  ('?cmdPropertyEditor') ()
+
+%ButtonThread DEPEND %Control LONG TIMES 3
+WHEN  ('?LookupFile') (0)
+WHEN  ('?LookupSendToCommand') (0)
+WHEN  ('?cmdPropertyEditor') (0)
+
+%ButtonThreadStack DEPEND %Control DEFAULT TIMES 19
+WHEN  ('') ('25000')
+WHEN  ('?ApplicationColorButton') ('25000')
+WHEN  ('?BookmarkBackColorButton') ('25000')
+WHEN  ('?Change') ('25000')
+WHEN  ('?Delete') ('25000')
+WHEN  ('?Insert') ('25000')
+WHEN  ('?LookupFile') ('25000')
+WHEN  ('?LookupSendToCommand') ('25000')
+WHEN  ('?SelectedBackColorButton') ('25000')
+WHEN  ('?ToolbarColorButton') ('25000')
+WHEN  ('?cmdApply') ('25000')
+WHEN  ('?cmdDefault') ('25000')
+WHEN  ('?cmdDeletePropertyFile') ('25000')
+WHEN  ('?cmdFontDialog') ('25000')
+WHEN  ('?cmdGetMinusKey') ('25000')
+WHEN  ('?cmdGetPlusKey') ('25000')
+WHEN  ('?cmdPropertyEditor') ('25000')
+WHEN  ('?cmdRegisterNow') ('25000')
+WHEN  ('?thisEditCommand') ('25000')
+
+%ButtonParameters DEPEND %Control DEFAULT TIMES 3
+WHEN  ('?LookupFile') ('')
+WHEN  ('?LookupSendToCommand') ('')
+WHEN  ('?cmdPropertyEditor') ('')
+
+%ButtonReturnValueAssignment DEPEND %Control FIELD TIMES 3
+WHEN  ('?LookupFile') ()
+WHEN  ('?LookupSendToCommand') ()
+WHEN  ('?cmdPropertyEditor') ()
+
+%ButtonReturnValueReferenceAssign DEPEND %Control LONG TIMES 3
+WHEN  ('?LookupFile') (0)
+WHEN  ('?LookupSendToCommand') (0)
+WHEN  ('?cmdPropertyEditor') (0)
+
+%ButtonRequest DEPEND %Control DEFAULT TIMES 19
+WHEN  ('') ('None')
+WHEN  ('?ApplicationColorButton') ('None')
+WHEN  ('?BookmarkBackColorButton') ('None')
+WHEN  ('?Change') ('None')
+WHEN  ('?Delete') ('None')
+WHEN  ('?Insert') ('None')
+WHEN  ('?LookupFile') ('None')
+WHEN  ('?LookupSendToCommand') ('None')
+WHEN  ('?SelectedBackColorButton') ('None')
+WHEN  ('?ToolbarColorButton') ('None')
+WHEN  ('?cmdApply') ('None')
+WHEN  ('?cmdDefault') ('None')
+WHEN  ('?cmdDeletePropertyFile') ('None')
+WHEN  ('?cmdFontDialog') ('None')
+WHEN  ('?cmdGetMinusKey') ('None')
+WHEN  ('?cmdGetPlusKey') ('None')
+WHEN  ('?cmdPropertyEditor') ('None')
+WHEN  ('?cmdRegisterNow') ('None')
+WHEN  ('?thisEditCommand') ('None')
+
+%ButtonThreadParameters DEPEND %Control DEFAULT TIMES 3
+WHEN  ('?LookupFile') ('')
+WHEN  ('?LookupSendToCommand') ('')
+WHEN  ('?cmdPropertyEditor') ('')
+
+%ButtonThreadReturnValueAssignment DEPEND %Control FIELD TIMES 3
+WHEN  ('?LookupFile') ()
+WHEN  ('?LookupSendToCommand') ()
+WHEN  ('?cmdPropertyEditor') ()
+
+%PreLookupKey DEPEND %Control KEY TIMES 0
+
+%PreLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PreLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%PreLookupProcedureParameters DEPEND %Control DEFAULT TIMES 0
+
+%PostLookupKey DEPEND %Control KEY TIMES 0
+
+%PostLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PostLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%PostLookupProcedureParameters DEPEND %Control DEFAULT TIMES 0
+
+%PostLookupDuringValidate DEPEND %Control LONG TIMES 15
+WHEN  ('') (1)
+WHEN  ('?LookupFile') (1)
+WHEN  ('?LookupSendToCommand') (1)
+WHEN  ('?cmdApply') (1)
+WHEN  ('?cmdPropertyEditor') (1)
+WHEN  ('?cmdRegisterNow') (1)
+WHEN  ('?glo:RestorePointTimerInterval') (1)
+WHEN  ('?loc:nDeleteWarningCount:2') (1)
+WHEN  ('?loc:sApplicationColor') (1)
+WHEN  ('?loc:sBookmarkBackColor') (1)
+WHEN  ('?loc:sSelectedBackColor') (1)
+WHEN  ('?loc:sToolbarColor') (1)
+WHEN  ('?loc:szClarionHelpFile') (1)
+WHEN  ('?szFontDescription') (1)
+WHEN  ('?thisEditCommand') (1)
+
+%LookupAssign DEPEND %Control MULTI LONG TIMES 0
+
+%MoreTarget DEPEND %LookupAssign FIELD TIMES 0
+
+%MoreField DEPEND %LookupAssign DEFAULT TIMES 0
+
+%ForceWindowRefresh DEPEND %Control LONG TIMES 0
+
+%CheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedAssignVariable DEPEND %CheckedAssigns FIELD TIMES 0
+
+%CheckedAssignValue DEPEND %CheckedAssigns DEFAULT TIMES 0
+
+%CheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl DEPEND %CheckedHides DEFAULT TIMES 0
+
+%CheckedControlAction DEPEND %CheckedHides DEFAULT TIMES 7
+WHEN  ('')TIMES 0
+WHEN  ('?LookupFile')TIMES 0
+WHEN  ('?LookupSendToCommand')TIMES 0
+WHEN  ('?cmdApply')TIMES 0
+WHEN  ('?cmdPropertyEditor')TIMES 0
+WHEN  ('?cmdRegisterNow')TIMES 0
+WHEN  ('?thisEditCommand')TIMES 0
+
+%CheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl1 DEPEND %CheckedEnables DEFAULT TIMES 0
+
+%CheckedControl1Action DEPEND %CheckedEnables DEFAULT TIMES 7
+WHEN  ('')TIMES 0
+WHEN  ('?LookupFile')TIMES 0
+WHEN  ('?LookupSendToCommand')TIMES 0
+WHEN  ('?cmdApply')TIMES 0
+WHEN  ('?cmdPropertyEditor')TIMES 0
+WHEN  ('?cmdRegisterNow')TIMES 0
+WHEN  ('?thisEditCommand')TIMES 0
+
+%UncheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%UncheckedAssignVariable DEPEND %UncheckedAssigns FIELD TIMES 0
+
+%UncheckedAssignValue DEPEND %UncheckedAssigns DEFAULT TIMES 0
+
+%UnCheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl DEPEND %UnCheckedHides DEFAULT TIMES 0
+
+%UnCheckedControlAction DEPEND %UnCheckedHides DEFAULT TIMES 7
+WHEN  ('')TIMES 0
+WHEN  ('?LookupFile')TIMES 0
+WHEN  ('?LookupSendToCommand')TIMES 0
+WHEN  ('?cmdApply')TIMES 0
+WHEN  ('?cmdPropertyEditor')TIMES 0
+WHEN  ('?cmdRegisterNow')TIMES 0
+WHEN  ('?thisEditCommand')TIMES 0
+
+%UnCheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl1 DEPEND %UnCheckedEnables DEFAULT TIMES 0
+
+%UnCheckedControl1Action DEPEND %UnCheckedEnables DEFAULT TIMES 7
+WHEN  ('')TIMES 0
+WHEN  ('?LookupFile')TIMES 0
+WHEN  ('?LookupSendToCommand')TIMES 0
+WHEN  ('?cmdApply')TIMES 0
+WHEN  ('?cmdPropertyEditor')TIMES 0
+WHEN  ('?cmdRegisterNow')TIMES 0
+WHEN  ('?thisEditCommand')TIMES 0
+
+%CheckedDisables DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedDisableControl DEPEND %CheckedDisables DEFAULT TIMES 0
+
+%CheckedDisableControlAction DEPEND %CheckedDisables DEFAULT TIMES 7
+WHEN  ('')TIMES 0
+WHEN  ('?LookupFile')TIMES 0
+WHEN  ('?LookupSendToCommand')TIMES 0
+WHEN  ('?cmdApply')TIMES 0
+WHEN  ('?cmdPropertyEditor')TIMES 0
+WHEN  ('?cmdRegisterNow')TIMES 0
+WHEN  ('?thisEditCommand')TIMES 0
+
+%UnCheckedDisables DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedDisableControl DEPEND %UnCheckedDisables DEFAULT TIMES 0
+
+%UnCheckedDisableControlAction DEPEND %UnCheckedDisables DEFAULT TIMES 7
+WHEN  ('')TIMES 0
+WHEN  ('?LookupFile')TIMES 0
+WHEN  ('?LookupSendToCommand')TIMES 0
+WHEN  ('?cmdApply')TIMES 0
+WHEN  ('?cmdPropertyEditor')TIMES 0
+WHEN  ('?cmdRegisterNow')TIMES 0
+WHEN  ('?thisEditCommand')TIMES 0
+
+%ProcedureOneInstance LONG  (0)
+%FieldGradientColorType DEPEND %Control DEFAULT TIMES 7
+WHEN  ('') ('Off')
+WHEN  ('?Panel1') ('Off')
+WHEN  ('?loc:sApplicationColorBox') ('Off')
+WHEN  ('?loc:sBookmarkBackColorBox') ('Off')
+WHEN  ('?loc:sResultListColorBox') ('Off')
+WHEN  ('?loc:sSelectedBackColorBox') ('Off')
+WHEN  ('?loc:sToolbarColorBox') ('Off')
+
+%FieldGradientColorTypeVariable DEPEND %Control DEFAULT TIMES 7
+WHEN  ('') ('')
+WHEN  ('?Panel1') ('')
+WHEN  ('?loc:sApplicationColorBox') ('')
+WHEN  ('?loc:sBookmarkBackColorBox') ('')
+WHEN  ('?loc:sResultListColorBox') ('')
+WHEN  ('?loc:sSelectedBackColorBox') ('')
+WHEN  ('?loc:sToolbarColorBox') ('')
+
+%FieldGradientColorTypeIsVariable DEPEND %Control LONG TIMES 7
+WHEN  ('') (0)
+WHEN  ('?Panel1') (0)
+WHEN  ('?loc:sApplicationColorBox') (0)
+WHEN  ('?loc:sBookmarkBackColorBox') (0)
+WHEN  ('?loc:sResultListColorBox') (0)
+WHEN  ('?loc:sSelectedBackColorBox') (0)
+WHEN  ('?loc:sToolbarColorBox') (0)
+
+%FieldGradientColorFrom DEPEND %Control LONG TIMES 7
+WHEN  ('') (-1)
+WHEN  ('?Panel1') (-1)
+WHEN  ('?loc:sApplicationColorBox') (-1)
+WHEN  ('?loc:sBookmarkBackColorBox') (-1)
+WHEN  ('?loc:sResultListColorBox') (-1)
+WHEN  ('?loc:sSelectedBackColorBox') (-1)
+WHEN  ('?loc:sToolbarColorBox') (-1)
+
+%FieldGradientColorFromVariable DEPEND %Control DEFAULT TIMES 0
+
+%FieldGradientColorFromIsVariable DEPEND %Control LONG TIMES 7
+WHEN  ('') (0)
+WHEN  ('?Panel1') (0)
+WHEN  ('?loc:sApplicationColorBox') (0)
+WHEN  ('?loc:sBookmarkBackColorBox') (0)
+WHEN  ('?loc:sResultListColorBox') (0)
+WHEN  ('?loc:sSelectedBackColorBox') (0)
+WHEN  ('?loc:sToolbarColorBox') (0)
+
+%FieldGradientColorTo DEPEND %Control LONG TIMES 7
+WHEN  ('') (-1)
+WHEN  ('?Panel1') (-1)
+WHEN  ('?loc:sApplicationColorBox') (-1)
+WHEN  ('?loc:sBookmarkBackColorBox') (-1)
+WHEN  ('?loc:sResultListColorBox') (-1)
+WHEN  ('?loc:sSelectedBackColorBox') (-1)
+WHEN  ('?loc:sToolbarColorBox') (-1)
+
+%FieldGradientColorToVariable DEPEND %Control DEFAULT TIMES 0
+
+%FieldGradientColorToIsVariable DEPEND %Control LONG TIMES 7
+WHEN  ('') (0)
+WHEN  ('?Panel1') (0)
+WHEN  ('?loc:sApplicationColorBox') (0)
+WHEN  ('?loc:sBookmarkBackColorBox') (0)
+WHEN  ('?loc:sResultListColorBox') (0)
+WHEN  ('?loc:sSelectedBackColorBox') (0)
+WHEN  ('?loc:sToolbarColorBox') (0)
+
+%PreserveVarsLoc MULTI LONG  ()
+%PreserveVarLoc DEPEND %PreserveVarsLoc DEFAULT TIMES 0
+
+%ActiveImageEnable DEPEND %Control LONG TIMES 0
+
+%AIObjectName DEPEND %Control DEFAULT TIMES 1
+WHEN  ('') ('AIBtn0')
+
+%AIEnableMimicControl DEPEND %Control LONG TIMES 1
+WHEN  ('') (1)
+
+%AIMimicControl DEPEND %Control DEFAULT TIMES 1
+WHEN  ('') ('?Panel1')
+
+%AIImgRound DEPEND %Control LONG TIMES 0
+
+%AIOverrideImg DEPEND %Control DEFAULT TIMES 0
+
+%AIOverrideImgVariable DEPEND %Control DEFAULT TIMES 0
+
+%AIOverrideImgIsVariable DEPEND %Control LONG TIMES 1
+WHEN  ('') (0)
+
+%AIDisableImg DEPEND %Control DEFAULT TIMES 0
+
+%AIDisableImgVariable DEPEND %Control DEFAULT TIMES 0
+
+%AIDisableImgIsVariable DEPEND %Control LONG TIMES 1
+WHEN  ('') (0)
+
+%AIHotImg DEPEND %Control DEFAULT TIMES 0
+
+%AIHotImgVariable DEPEND %Control DEFAULT TIMES 0
+
+%AIHotImgIsVariable DEPEND %Control LONG TIMES 1
+WHEN  ('') (0)
+
+%AIPressedImg DEPEND %Control DEFAULT TIMES 0
+
+%AIPressedImgVariable DEPEND %Control DEFAULT TIMES 0
+
+%AIPressedImgIsVariable DEPEND %Control LONG TIMES 1
+WHEN  ('') (0)
+
+[EMBED]
+EMBED %DataSection
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 50
+PROPERTY:END
+!region Notices
+! ================================================================================
+! Notice : Copyright (C) 2017, Devuna
+!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
+!
+!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
+!
+!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
+!    it under the terms of the MIT License as published by
+!    the Open Source Initiative.
+!
+!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    MIT License for more details.
+!
+!    You should have received a copy of the MIT License
+!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
+! ================================================================================
+!endregion Notices
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 50
+PROPERTY:END
+STYLE:NORMAL      EQUATE(0)
+STYLE:BOLD        EQUATE(1)
+STYLE:ITALIC      EQUATE(2)
+STYLE:BOLDITALIC  EQUATE(3)
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 1300
+PROPERTY:END
+keyCodeName       ctKssKeyCodeName
+
+PropertyFileQueue          QUEUE
+FileName                      CSTRING(MAXFILE)
+FilenameStyle                 LONG
+FilePath                      CSTRING(MAXPATH)
+IsReadOnly                    BOOL
+                           END
+bReadOnly                  BOOL
+szSearchFolder             CSTRING(MAXPATH)
+loc:SelectedBack           LONG
+loc:sSelectedBackColor     STRING(30)
+loc:BookmarkBack           LONG
+loc:sBookmarkBackColor     STRING(30)
+loc:ApplicationColor       LONG
+loc:sApplicationColor      STRING(30)
+loc:ToolbarColor           LONG
+loc:sToolbarColor          STRING(30)
+loc:PlusKey                LONG
+loc:MinusKey               LONG
+szFontDescription          CSTRING(64)                           !
+szFontName                 CSTRING(32)                           !
+nFontSize                  BYTE                                  !
+lForeColor                 LONG
+nFontStyle                 LONG
+DefaultErrors              GROUP
+Number                        USHORT(1)
+                              USHORT(Msg:ConfirmDelete)
+                              BYTE(Level:User)
+                              PSTRING('Confirm Delete')
+                              PSTRING('Are you sure you want to delete the %File properties file?')
+                           END
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6300
+PROPERTY:END
+QEIP1::FileExtension CLASS(EditEntryClass)
+CreateControl          PROCEDURE(),DERIVED                      ! Method added to host embed code
+TakeAccepted           PROCEDURE(BYTE Action),BYTE,DERIVED      ! Method added to host embed code
+                     END
+[END]
+EMBED %WindowManagerMethodCodeSection
+[INSTANCES]
+WHEN 'Init'
+[INSTANCES]
+WHEN '(),BYTE'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 2700
+PROPERTY:END
+GlobalErrors.AddErrors(DefaultErrors)
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 7800
+PROPERTY:END
+DO FillPropertyFileQueue
+
+loc:MinusKeyString = 'Previous Result Line assigned to ' & CLIP(KeyCodeName.ToName(glo:MinusKey))
+loc:MinusKeyTipString = 'The ''Jump to Previous Line in Results List'' function is assigned to the ' & CLIP(KeyCodeName.ToName(glo:MinusKey))
+
+loc:PlusKeyString = 'Next Result Line assigned to ' & CLIP(KeyCodeName.ToName(glo:PlusKey))
+loc:PlusKeyTipString  = 'The ''Jump to Next Line in Results List'' function is assigned to the ' & CLIP(KeyCodeName.ToName(glo:PlusKey))
+
+glo:OldMinusKey = glo:MinusKey
+glo:OldPlusKey = glo:PlusKey
+loc:MinusKey = glo:MinusKey
+loc:PlusKey  = glo:PlusKey
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8005
+PROPERTY:END
+?loc:MinusKeyStringRegion{PROP:Tip} = loc:MinusKeyTipString
+?loc:PlusKeyStringRegion{PROP:Tip} = loc:PlusKeyTipString
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8020
+PROPERTY:END
+?lbPropertyFiles{PROP:Selected} = 1
+GET(PropertyFileQueue,1)
+CASE PropertyFileQueue.FilenameStyle
+  OF STYLE:NORMAL
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLD
+     ?cmdDefault{PROP:Disable} = TRUE
+  OF STYLE:ITALIC
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLDITALIC
+     ?cmdDefault{PROP:Disable} = TRUE
+END
+?cmdDeletePropertyFile{PROP:Disable} = PropertyFileQueue.IsReadOnly
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8040
+PROPERTY:END
+OMIT('Original_Code')
+IF RegisteredTo = UNREGISTERED_COPY
+   UNHIDE(?cmdRegisterNow)
+ELSE
+   ?cmdRegisterNow{PROP:Text} = 'Check for Update'
+   UNHIDE(?cmdRegisterNow)
+END
+!Original_Code
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8400
+PROPERTY:END
+CorrectForOffscreen(Window)
+
+thisEditCommand = glo:szEditorCommand
+
+szFontName  = glo:ResultListFontName
+nFontSize   = glo:ResultListFontSize
+lForeColor  = glo:ResultListForeColor
+nFontStyle  = glo:ResultListFontStyle
+DO GetFontDescription
+
+CASE glo:ApplicationColor
+  OF COLOR:GRADIENTACTIVECAPTION
+     loc:ApplicationColor = kcr_GetSysColor(COLOR_GRADIENTACTIVECAPTION)
+  OF COLOR:GRADIENTINACTIVECAPTION
+     loc:ApplicationColor = kcr_GetSysColor(COLOR_GRADIENTINACTIVECAPTION)
+ELSE
+     loc:ApplicationColor = glo:ApplicationColor
+END
+CASE glo:ToolbarColor
+  OF COLOR:GRADIENTACTIVECAPTION
+     loc:ToolbarColor = kcr_GetSysColor(COLOR_GRADIENTACTIVECAPTION)
+  OF COLOR:GRADIENTINACTIVECAPTION
+     loc:ToolbarColor = kcr_GetSysColor(COLOR_GRADIENTINACTIVECAPTION)
+ELSE
+     loc:ToolbarColor = glo:ToolbarColor
+END
+loc:SelectedBack = glo:SelectedBack
+loc:BookmarkBack = glo:BookmarkBack
+loc:SplitterOrientation = glo:SplitterOrientation
+loc:szVersion    = 'Version ' & glo:szVersion
+loc:szClarionHelpFile = glo:szClarionHelpFile
+loc:nDeleteWarningCount = glo:nDeleteWarningCount
+?loc:nDeleteWarningCount{PROP:From} = 'Never|#0|Always|#1|When|#' & CHOOSE(loc:nDeleteWarningCount > 1,loc:nDeleteWarningCount,2)
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8800
+PROPERTY:END
+FileLookup3.Flags=BOR(FileLookup3.Flags,FILE:KeepDir)    ! Return to start directory
+FileLookup4.Flags=BOR(FileLookup4.Flags,FILE:KeepDir)    ! Return to start directory
+[END]
+[END]
+WHEN 'Reset'
+[INSTANCES]
+WHEN '(BYTE Force=0)'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
+!Color Options
+!======================================================================================
+?loc:sApplicationColorBox{PROP:Fill} = loc:ApplicationColor
+loc:sApplicationColor = srcGetColorString(loc:ApplicationColor)
+
+?loc:sToolbarColorBox{PROP:Fill} = loc:ToolbarColor
+loc:sToolbarColor = srcGetColorString(loc:ToolbarColor)
+
+?loc:sResultListColorBox{PROP:Fill} = lForeColor
+DO GetFontDescription
+
+?loc:sSelectedBackColorBox{PROP:Fill} = loc:SelectedBack
+loc:sSelectedBackColor = srcGetColorString(loc:SelectedBack)
+
+?loc:sBookmarkBackColorBox{PROP:Fill} = loc:BookmarkBack
+loc:sBookmarkBackColor = srcGetColorString(loc:BookmarkBack)
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8800
+PROPERTY:END
+IF RECORDS(EditorQueue) > 1
+   ENABLE(?glo:PromptForEditor)
+ELSE
+   glo:PromptForEditor = FALSE
+   DISABLE(?glo:PromptForEditor)
+   DISPLAY(?glo:PromptForEditor)
+END
+
+IF glo:bAllExtensions = TRUE
+   DISABLE(?ClarionExtensions:Group)
+ELSE
+   ENABLE(?ClarionExtensions:Group)
+END
+
+IF loc:nDeleteWarningCount < 2
+   HIDE(?RemovingAtLeast,?loc:nDeleteWarningCount:2)
+ELSE
+   UNHIDE(?RemovingAtLeast,?loc:nDeleteWarningCount:2)
+END
+
+GET(PropertyFileQueue,CHOICE(?lbPropertyFiles))
+CASE PropertyFileQueue.FilenameStyle
+  OF STYLE:NORMAL
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLD
+     ?cmdDefault{PROP:Disable} = TRUE
+  OF STYLE:ITALIC
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLDITALIC
+     ?cmdDefault{PROP:Disable} = TRUE
+END
+?cmdDeletePropertyFile{PROP:Disable} = PropertyFileQueue.IsReadOnly
+[END]
+[END]
+[END]
+EMBED %ControlEventHandling
+[INSTANCES]
+WHEN '?rgnWebAddress'
+[INSTANCES]
+WHEN 'MouseIn'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+?strWebAddress{PROP:FontStyle} = FONT:regular+FONT:underline
+SETCURSOR('~harrow.cur')
+[END]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+szURL = ?strWebAddress{PROP:Text}
+szNull = ''
+kcr_ShellExecute(window{prop:handle},0,szURL,0,szNull,1)
+[END]
+WHEN 'MouseOut'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+?strWebAddress{PROP:FontStyle} = FONT:regular
+SETCURSOR()
+[END]
+[END]
+WHEN '?thisEditCommand'
+[INSTANCES]
+WHEN 'AlertKey'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+CASE KEYCODE()
+  OF DeleteKey
+     FORWARDKEY(?thisEditCommand)
+  OF MouseRight
+     MRUContextMenu(EditorQueue, ?thisEditCommand, '<<Use Windows Default>')
+     SELF.Reset()
+END
+[END]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+DO AddEditCommand
+[END]
+[END]
+WHEN '?glo:bAllExtensions'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+SELF.Reset()
+[END]
+[END]
+WHEN '?SelectedBackColorButton'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+saveColor = loc:SelectedBack
+COLORDIALOG('Selected Color',loc:SelectedBack)
+IF saveColor <> loc:SelectedBack
+   bPropertiesChanged = TRUE
+END
+ThisWindow.Reset()
+[END]
+[END]
+WHEN '?BookmarkBackColorButton'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+saveColor = loc:BookmarkBack
+COLORDIALOG('Bookmark Color',loc:BookmarkBack)
+IF saveColor <> loc:BookmarkBack
+   bPropertiesChanged = TRUE
+END
+ThisWindow.Reset()
+[END]
+[END]
+WHEN '?cmdRegisterNow'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+IF RegisteredTo = UNREGISTERED_COPY
+   IF RegisterProduct() = Level:Benign
+      IF CheckRegistration(RegisteredTo,lExpiryDate) = Level:Benign
+         DISPLAY(?RegisteredTo)
+         HIDE(?cmdRegisterNow)
+      END
+   END
+END      
+[END]
+[END]
+WHEN '?cmdPropertyEditor'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+GET(PropertyFileQueue,CHOICE(?lbPropertyFiles))
+IF bPropertiesChanged = FALSE
+   bPropertiesChanged = PropertyEditor(PropertyFileQueue.FilePath,MaxStyleIndex)
+ELSE
+   PropertyEditor(PropertyFileQueue.FilePath,MaxStyleIndex)
+END
+DO FillPropertyFileQueue
+ThisWindow.Reset
+[END]
+[END]
+WHEN '?lbPropertyFiles'
+[INSTANCES]
+WHEN 'AlertKey'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+CASE KEYCODE()
+  OF MouseLeft2
+     POST(EVENT:Accepted,?cmdPropertyEditor)
+END
+[END]
+WHEN 'NewSelection'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+GET(PropertyFileQueue,CHOICE(?lbPropertyFiles))
+CASE PropertyFileQueue.FilenameStyle
+  OF STYLE:NORMAL
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLD
+     ?cmdDefault{PROP:Disable} = TRUE
+  OF STYLE:ITALIC
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLDITALIC
+     ?cmdDefault{PROP:Disable} = TRUE
+END
+?cmdDeletePropertyFile{PROP:Disable} = PropertyFileQueue.IsReadOnly
+[END]
+[END]
+WHEN '?ApplicationColorButton'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+saveColor = loc:ApplicationColor
+COLORDIALOG('Application Color',loc:ApplicationColor)
+IF saveColor <> loc:ApplicationColor
+   bPropertiesChanged = TRUE
+END
+ThisWindow.Reset()
+[END]
+[END]
+WHEN '?ToolbarColorButton'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+saveColor = loc:ToolbarColor
+COLORDIALOG('Toolbar Color',loc:ToolbarColor)
+IF saveColor <> loc:ToolbarColor
+   bPropertiesChanged = TRUE
+END
+ThisWindow.Reset()
+[END]
+[END]
+WHEN '?loc:nDeleteWarningCount'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+ThisWindow.Reset()
+[END]
+[END]
+WHEN '?cmdFontDialog'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+IF FONTDIALOG('Choose Font',szFontName,nFontSize,lForeColor,nFontStyle,0)
+   IF szFontName  <> glo:ResultListFontName  |
+   OR nFontSize   <> glo:ResultListFontSize  |
+   OR lForeColor  <> glo:ResultListForeColor |
+   OR nFontStyle  <> glo:ResultListFontStyle
+      bPropertiesChanged = TRUE
+   END
+   ThisWindow.Reset()
+END
+[END]
+[END]
+WHEN '?cmdApply'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
+glo:szClarionHelpFile   = loc:szClarionHelpFile
+glo:szEditorCommand     = thisEditCommand
+glo:nDeleteWarningCount = loc:nDeleteWarningCount
+glo:SelectedBack        = loc:SelectedBack
+glo:BookmarkBack        = loc:BookmarkBack
+glo:SplitterOrientation = loc:SplitterOrientation
+
+
+IF loc:ApplicationColor = kcr_GetSysColor(COLOR_GRADIENTACTIVECAPTION)
+   glo:ApplicationColor = COLOR:GRADIENTACTIVECAPTION
+ELSIF loc:ApplicationColor = kcr_GetSysColor(COLOR_GRADIENTINACTIVECAPTION)
+   glo:ApplicationColor = COLOR:GRADIENTINACTIVECAPTION
+ELSE
+   glo:ApplicationColor   = loc:ApplicationColor
+END
+
+IF loc:ToolbarColor = kcr_GetSysColor(COLOR_GRADIENTACTIVECAPTION)
+   glo:ToolbarColor = COLOR:GRADIENTACTIVECAPTION
+ELSIF loc:ToolbarColor = kcr_GetSysColor(COLOR_GRADIENTINACTIVECAPTION)
+   glo:ToolbarColor = COLOR:GRADIENTINACTIVECAPTION
+ELSE
+   glo:ToolbarColor   = loc:ToolbarColor
+END
+
+INIMgr.Update('Global','DeleteWarningCount',glo:nDeleteWarningCount)
+INIMgr.Update('Global','ApplicationColor',glo:ApplicationColor)
+INIMgr.Update('Global','ToolbarColor',glo:ToolbarColor)
+INIMgr.Update('Global','SelectedBack',glo:SelectedBack)
+INIMgr.Update('Global','BookmarkBack',glo:BookmarkBack)
+
+glo:ResultListFontName  = szFontName
+glo:ResultListFontSize  = nFontSize
+glo:ResultListForeColor = lForeColor
+glo:ResultListFontStyle = nFontStyle
+INIMgr.Update('Global','ResultListFontName',glo:ResultListFontName)
+INIMgr.Update('Global','ResultListFontSize',glo:ResultListFontSize)
+INIMgr.Update('Global','ResultListForeColor',glo:ResultListForeColor)
+INIMgr.Update('Global','ResultListFontStyle',glo:ResultListFontStyle)
+
+IF loc:MinusKey <> glo:MinusKey OR loc:PlusKey <> glo:PlusKey
+   bPropertiesChanged = TRUE
+END
+
+glo:OldMinusKey = glo:MinusKey
+glo:MinusKey = loc:MinusKey
+INIMgr.Update('Global','ResultListMinusKey',glo:MinusKey)
+
+glo:OldPlusKey = glo:PlusKey
+glo:PlusKey  = loc:PlusKey
+INIMgr.Update('Global','ResultListPlusKey',glo:PlusKey)
+
+INIMgr.UpdateQueue('Editor Queue','EditCommand',EditorQueue,EditorQueue.szValue)
+INIMgr.UpdateQueue('ClarionExtensions Queue','ClarionExtension',ClarionExtensionsQueue,ClarionExtensionsQueue.FileExtension)
+POST(EVENT:CloseWindow)
+[END]
+[END]
+WHEN '?cmdDefault'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+i = CHOICE(?lbPropertyFiles)
+LOOP j = 1 TO RECORDS(PropertyFileQueue)
+   GET(PropertyFileQueue,j)
+   IF j = i
+      PropertyFileQueue.FilenameStyle = STYLE:BOLD + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
+      glo:szDefaultPropertyFile = PropertyFileQueue.FileName
+   ELSE
+      PropertyFileQueue.FilenameStyle = STYLE:NORMAL + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
+   END
+   PUT(PropertyFileQueue)
+END
+GET(PropertyFileQueue,i)
+CASE PropertyFileQueue.FilenameStyle
+  OF STYLE:NORMAL
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLD
+     ?cmdDefault{PROP:Disable} = TRUE
+  OF STYLE:ITALIC
+     ?cmdDefault{PROP:Disable} = FALSE
+  OF STYLE:BOLDITALIC
+     ?cmdDefault{PROP:Disable} = TRUE
+END
+[END]
+[END]
+WHEN '?cmdDeletePropertyFile'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+IF GlobalErrors.ThrowFile(Msg:ConfirmDelete,PropertyFileQueue.FileName) = Level:Benign
+   REMOVE(PropertyFileQueue.FilePath)
+   DO FillPropertyFileQueue
+   ThisWindow.Reset
+END
+[END]
+[END]
+WHEN '?cmdGetPlusKey'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+WinGetKeyAssignment('Jump to Next Line in Results List',loc:PlusKey)
+loc:PlusKeyString = 'Next Result Line assigned to ' & CLIP(KeyCodeName.ToName(loc:PlusKey))
+loc:PlusKeyTipString  = 'The ''Jump to Next Line in Results List'' function is assigned to the ' & CLIP(KeyCodeName.ToName(loc:PlusKey))
+?loc:PlusKeyStringRegion{PROP:Tip} = loc:PlusKeyTipString
+[END]
+[END]
+WHEN '?cmdGetMinusKey'
+[INSTANCES]
+WHEN 'Accepted'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+WinGetKeyAssignment('Jump to Previous Line in Results List',loc:MinusKey)
+loc:MinusKeyString = 'Previous Result Line assigned to ' & CLIP(KeyCodeName.ToName(loc:MinusKey))
+loc:MinusKeyTipString = 'The ''Jump to Previous Line in Results List'' function is assigned to the ' & CLIP(KeyCodeName.ToName(loc:MinusKey))
+?loc:MinusKeyStringRegion{PROP:Tip} = loc:MinusKeyTipString
+[END]
+[END]
+[END]
+EMBED %LocalProcedures
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+QEIP1::FileExtension.CreateControl    PROCEDURE
+   CODE
+      PARENT.CreateControl()
+      SELF.Feq{PROP:Upr} = TRUE
+      RETURN
+
+QEIP1::FileExtension.TakeAccepted    PROCEDURE(BYTE Action)
+ReturnValue BYTE
+   CODE
+      ReturnValue = PARENT.TakeAccepted(Action)
+      !CASE Action
+      !  OF EditAction:Complete
+      !     IF INSTRING('*',ClarionExtensionsQueue.FileExtension,1)  |
+      !     OR INSTRING('?',ClarionExtensionsQueue.FileExtension,1)
+      !        MESSAGE('File Extension may not contain wild cards (*,?)','Data Validation Error',ICON:HAND)
+      !        ReturnValue = EditAction:None
+      !     END
+      !END
+      RETURN(ReturnValue)
+
+[END]
+EMBED %QEIPInitCodeSection
+[INSTANCES]
+WHEN '1'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 500
+PROPERTY:END
+SELF.DeleteAction = EIPAction:Always
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 1500
+PROPERTY:END
+SELF.AddControl(QEIP1::FileExtension,1,0)
+[END]
+[END]
+EMBED %QEIPTakeCompletedCodeSection
+[INSTANCES]
+WHEN '1'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 500
+PROPERTY:END
+    IF Force = BUTTON:Yes
+       IF INSTRING('*',ClarionExtensionsQueue.FileExtension,1)  |
+       OR INSTRING('?',ClarionExtensionsQueue.FileExtension,1)
+          MESSAGE('File Extension may not contain wild cards (*,?)','Data Validation Error',ICON:HAND)
+          Force = BUTTON:Cancel
+       ELSIF ClarionExtensionsQueue.FileExtension[1] <> '.'
+          ClarionExtensionsQueue.FileExtension = '.' & ClarionExtensionsQueue.FileExtension
+       END
+    END
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+IF SELF.Response = RequestCompleted
+   SORT(ClarionExtensionsQueue,ClarionExtensionsQueue.FileExtension)
+END
+[END]
+[END]
+EMBED %WindowManagerMethodDataSection
+[INSTANCES]
+WHEN 'TakeAccepted'
+[INSTANCES]
+WHEN '(),BYTE'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
+szURL                CSTRING(256)
+szNull               CSTRING('<0>')
+i                    LONG
+j                    LONG
+lExpiryDate          LONG
+saveColor            LONG
+[END]
+[END]
+WHEN 'TakeWindowEvent'
+[INSTANCES]
+WHEN '(),BYTE'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
+nCode  SIGNED
+[END]
+[END]
+[END]
+EMBED %QEIPRunCodeSection
+[INSTANCES]
+WHEN '1'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 2500
+PROPERTY:END
+DISABLE(?Insert,?Delete)
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 6000
+PROPERTY:END
+ENABLE(?Insert,?Delete)
+[END]
+[END]
+EMBED %ProcedureRoutines
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 4000
+PROPERTY:END
+AddEditCommand    ROUTINE
+   DATA
+i     LONG
+j     LONG
+
+   CODE
+      UPDATE()
+      IF thisEditCommand <> ''
+         j = RECORDS(EditorQueue)
+         LOOP i = 1 TO j
+            GET(EditorQueue,i)
+            IF EditorQueue.szValue = thisEditCommand
+               BREAK
+            END
+         END
+         IF i > j
+            IF j = MAXMRU
+               GET(EditorQueue,j)
+               DELETE(EditorQueue)
+            END
+            EditorQueue.szValue = thisEditCommand
+            ADD(EditorQueue,+EditorQueue.szValue)
+         END
+      END
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 4000
+PROPERTY:END
+FillPropertyFileQueue  ROUTINE
+   DATA
+
+   CODE
+      FREE(PropertyFileQueue)
+      !get user properties
+      szSearchFolder = svSpecialFolder.GetDir(SV:CSIDL_APPDATA, 'Devuna' & '\' & 'KSS\')
+      bReadOnly = FALSE
+      DO GetFilenames
+
+      !get system properties
+      szSearchFolder = LONGPATH() & '\'
+      bReadOnly = TRUE
+      DO GetFileNames
+
+      GET(PropertyFileQueue,1)
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 4000
+PROPERTY:END
+GetFilenames   ROUTINE
+   DATA
+i              LONG
+j              LONG
+cc             LONG
+szPath         CSTRING(MAXPATH+1)
+szDrive        CSTRING(MAXDRIVE+1)
+szDir          CSTRING(MAXDIR+1)
+szName         CSTRING(MAXFILE+1)
+szExtension    CSTRING(MAXEXT+1)
+FileModes      QUEUE(FILE:queue),PRE(fm)
+               END
+   CODE
+      DIRECTORY(FileModes,szSearchFolder & '*.properties',0)
+      j = RECORDS(FileModes)
+      IF j > 0
+         LOOP i = 1 TO j
+            GET(FileModes,i)
+            szPath = szSearchFolder & CLIP(FileModes.Name)
+            cc = kcr_fnSplit(szPath, szDrive, szDir, szName, szExtension)
+            PropertyFileQueue.FileName = LOWER(szName)
+            GET(PropertyFileQueue,+PropertyFileQueue.FileName)
+            IF ERRORCODE()
+               PropertyFileQueue.FileName = LOWER(szName)
+               PropertyFileQueue.FilePath = szPath
+               PropertyFileQueue.IsReadOnly = bReadOnly
+               IF PropertyFileQueue.FileName = glo:szDefaultPropertyFile
+                  PropertyFileQueue.FilenameStyle = STYLE:BOLD + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
+               ELSE
+                  PropertyFileQueue.FilenameStyle = STYLE:NORMAL + CHOOSE(PropertyFileQueue.IsReadOnly=0,STYLE:ITALIC,0)
+               END
+               ADD(PropertyFileQueue,+PropertyFileQueue.FileName)
+            END
+         END
+      END
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 4000
+PROPERTY:END
+GetFontDescription   ROUTINE
+   IF szFontName
+      szFontDescription = CLIP(szFontName) & ','
+   END
+
+   IF nFontSize
+      szFontDescription = szFontDescription & nFontSize & ','
+   END
+
+   IF BAND(nFontStyle,0FFFh) >= FONT:bold
+      szFontDescription = szFontDescription & 'Bold,'
+   ELSIF BAND(nFontStyle,0FFFh) >= FONT:regular
+      szFontDescription = szFontDescription & 'Regular,'
+   ELSE
+      szFontDescription = szFontDescription & 'Thin,'
+   END
+
+   IF BAND(nFontStyle,FONT:italic) = FONT:italic
+      szFontDescription = szFontDescription & 'Italic,'
+   END
+
+   IF BAND(nFontStyle,FONT:underline) = FONT:underline
+      szFontDescription = szFontDescription & 'Underline,'
+   END
+
+   IF szFontDescription[LEN(szFontDescription)] = ','
+      szFontDescription[LEN(szFontDescription)] = '<0>'
+   END
+   DISPLAY(?szFontDescription)
+   EXIT
+[END]
+[END]
+[ADDITION]
+NAME ABC cwHHProc
+[INSTANCE]
+INSTANCE 2
+OWNER 2
+[PROMPTS]
+%cwHHFileName DEFAULT  ('')
+%cwHHContextURL DEFAULT  ('')
+%cwHHAltTrapKey DEFAULT  ('')
+[ADDITION]
+NAME KCR KCR_QueueEIP
+[INSTANCE]
+INSTANCE 1
+[PROMPTS]
+%QueueEIPIncludePopupMenu LONG  (1)
+%QueueEIPContinuousInsert LONG  (0)
+%QueueEIPInsertionPoint DEFAULT  ('Append')
+%QueueEIPTabAction DEFAULT  ('Always')
+%QueueEIPTabRemain LONG  (1)
+%QueueEIPEnterAction DEFAULT  ('Always')
+%QueueEIPEnterRemain LONG  (0)
+%QueueEIPArrowAction DEFAULT  ('Always')
+%QueueEIPArrowRemain LONG  (1)
+%QueueEIPArrowRetain LONG  (1)
+%QueueEIPFocusAction DEFAULT  ('Never')
+%QueueEditInPlaceList MULTI LONG  ()
+%QueueEditInPlaceField DEPEND %QueueEditInPlaceList FIELD TIMES 0
+
+%QueueEditInPlaceFieldDefaultValue DEPEND %QueueEditInPlaceList DEFAULT TIMES 0
+
+%QueueAllowEIP DEPEND %QueueEditInPlaceList LONG TIMES 0
+
+%QueueEditClass DEPEND %QueueEditInPlaceList DEFAULT TIMES 0
+
+%QueueColorColumn DEPEND %QueueEditInPlaceList LONG TIMES 0
+
+%QueueTextColor DEPEND %QueueEditInPlaceList LONG TIMES 0
+
+%QueueBackColor DEPEND %QueueEditInPlaceList LONG TIMES 0
+
+%QueueTextSelected DEPEND %QueueEditInPlaceList LONG TIMES 0
+
+%QueueBackSelected DEPEND %QueueEditInPlaceList LONG TIMES 0
+
+%HotFields MULTI LONG  ()
+%HotField DEPEND %HotFields FIELD TIMES 0
+
+[ADDITION]
+NAME ABC DOSFileLookup
+[INSTANCE]
+INSTANCE 3
+[PROMPTS]
+%ClassItem UNIQUE DEFAULT  ('Default')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('SelectFileClass')
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('')
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%DOSFileDialogHeader DEFAULT  ('Select Clarion Help File...')
+%DOSFileField FIELD  (loc:szClarionHelpFile)
+%DOSInitialDirectory DEFAULT  ('')
+%DOSInitialFilename DEFAULT  ('ClarionHelp.chm')
+%ReturnToOriginalDir LONG  (1)
+%AllowLongFilenames LONG  (1)
+%DOSFileDialogType DEFAULT  ('Open')
+%AllowNoError LONG  (0)
+%DefaultOnCancel LONG  (0)
+%AllowMultiSelect LONG  (0)
+%ActionsToTake DEFAULT  ('')
+%AssignToImageControl LONG  (0)
+%ImageControl DEFAULT  ('')
+%ImageResize LONG  (1)
+%DOSVariableMask LONG  (0)
+%DOSMaskVariable DEFAULT  ('')
+%DOSMaskDesc DEFAULT  ('Helpl Files')
+%DOSMask DEFAULT  ('*.chm')
+%DOSMoreMasks MULTI LONG  ()
+%DOSMoreMaskDesc DEPEND %DOSMoreMasks DEFAULT TIMES 0
+
+%DOSMoreMask DEPEND %DOSMoreMasks DEFAULT TIMES 0
+
+%RedisplayWindow LONG  (1)
+%UpdateFields MULTI LONG  ()
+%UpdateFeq DEPEND %UpdateFields DEFAULT TIMES 0
+
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('FileLookup3')
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('ADOBlob')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 1
+WHEN  ('Default')TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 1
+WHEN  ('Default')TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+[INSTANCE]
+INSTANCE 4
+[PROMPTS]
+%ClassItem UNIQUE DEFAULT  ('Default')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('SelectFileClass')
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('')
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%DOSFileDialogHeader DEFAULT  ('Select Send To Target...')
+%DOSFileField FIELD  (thisEditCommand)
+%DOSInitialDirectory DEFAULT  ('')
+%DOSInitialFilename DEFAULT  ('')
+%ReturnToOriginalDir LONG  (1)
+%AllowLongFilenames LONG  (1)
+%DOSFileDialogType DEFAULT  ('Open')
+%AllowNoError LONG  (0)
+%DefaultOnCancel LONG  (0)
+%AllowMultiSelect LONG  (0)
+%ActionsToTake DEFAULT  ('')
+%AssignToImageControl LONG  (0)
+%ImageControl DEFAULT  ('')
+%ImageResize LONG  (1)
+%DOSVariableMask LONG  (0)
+%DOSMaskVariable DEFAULT  ('')
+%DOSMaskDesc DEFAULT  ('Program Files')
+%DOSMask DEFAULT  ('*.exe')
+%DOSMoreMasks MULTI LONG  (1)
+%DOSMoreMaskDesc DEPEND %DOSMoreMasks DEFAULT TIMES 1
+WHEN  (1) ('All Files')
+
+%DOSMoreMask DEPEND %DOSMoreMasks DEFAULT TIMES 1
+WHEN  (1) ('*.*')
+
+%RedisplayWindow LONG  (1)
+%UpdateFields MULTI LONG  ()
+%UpdateFeq DEPEND %UpdateFields DEFAULT TIMES 0
+
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('FileLookup4')
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('ADOBlob')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 1
+WHEN  ('Default')TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 1
+WHEN  ('Default')TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+[CALLS]
+CorrectForOffScreen
+MRUContextMenu
+PropertyEditor
+RegisterProduct
+srcGetColorString
+srcGetRGBColorString
+winGetKeyAssignment
+[WINDOW]
+Window  WINDOW('Options'),AT(,,530,320),FONT('Segoe UI',10),DOUBLE,TILED,GRAY,HLP('UserOptions.htm'), |
+          SYSTEM
+          PANEL,AT(5,5,520,310),USE(?Panel1),BEVEL(1),#ORDINAL(1)
+          PROMPT('S&end to Command'),AT(10,10),USE(?thisEditCommand:Prompt),#ORDINAL(2)
+          COMBO(@s255),AT(80,10,328,10),USE(thisEditCommand),VSCROLL,ALRT(DeleteKey),ALRT(MouseRight), |
+            DROP(10),FORMAT('1020L(2)|M@s255@'),FROM(EditorQueue),#FIELDS(EditorQueue.szEditCommand), |
+            #ORDINAL(3)
+          BUTTON('...'),AT(413,10,11,10),USE(?LookupSendToCommand),#ORIG(?LookupFile),#SEQ(4), |
+            #ORDINAL(4)
+          CHECK(' &Prompt for Command'),AT(428,10,92),USE(glo:PromptForEditor),#ORDINAL(5)
+          PROMPT('Clarion &Help File'),AT(10,25),USE(?loc:szClarionHelpFile:Prompt),#ORDINAL(6)
+          ENTRY(@s255),AT(80,25,422,10),USE(loc:szClarionHelpFile),COLOR(COLOR:BTNFACE),READONLY, |
+            SKIP,#ORDINAL(7)
+          BUTTON('...'),AT(505,24,11,10),USE(?LookupFile),#ORIG(?LookupFile),#SEQ(3),#ORDINAL(8)
+          CHECK(' Identify &Location in all files'),AT(17,49,137),USE(glo:bAllExtensions), |
+            #ORDINAL(9)
+          GROUP('Identify Location in these File Extensions'),AT(10,39,150,271),USE(?ClarionExtensions:Group), |
+            BOXED,#ORDINAL(10)
+            LIST,AT(17,62,136,225),USE(?List),CENTER,VSCROLL,ALRT(MouseLeft2),FORMAT('80L(2)|M@s20@'), |
+              FROM(ClarionExtensionsQueue),TIP('Filenames containing the extensions in ' & |
+              'this list will receive Location Identification processing.  This special' & |
+              ' processing may incur significant processing overhead.'),#FIELDS(CEQ:FileExtension), |
+              #ORIG(?List),#SEQ(1),#ORDINAL(11)
+            BUTTON('Insert'),AT(17,292,40,12),USE(?Insert),KEY(InsertKey),#ORIG(?Insert),#SEQ(1), |
+              #ORDINAL(12)
+            BUTTON('Edit'),AT(59,292,40,12),USE(?Change),KEY(CtrlEnter),#ORIG(?Change),#SEQ(1), |
+              #ORDINAL(13)
+            BUTTON('Delete'),AT(102,292,40,12),USE(?Delete),KEY(DeleteKey),#ORIG(?Delete), |
+              #SEQ(1),#ORDINAL(14)
+          END
+          GROUP('Properties'),AT(165,39,355,271),USE(?EditorStylesGroup),BOXED,#ORDINAL(15)
+            LIST,AT(170,62,102,225),USE(?lbPropertyFiles),ALRT(MouseLeft2),FORMAT('125L(2)Y@s255@'), |
+              FROM(PropertyFileQueue),#ORDINAL(16)
+            BUTTON('Edit'),AT(188,292,40,12),USE(?cmdPropertyEditor),TIP('Edit the high' & |
+              'lighted property file.'),#ORDINAL(17)
+            PROMPT('&Confirm deletions'),AT(282,48,60,10),USE(?DeleteWarningThresholdPrompt), |
+              TRN,#ORDINAL(18)
+            LIST,AT(357,48,38,10),USE(loc:nDeleteWarningCount),DROP(3),FROM('Never|#0|A' & |
+              'lways|#1|When|#2'),#ORDINAL(19)
+            STRING('removing at least'),AT(398,48,,10),USE(?RemovingAtLeast),HIDE,#ORDINAL(20)
+            SPIN(@N10~ rows~),AT(460,48,55,10),USE(loc:nDeleteWarningCount,,?loc:nDeleteWarningCount:2), |
+              RIGHT(2),HIDE,RANGE(2,9999),TIP('Show a warning message when the number o' & |
+              'f records to be deleted  is greater than or equal to this number.<0DH,0AH>' & |
+              'Leave blank to completely disable the warning message.'),#ORDINAL(21)
+            BOX,AT(282,62,11,10),USE(?loc:sResultListColorBox),COLOR(00B99D7Fh),FILL(COLOR:Black), |
+              LINEWIDTH(1),ROUND,#ORDINAL(22)
+            PROMPT('&Result List'),AT(297,62),USE(?Font:Prompt),TRN,#ORDINAL(23)
+            ENTRY(@s63),AT(357,62,145,10),USE(szFontDescription),DISABLE,#ORDINAL(24)
+            BUTTON('...'),AT(505,62,11,10),USE(?cmdFontDialog),#ORDINAL(25)
+            BOX,AT(282,77,11,10),USE(?loc:sApplicationColorBox),COLOR(00B99D7Fh),FILL(00EAD1B9h), |
+              LINEWIDTH(1),ROUND,#ORDINAL(26)
+            PROMPT('&Application'),AT(297,77),USE(?loc:ApplicationColor:Prompt),TRN,#ORDINAL(27)
+            ENTRY(@s30),AT(357,77,145,10),USE(loc:sApplicationColor),LEFT,COLOR(COLOR:White), |
+              DISABLE,SKIP,#ORDINAL(28)
+            BUTTON('...'),AT(505,77,11,10),USE(?ApplicationColorButton),TIP('Select App' & |
+              'lication Color'),#ORDINAL(29)
+            BOX,AT(282,92,11,10),USE(?loc:sToolbarColorBox),COLOR(00B99D7Fh),FILL(00F2E4D7h), |
+              LINEWIDTH(1),ROUND,#ORDINAL(30)
+            PROMPT('&Toolbar'),AT(297,92),USE(?loc:ToolbarColor:Prompt),TRN,#ORDINAL(31)
+            ENTRY(@s30),AT(357,92,145,10),USE(loc:sToolbarColor),LEFT,COLOR(COLOR:White),DISABLE, |
+              SKIP,#ORDINAL(32)
+            BUTTON('...'),AT(505,92,11,10),USE(?ToolbarColorButton),TIP('Select Toolbar Color'), |
+              #ORDINAL(33)
+            BOX,AT(282,107,11,10),USE(?loc:sSelectedBackColorBox),COLOR(00B99D7Fh),FILL(COLOR:Red), |
+              LINEWIDTH(1),ROUND,#ORDINAL(34)
+            PROMPT('&Selected'),AT(297,107),USE(?loc:SelectedBackColor:Prompt),TRN,#ORDINAL(35)
+            ENTRY(@s30),AT(357,107,145,10),USE(loc:sSelectedBackColor),LEFT,COLOR(COLOR:White), |
+              DISABLE,SKIP,#ORDINAL(36)
+            BUTTON('...'),AT(505,107,11,10),USE(?SelectedBackColorButton),TIP('Select Sel' & |
+              'ected Text Background Color'),#ORDINAL(37)
+            BOX,AT(282,122,11,10),USE(?loc:sBookmarkBackColorBox),COLOR(00B99D7Fh),FILL(COLOR:Maroon), |
+              LINEWIDTH(1),ROUND,#ORDINAL(38)
+            PROMPT('Boo&kmark'),AT(297,122),USE(?loc:BookmarkBackColor:Prompt),TRN,#ORDINAL(39)
+            ENTRY(@s30),AT(357,122,145,10),USE(loc:sBookmarkBackColor),LEFT,COLOR(COLOR:White), |
+              DISABLE,SKIP,#ORDINAL(40)
+            BUTTON('...'),AT(505,122,11,10),USE(?BookmarkBackColorButton),TIP('Select Boo' & |
+              'kmark Background Color'),#ORDINAL(41)
+            BUTTON,AT(170,292,14,12),USE(?cmdDefault),ICON('check-black.ico'),TIP('Set the de' & |
+              'fault property file'),#ORDINAL(42)
+            BUTTON('Delete'),AT(232,292,40,12),USE(?cmdDeletePropertyFile),TIP('Delete the' & |
+              ' highlighted property file.'),#ORDINAL(43)
+          END
+          CHECK(' &Link Paths and Files with Find Text'),AT(357,137),USE(glo:SyncPathWithPattern), |
+            TIP('Recall Paths and Files when you select prior Find text from the drop list.'), |
+            #ORDINAL(44)
+          CHECK(' Allow &Multiple Instances'),AT(357,147),USE(glo:AllowMultipleInstances), |
+            #ORDINAL(45)
+          CHECK(' Auto Size Result &Columns'),AT(357,157),USE(glo:AutoSizeResultColumns),#ORDINAL(46)
+          PROMPT('Restore &Point Timer'),AT(282,171),USE(?glo:RestorePointTimerInterval:Prompt), |
+            #ORDINAL(47)
+          SPIN(@n13),AT(358,171,60,10),USE(glo:RestorePointTimerInterval),RIGHT(1),STEP(1), |
+            TIP('Set to 0 to disable Restore Point Feature'),#ORDINAL(48)
+          STRING('minutes'),AT(423,171),USE(?Minutes:String),#ORDINAL(49)
+          GROUP('Application Function Keys'),AT(282,182,234,38),USE(?FunctionKeyBox),BOXED, |
+            TRN,#ORDINAL(50)
+            STRING(@s80),AT(286,192,215,10),USE(loc:MinusKeyString),RIGHT,TRN,#ORDINAL(51)
+            REGION,AT(286,192,215,10),USE(?loc:MinusKeyStringRegion),IMM,#ORDINAL(52)
+            BUTTON('...'),AT(503,192,11,10),USE(?cmdGetMinusKey),#ORDINAL(53)
+            STRING(@s80),AT(286,204,215,10),USE(loc:PlusKeyString),RIGHT,TRN,#ORDINAL(54)
+            REGION,AT(286,204,215,10),USE(?loc:PlusKeyStringRegion),IMM,#ORDINAL(55)
+            BUTTON('...'),AT(503,204,11,10),USE(?cmdGetPlusKey),#ORDINAL(56)
+          END
+          GROUP,AT(282,220,234,68),USE(?CopyrightBox),BOXED,TRN,#ORDINAL(57)
+            STRING('Kwik Source Search'),AT(336,226,127),USE(?ProductName),FONT(,,,FONT:bold), |
+              CENTER,TRN,#ORDINAL(58)
+            STRING(@s22),AT(336,234,127),USE(loc:szVersion),CENTER,TRN,#ORDINAL(59)
+            STRING('© Copyright  2011-2019'),AT(336,242,127),USE(?Copyright),CENTER,TRN,#ORDINAL(60)
+            STRING('Devuna Inc.'),AT(336,251,127),USE(?CompanyName),CENTER,TRN,#ORDINAL(61)
+            REGION,AT(359,260,90,10),USE(?rgnWebAddress),IMM,#ORDINAL(62)
+            STRING('http://www.devuna.com'),AT(336,260,127),USE(?strWebAddress),FONT(,10,COLOR:Blue, |
+              FONT:regular),CENTER,TRN,#ORDINAL(63)
+            STRING('Registered to'),AT(336,269,127),USE(?strRegisteredTo),CENTER,TRN,#ORDINAL(64)
+            STRING(@S28),AT(336,278,127),USE(RegisteredTo),CENTER,TRN,#ORDINAL(65)
+          END
+          BUTTON('Register Now'),AT(369,292,,12),USE(?cmdRegisterNow),HIDE,#ORDINAL(66)
+          BUTTON('&Apply'),AT(476,292,40,12),USE(?cmdApply),#ORDINAL(67)
+        END
+
