@@ -548,6 +548,7 @@ RestorePointTimer      PROCEDURE   !
      END
    END
 
+eqDBG EQUATE('<4,2,7>')     !Carl added to get to compile
 !To Do List
 !VB         - done
 !Python     - done

@@ -17,7 +17,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>True</DebugSymbols>
     <DebugType>Full</DebugType>
-    <vid>full</vid>
+    <vid>off</vid>
     <check_stack>True</check_stack>
     <check_index>True</check_index>
     <OutputPath>bin\debug\</OutputPath>
@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>False</DebugSymbols>
     <DebugType>None</DebugType>
-    <vid>off</vid>
+    <vid>full</vid>
     <check_stack>False</check_stack>
     <check_index>False</check_index>
     <GenerateMap>True</GenerateMap>
@@ -67,7 +67,9 @@
     <Library Include="paste.ico" />
     <Library Include="PreviousBookmark.ico" />
     <Library Include="print.ico" />
-    <Library Include="psapi.lib" />
+    <Library Include="psapi.lib">
+      <CopyDllToOutputDirectory>Never</CopyDllToOutputDirectory>
+    </Library>
     <Library Include="RedoSearch.ico" />
     <Library Include="Replace.ico" />
     <Library Include="SaveAs.ico" />
