@@ -1,0 +1,82 @@
+ste Class Declaration into Data Section -----
+DOO CLASS                      !Created 05/24/20  3:25PM by Do2Class by Carl Barnes
+ProcessBuffer      PROCEDURE()
+ProcessThisString  PROCEDURE()
+ProcessFile        PROCEDURE()
+ProcessClarionFile PROCEDURE()
+ProcessCppFile     PROCEDURE()
+ProcessPythonFile  PROCEDURE()
+ProcessVBFile      PROCEDURE()
+    END  !7 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\kss_04_FillResultQueue_Do2Class_.TXA                                                                                                                                                                                          
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\kss_04_FillResultQueue.txa                                                                                                                                                                                                    
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/24/20  3:25PM by Do2Class by Carl Barnes
+ProcessBuffer      PROCEDURE()
+ProcessClarionFile PROCEDURE()
+ProcessCppFile     PROCEDURE()
+ProcessFile        PROCEDURE()
+ProcessPythonFile  PROCEDURE()
+ProcessThisString  PROCEDURE()
+ProcessVBFile      PROCEDURE()
+    END  !7 Routines Found
+!=======================================================
+
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+ProcessBuffer                                191  ProcessBuffer  ROUTINE
+           *PROCEDURE*                        56  DOO.ProcessBuffer()
+           *PROCEDURE*                        64  DOO.ProcessBuffer()
+ProcessClarionFile                           482  ProcessClarionFile    ROUTINE
+           ProcessFile                       430  DOO.ProcessClarionFile()
+ProcessCppFile                               650  ProcessCppFile    ROUTINE
+           ProcessFile                       432  DOO.ProcessCppFile()
+ProcessFile                                  388  ProcessFile    ROUTINE
+           *PROCEDURE*                        85  DOO.ProcessFile()
+           *PROCEDURE*                        90  DOO.ProcessFile()
+ProcessPythonFile                            985  ProcessPythonFile    ROUTINE
+           ProcessFile                       434  DOO.ProcessPythonFile()
+ProcessThisString                            275  ProcessThisString    ROUTINE
+           ProcessBuffer                     214  DOO.ProcessThisString()
+           ProcessBuffer                     258  DOO.ProcessThisString()
+ProcessVBFile                              1,148  ProcessVBFile    ROUTINE
+           ProcessFile                       436  DOO.ProcessVbFile()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                   20  FillResultQueue   Procedure()
+           ProcessBuffer                      56  DOO.ProcessBuffer()
+           ProcessBuffer                      64  DOO.ProcessBuffer()
+           ProcessFile                        85  DOO.ProcessFile()
+           ProcessFile                        90  DOO.ProcessFile()
+ProcessBuffer                                191  ProcessBuffer  ROUTINE
+           ProcessThisString                 214  DOO.ProcessThisString()
+           ProcessThisString                 258  DOO.ProcessThisString()
+ProcessClarionFile                           482  ProcessClarionFile    ROUTINE
+ProcessCppFile                               650  ProcessCppFile    ROUTINE
+ProcessFile                                  388  ProcessFile    ROUTINE
+           ProcessClarionFile                430  DOO.ProcessClarionFile()
+           ProcessCppFile                    432  DOO.ProcessCppFile()
+           ProcessPythonFile                 434  DOO.ProcessPythonFile()
+           ProcessVBFile                     436  DOO.ProcessVbFile()
+ProcessPythonFile                            985  ProcessPythonFile    ROUTINE
+ProcessThisString                            275  ProcessThisString    ROUTINE
+ProcessVBFile                              1,148  ProcessVBFile    ROUTINE
+========================================  ======  ==============================
+
+

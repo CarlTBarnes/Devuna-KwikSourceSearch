@@ -1,104 +1,22 @@
-
-
-   MEMBER('kss.clw')                                       ! This is a MEMBER module
-
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
-
-   INCLUDE('ABTOOLBA.INC'),ONCE
-   INCLUDE('ABWINDOW.INC'),ONCE
-
-!!! <summary>
-!!! Generated from procedure template - Source
-!!! Process STDOUT_Queue and store lines in ResultQueue
-!!! </summary>
-FillResultQueue      PROCEDURE  (*ResultQueueType ResultQueue, LONG feqSearchProgress, *CSTRING szFixedFileMask, *CSTRING szFixedExcludeMask, *BYTE bCancelFlag, LONG progressCalls, *BOOL  bFilenamesOnly, *BOOL bFileListFromFile) ! Declare Procedure
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
-DOO CLASS                      !Created 05/24/20  3:25PM by Do2Class by Carl Barnes
-ProcessBuffer      PROCEDURE()
-ProcessClarionFile PROCEDURE()
-ProcessCppFile     PROCEDURE()
-ProcessFile        PROCEDURE()
-ProcessPythonFile  PROCEDURE()
-ProcessThisString  PROCEDURE()
-ProcessVBFile      PROCEDURE()
-    END  !7 Routines Found
-oHH           &tagHTMLHelp
-thisBuffer     &CSTRING
-tempBuffer     &CSTRING
-thisFolder     CSTRING(261)
-thisFile       CSTRING(261)
-thisLine       LONG
-thisText       CSTRING(2048)
-thisString     CSTRING(BUFSIZE+1)
-i              LONG
-j              LONG
-n              LONG
-p              LONG
-x              LONG
-
-!ProcNameQueue  QUEUE,PRE(PNQ)
-!LineNo            LONG
-!ProcedureName     CSTRING(256)
-!               END
-!SectionQueue   QUEUE,PRE(SQ)
-!lowLineNo         LONG
-!highLineNo        LONG
-!szSection         CSTRING(5)
-!               END
-
-
-ProcNameQueue  QUEUE(ProcNameQueueType),PRE(PNQ)
-               END
-SectionQueue   QUEUE(SectionQueueType),PRE(SQ)
-               END
-
-sizeNeeded     LONG
-modulo         LONG
-CommentStyle   LONG
-excludeQueue   QUEUE,PRE(exq)
-excludemask       CSTRING(256)
-               END
-
-
-  CODE
+[PROCEDURE]
+NAME FillResultQueue
+PROTOTYPE '(*ResultQueueType ResultQueue, LONG feqSearchProgress, *CSTRING szFixedFileMask, *CSTRING szFixedExcludeMask, *BYTE bCancelFlag, LONG progressCalls, *BOOL  bFilenamesOnly, *BOOL bFileListFromFile)'
+PARAMETERS '(*ResultQueueType ResultQueue, LONG feqSearchProgress, *CSTRING szFixedFileMask, *CSTRING szFixedExcludeMask, *BYTE bCancelFlag, LONG progressCalls, *BOOL  bFilenamesOnly, *BOOL bFileListFromFile)'
+GLOBAL
+[COMMON]
+DESCRIPTION 'Process STDOUT_Queue and store lines in ResultQueue'
+FROM ABC Source
+MODIFIED '2019/02/15' '17:14:21'
+[PROMPTS]
+%GenerateOpenClose LONG  (0)
+%GenerateSaveRestore LONG  (0)
+[EMBED]
+EMBED %ProcessedCode
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 5000
+PROPERTY:END
    thisBuffer &= NEW CSTRING((2*BUFSIZE)+1)
    ASSERT(0,eqDBG & 'NEW thisBuffer [' & ADDRESS(thisBuffer) & ']')
 
@@ -135,7 +53,7 @@ excludemask       CSTRING(256)
       ELSE
          thisBuffer = thisBuffer & STDOUT_Queue.Buffer
       END
-      DOO.ProcessBuffer()
+      DO ProcessBuffer
       YIELD()
    END
 
@@ -143,7 +61,7 @@ excludemask       CSTRING(256)
    IF j > 0
       thisBuffer[j+1] = '<13>'
       thisBuffer[j+2] = '<10>'
-      DOO.ProcessBuffer()
+      DO ProcessBuffer
    END
 
    ASSERT(0,eqDBG & 'DISPOSE thisBuffer [' & ADDRESS(thisBuffer) & ']')
@@ -164,12 +82,12 @@ excludemask       CSTRING(256)
          IF ResultQueue.szExtension
             CommentStyle = GetCommentStyle(ResultQueue.szExtension)
             IF glo:bAllExtensions = TRUE
-               DOO.ProcessFile()
+               DO ProcessFile
             ELSE
                LOOP p = 1 TO RECORDS(ClarionExtensionsQueue)
                   GET(ClarionExtensionsQueue,p)
                   IF INSTRING(ClarionExtensionsQueue.FileExtension,UPPER(ResultQueue.Filename & ResultQueue.szExtension),1)
-                     DOO.ProcessFile()
+                     DO ProcessFile
                      BREAK
                   END
                END
@@ -196,11 +114,86 @@ excludemask       CSTRING(256)
       DISPOSE(tempBuffer)
       tempBuffer &= NULL
    END
-DOO.ProcessBuffer  PROCEDURE()
-!dup-->  i              LONG
-!dup-->  j              LONG
+[END]
+EMBED %DataSection
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 50
+PROPERTY:END
+!region Notices
+! ================================================================================
+! Notice : Copyright (C) 2017, Devuna
+!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
+!
+!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
+!
+!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
+!    it under the terms of the MIT License as published by
+!    the Open Source Initiative.
+!
+!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    MIT License for more details.
+!
+!    You should have received a copy of the MIT License
+!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
+! ================================================================================
+!endregion Notices
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 1300
+PROPERTY:END
+thisBuffer     &CSTRING
+tempBuffer     &CSTRING
+thisFolder     CSTRING(261)
+thisFile       CSTRING(261)
+thisLine       LONG
+thisText       CSTRING(2048)
+thisString     CSTRING(BUFSIZE+1)
+i              LONG
+j              LONG
+n              LONG
+p              LONG
+x              LONG
+
+!ProcNameQueue  QUEUE,PRE(PNQ)
+!LineNo            LONG
+!ProcedureName     CSTRING(256)
+!               END
+!SectionQueue   QUEUE,PRE(SQ)
+!lowLineNo         LONG
+!highLineNo        LONG
+!szSection         CSTRING(5)
+!               END
+
+
+ProcNameQueue  QUEUE(ProcNameQueueType),PRE(PNQ)
+               END
+SectionQueue   QUEUE(SectionQueueType),PRE(SQ)
+               END
+
+sizeNeeded     LONG
+modulo         LONG
+CommentStyle   LONG
+excludeQueue   QUEUE,PRE(exq)
+excludemask       CSTRING(256)
+               END
+
+[END]
+EMBED %ProcedureRoutines
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 3500
+PROPERTY:END
+ProcessBuffer  ROUTINE
+   DATA
+i              LONG
+j              LONG
 k              LONG
-!dup-->  p              LONG
+p              LONG
 pDelimiter     LONG
 Delimiter      STRING('<10>')
 CR             STRING('<13>')
@@ -218,7 +211,7 @@ currentPath    LIKE(ResultQueue.Path)
          END
          !ASSERT(0,eqDBG & 'Thread ' & thread() & ' look for delimiter ' & thisString)
          IF bFileListFromFile = TRUE
-            DOO.ProcessThisString()
+            DO ProcessThisString
          ELSE
             IF thisString[1 : 2] = '  '
                thisFolder = CLIP(LEFT(thisString))
@@ -262,7 +255,7 @@ currentPath    LIKE(ResultQueue.Path)
                   END
                END
                IF n > RECORDS(excludeQueue)
-                  DOO.ProcessThisString()
+                  DO ProcessThisString
                END
 
             END
@@ -279,7 +272,8 @@ currentPath    LIKE(ResultQueue.Path)
          END
       END
 
-DOO.ProcessThisString    PROCEDURE()
+ProcessThisString    ROUTINE
+   DATA
 k              LONG
 pDot           LONG
 pColon         LONG
@@ -300,7 +294,7 @@ fileQueue         QUEUE(FILE:queue),PRE(fq)
                   END
 
    CODE
-            x# = 1  !#$"
+            x# = 1
             k = 1
             pColon = INSTRING(Colon,thisString,1,3)   !skip ':' from path
             IF pColon
@@ -387,8 +381,13 @@ fileQueue         QUEUE(FILE:queue),PRE(fq)
                ADD(ResultQueue,+ResultQueue.SortName,+ResultQueue.LineNo)
             END
 
-DOO.ProcessFile    PROCEDURE()
-!dup-->  p                    LONG
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+ProcessFile    ROUTINE
+   DATA
+p                    LONG
 
    CODE
       IF ResultQueue.SortName = thisFile
@@ -428,13 +427,13 @@ DOO.ProcessFile    PROCEDURE()
 
             CASE CommentStyle
               OF CommentStyleClarion
-                 DOO.ProcessClarionFile()
+                 DO ProcessClarionFile
               OF CommentStyleCpp
-                 DOO.ProcessCppFile()
+                 DO ProcessCppFile
               OF CommentStylePython
-                 DOO.ProcessPythonFile()
+                 DO ProcessPythonFile
               OF CommentStyleVb
-                 DOO.ProcessVbFile()
+                 DO ProcessVbFile
             END
 
             CLOSE(AsciiFile)
@@ -475,9 +474,14 @@ DOO.ProcessFile    PROCEDURE()
             PUT(ResultQueue)
          END
       END
-   RETURN
-DOO.ProcessClarionFile    PROCEDURE()
-!dup-->  p                    LONG
+   EXIT
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+ProcessClarionFile    ROUTINE
+   DATA
+p                    LONG
 bInMap               BOOL(FALSE)
 bInClassDeclaration  BOOL(FALSE)
 appProcedureName     LIKE(ProcNameQueue.ProcedureName)
@@ -639,9 +643,14 @@ LastProcedureName    LIKE(ProcNameQueue.ProcedureName)
             END
          END
       END
-DOO.ProcessCppFile    PROCEDURE()
-!dup-->  n                 LONG
-!dup-->  p                 LONG
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+ProcessCppFile    ROUTINE
+   DATA
+n                 LONG
+p                 LONG
 q1                LONG
 q2                LONG
 InBlockComment    BOOL(FALSE)
@@ -667,7 +676,7 @@ stopLine          LONG(1)
             thisLine += 1
 
             IF thisline = stopLine
-               x# = 0  !#$"
+               x# = 0
             END
 
             thisText = CLIP(LEFT(AsciiFile.Buffer))
@@ -968,10 +977,15 @@ stopLine          LONG(1)
             END
          END
       END
-   RETURN
-DOO.ProcessPythonFile    PROCEDURE()
-!dup-->  n                 LONG
-!dup-->  p                 LONG
+   EXIT
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+ProcessPythonFile    ROUTINE
+   DATA
+n                 LONG
+p                 LONG
 q1                LONG
 q2                LONG
 InMethod          BOOL(FALSE)
@@ -997,7 +1011,7 @@ stopLine          LONG(1)
             thisLine += 1
 
             IF thisline = stopLine
-               x# = 0  !#$"
+               x# = 0
             END
 
             IF thisClass <> '' AND NOT INSTRING(AsciiFile.Buffer[1],' #')
@@ -1126,10 +1140,15 @@ stopLine          LONG(1)
             END
          END
       END
-   RETURN
-DOO.ProcessVBFile    PROCEDURE()
-!dup-->  n                 LONG
-!dup-->  p                 LONG
+   EXIT
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8500
+PROPERTY:END
+ProcessVBFile    ROUTINE
+   DATA
+n                 LONG
+p                 LONG
 q1                LONG
 q2                LONG
 InMethod          BOOL(FALSE)
@@ -1155,7 +1174,7 @@ stopLine          LONG(1)
             thisLine += 1
 
             IF thisline = stopLine
-               x# = 0  !#$"
+               x# = 0
             END
 
             thisText = CLIP(LEFT(AsciiFile.Buffer))
@@ -1347,101 +1366,19 @@ stopLine          LONG(1)
             END
          END
       END
-   RETURN
-!!! <summary>
-!!! Generated from procedure template - Window
-!!! </summary>
-BrowseQueues PROCEDURE (*ProcNameQueueType ProcNameQueue,*SectionQueueType SectionQueue)
-
-!region Notices
-! ================================================================================
-! Notice : Copyright (C) 2017, Devuna
-!          Distributed under the MIT License (https://opensource.org/licenses/MIT)
-!
-!    This file is part of Devuna-KwikSourceSearch (https://github.com/Devuna/Devuna-KwikSourceSearch)
-!
-!    Devuna-KwikSourceSearch is free software: you can redistribute it and/or modify
-!    it under the terms of the MIT License as published by
-!    the Open Source Initiative.
-!
-!    Devuna-KwikSourceSearch is distributed in the hope that it will be useful,
-!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!    MIT License for more details.
-!
-!    You should have received a copy of the MIT License
-!    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
-! ================================================================================
-!endregion Notices
-oHH           &tagHTMLHelp
-Window               WINDOW('Location Queues'),AT(,,476,225),FONT('Segoe UI Semilight',11),DOUBLE,GRAY,MODAL,SYSTEM
-                       LIST,AT(16,16,211,196),USE(?LIST1),VSCROLL,FORMAT('40R(1)|M~LINE~C(0)@n10@1024L(2)|M~PR' & |
-  'OCEDURE~@s255@'),FROM(ProcNameQueue)
-                       LIST,AT(241,16,217,196),USE(?LIST2),VSCROLL,FORMAT('40R(1)|M~HIGH LINE~C(0)@n10@40R(1)|' & |
-  'M~LOW LINE~C(0)@n10@124L(2)|M~SECTION~@s255@'),FROM(SectionQueue)
-                       STRING('Procedure Queue'),AT(16,3),USE(?STRING1),FONT(,14)
-                       STRING('Section Queue'),AT(240,3),USE(?STRING2),FONT(,14)
-                     END
-
-ThisWindow           CLASS(WindowManager)
-Init                   PROCEDURE(),BYTE,PROC,DERIVED
-Kill                   PROCEDURE(),BYTE,PROC,DERIVED
-                     END
-
-Toolbar              ToolbarClass
-
-  CODE
-  GlobalResponse = ThisWindow.Run()                        ! Opens the window and starts an Accept Loop
-
-!---------------------------------------------------------------------------
-DefineListboxStyle ROUTINE
-!|
-!| This routine create all the styles to be shared in this window
-!| It`s called after the window open
-!|
-!---------------------------------------------------------------------------
-
-ThisWindow.Init PROCEDURE
-
-ReturnValue          BYTE,AUTO
-
-  CODE
-  GlobalErrors.SetProcedureName('BrowseQueues')
-  SELF.Request = GlobalRequest                             ! Store the incoming request
-  ReturnValue = PARENT.Init()
-  IF ReturnValue THEN RETURN ReturnValue.
-  SELF.FirstField = ?LIST1
-  SELF.VCRRequest &= VCRRequest
-  SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
-  SELF.AddItem(Toolbar)
-  CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
-  CLEAR(GlobalResponse)
-  SELF.Open(Window)                                        ! Open window
-  !Setting the LineHeight for every control of type LIST/DROP or COMBO in the window using the global setting.
-  ?LIST1{PROP:LineHeight} = 10
-  ?LIST2{PROP:LineHeight} = 10
-  Do DefineListboxStyle
-  INIMgr.Fetch('BrowseQueues',Window)                      ! Restore window settings from non-volatile store
-  SELF.SetAlerts()
-  oHH &= NEW tagHTMLHelp
-  oHH.Init( 'kss.chm' )
-  RETURN ReturnValue
-
-
-ThisWindow.Kill PROCEDURE
-
-ReturnValue          BYTE,AUTO
-
-  CODE
-  ReturnValue = PARENT.Kill()
-  IF ReturnValue THEN RETURN ReturnValue.
-  IF SELF.Opened
-    INIMgr.Update('BrowseQueues',Window)                   ! Save window data to non-volatile store
-  END
-  GlobalErrors.SetProcedureName
-  IF ~oHH &= NULL
-    oHH.Kill()
-    DISPOSE( oHH )
-  END
-  RETURN ReturnValue
-
+   EXIT
+[END]
+[END]
+[ADDITION]
+NAME ABC cwHHProc
+[INSTANCE]
+INSTANCE 1
+OWNER 2
+[PROMPTS]
+%cwHHFileName DEFAULT  ('')
+%cwHHContextURL DEFAULT  ('')
+%cwHHAltTrapKey DEFAULT  ('')
+[CALLS]
+BrowseQueues
+GetCommentStyle
+ReplaceTabs
