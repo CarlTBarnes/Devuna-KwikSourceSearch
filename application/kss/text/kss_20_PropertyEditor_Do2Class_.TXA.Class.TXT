@@ -1,0 +1,160 @@
+eclaration into Data Section -----
+DOO CLASS                      !Created 05/24/20  3:33PM by Do2Class by Carl Barnes
+LoadPropertyFile                     PROCEDURE()
+LoadFilePatterns                     PROCEDURE()
+LoadOptions                          PROCEDURE()
+LoadKeywords                         PROCEDURE()
+LoadStyles                           PROCEDURE()
+SavePropertyFile                     PROCEDURE()
+SaveFilePatterns                     PROCEDURE()
+SaveOptions                          PROCEDURE()
+SaveKeywords                         PROCEDURE()
+SaveStyles                           PROCEDURE()
+SkipToNextSection                    PROCEDURE()
+SkipToStyles                         PROCEDURE()
+AddStyleRecord                       PROCEDURE()
+FillFilePatternQueue                 PROCEDURE()
+LoadFilePatternsFromFilePatternQueue PROCEDURE()
+FillListBoxQueue                     PROCEDURE()
+LoadKeywordsFromListBoxQueue         PROCEDURE()
+CheckForChanges                      PROCEDURE()
+    END  !18 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\kss_20_PropertyEditor_Do2Class_.TXA                                                                                                                                                                                           
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\kss_20_PropertyEditor.txa                                                                                                                                                                                                     
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/24/20  3:33PM by Do2Class by Carl Barnes
+AddStyleRecord                       PROCEDURE()
+CheckForChanges                      PROCEDURE()
+FillFilePatternQueue                 PROCEDURE()
+FillListBoxQueue                     PROCEDURE()
+LoadFilePatterns                     PROCEDURE()
+LoadFilePatternsFromFilePatternQueue PROCEDURE()
+LoadKeywords                         PROCEDURE()
+LoadKeywordsFromListBoxQueue         PROCEDURE()
+LoadOptions                          PROCEDURE()
+LoadPropertyFile                     PROCEDURE()
+LoadStyles                           PROCEDURE()
+SaveFilePatterns                     PROCEDURE()
+SaveKeywords                         PROCEDURE()
+SaveOptions                          PROCEDURE()
+SavePropertyFile                     PROCEDURE()
+SaveStyles                           PROCEDURE()
+SkipToNextSection                    PROCEDURE()
+SkipToStyles                         PROCEDURE()
+    END  !18 Routines Found
+!=======================================================
+
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+AddStyleRecord                             1,428  AddStyleRecord    ROUTINE
+           SaveStyles                      1,382  DOO.AddStyleRecord()
+           SaveStyles                      1,390  DOO.AddStyleRecord()
+CheckForChanges                            1,584  CheckForChanges   ROUTINE
+           *PROCEDURE*                     1,890  DOO.CheckForChanges()
+           *PROCEDURE*                     1,909  DOO.CheckForChanges()
+           *PROCEDURE*                     1,923  DOO.CheckForChanges()
+           *PROCEDURE*                     2,131  DOO.CheckForChanges()
+FillFilePatternQueue                       1,479  FillFilePatternQueue     ROUTINE
+           *PROCEDURE*                     2,152  DOO.FillFilePatternQueue()
+FillListBoxQueue                           1,530  FillListBoxQueue     ROUTINE
+           *PROCEDURE*                     1,894  DOO.FillListBoxQueue()
+           *PROCEDURE*                     2,090  DOO.FillListBoxQueue()
+LoadFilePatterns                             905  LoadFilePatterns     ROUTINE
+           LoadPropertyFile                  884  DOO.LoadFilePatterns()
+LoadFilePatternsFromFilePatternQueue       1,511  LoadFilePatternsFromFilePatternQueue     ROUTINE
+           SaveFilePatterns                1,241  DOO.LoadFilePatternsFromFilePatternQueue()
+           *PROCEDURE*                     1,865  DOO.LoadFilePatternsFromFilePatternQueue()
+LoadKeywords                               1,000  LoadKeywords         ROUTINE
+           LoadPropertyFile                  890  DOO.LoadKeywords()
+LoadKeywordsFromListBoxQueue               1,564  LoadKeywordsFromListBoxQueue     ROUTINE
+           SaveKeywords                    1,314  DOO.LoadKeywordsFromListBoxQueue()
+           *PROCEDURE*                     1,860  DOO.LoadKeywordsFromListBoxQueue()
+           *PROCEDURE*                     1,884  DOO.LoadKeywordsFromListBoxQueue()
+LoadOptions                                  928  LoadOptions    ROUTINE
+           LoadPropertyFile                  887  DOO.LoadOptions()
+LoadPropertyFile                             855  LoadPropertyFile     ROUTINE
+           *PROCEDURE*                     1,638  DOO.LoadPropertyFile()
+LoadStyles                                 1,034  LoadStyles           ROUTINE
+           LoadPropertyFile                  893  DOO.LoadStyles()
+SaveFilePatterns                           1,235  SaveFilePatterns  ROUTINE
+           SavePropertyFile                1,205  DOO.SaveFilePatterns()
+SaveKeywords                               1,308  SaveKeywords      ROUTINE
+           SavePropertyFile                1,214  DOO.SaveKeywords()
+SaveOptions                                1,263  SaveOptions    ROUTINE
+           SavePropertyFile                1,210  DOO.SaveOptions()
+SavePropertyFile                           1,175  SavePropertyFile     ROUTINE
+           *PROCEDURE*                     1,925  DOO.SavePropertyFile()
+SaveStyles                                 1,348  SaveStyles     ROUTINE
+           SavePropertyFile                1,220  DOO.SaveStyles()
+SkipToNextSection                          1,398  SkipToNextSection ROUTINE
+           SavePropertyFile                1,206  DOO.SkipToNextSection()
+           SavePropertyFile                1,211  DOO.SkipToNextSection()
+SkipToStyles                               1,413  SkipToStyles      ROUTINE
+           SavePropertyFile                1,215  DOO.SkipToStyles()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                1,628  PropertyEditor   Procedure()
+           LoadPropertyFile                1,638  DOO.LoadPropertyFile()
+           LoadKeywordsFromListBoxQueue    1,860  DOO.LoadKeywordsFromListBoxQueue()
+           LoadFilePatternsFromFilePatte   1,865  DOO.LoadFilePatternsFromFilePatternQueue()
+           LoadKeywordsFromListBoxQueue    1,884  DOO.LoadKeywordsFromListBoxQueue()
+           CheckForChanges                 1,890  DOO.CheckForChanges()
+           FillListBoxQueue                1,894  DOO.FillListBoxQueue()
+           CheckForChanges                 1,909  DOO.CheckForChanges()
+           CheckForChanges                 1,923  DOO.CheckForChanges()
+           SavePropertyFile                1,925  DOO.SavePropertyFile()
+           FillListBoxQueue                2,090  DOO.FillListBoxQueue()
+           CheckForChanges                 2,131  DOO.CheckForChanges()
+           FillFilePatternQueue            2,152  DOO.FillFilePatternQueue()
+AddStyleRecord                             1,428  AddStyleRecord    ROUTINE
+CheckForChanges                            1,584  CheckForChanges   ROUTINE
+FillFilePatternQueue                       1,479  FillFilePatternQueue     ROUTINE
+FillListBoxQueue                           1,530  FillListBoxQueue     ROUTINE
+LoadFilePatterns                             905  LoadFilePatterns     ROUTINE
+LoadFilePatternsFromFilePatternQueue       1,511  LoadFilePatternsFromFilePatternQueue     ROUTINE
+LoadKeywords                               1,000  LoadKeywords         ROUTINE
+LoadKeywordsFromListBoxQueue               1,564  LoadKeywordsFromListBoxQueue     ROUTINE
+LoadOptions                                  928  LoadOptions    ROUTINE
+LoadPropertyFile                             855  LoadPropertyFile     ROUTINE
+           LoadFilePatterns                  884  DOO.LoadFilePatterns()
+           LoadOptions                       887  DOO.LoadOptions()
+           LoadKeywords                      890  DOO.LoadKeywords()
+           LoadStyles                        893  DOO.LoadStyles()
+LoadStyles                                 1,034  LoadStyles           ROUTINE
+SaveFilePatterns                           1,235  SaveFilePatterns  ROUTINE
+           LoadFilePatternsFromFilePatte   1,241  DOO.LoadFilePatternsFromFilePatternQueue()
+SaveKeywords                               1,308  SaveKeywords      ROUTINE
+           LoadKeywordsFromListBoxQueue    1,314  DOO.LoadKeywordsFromListBoxQueue()
+SaveOptions                                1,263  SaveOptions    ROUTINE
+SavePropertyFile                           1,175  SavePropertyFile     ROUTINE
+           SaveFilePatterns                1,205  DOO.SaveFilePatterns()
+           SkipToNextSection               1,206  DOO.SkipToNextSection()
+           SaveOptions                     1,210  DOO.SaveOptions()
+           SkipToNextSection               1,211  DOO.SkipToNextSection()
+           SaveKeywords                    1,214  DOO.SaveKeywords()
+           SkipToStyles                    1,215  DOO.SkipToStyles()
+           SaveStyles                      1,220  DOO.SaveStyles()
+SaveStyles                                 1,348  SaveStyles     ROUTINE
+           AddStyleRecord                  1,382  DOO.AddStyleRecord()
+           AddStyleRecord                  1,390  DOO.AddStyleRecord()
+SkipToNextSection                          1,398  SkipToNextSection ROUTINE
+SkipToStyles                               1,413  SkipToStyles      ROUTINE
+========================================  ======  ==============================
+
+

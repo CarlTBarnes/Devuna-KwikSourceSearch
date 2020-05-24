@@ -52,6 +52,26 @@ PropertyEditor PROCEDURE (*CSTRING szPropertyFile, LONG MaxStyleIndex)
 !    along with Devuna-KwikSourceSearch.  If not, see <https://opensource.org/licenses/MIT>.
 ! ================================================================================
 !endregion Notices
+DOO CLASS                      !Created 05/24/20  3:33PM by Do2Class by Carl Barnes
+AddStyleRecord                       PROCEDURE()
+CheckForChanges                      PROCEDURE()
+FillFilePatternQueue                 PROCEDURE()
+FillListBoxQueue                     PROCEDURE()
+LoadFilePatterns                     PROCEDURE()
+LoadFilePatternsFromFilePatternQueue PROCEDURE()
+LoadKeywords                         PROCEDURE()
+LoadKeywordsFromListBoxQueue         PROCEDURE()
+LoadOptions                          PROCEDURE()
+LoadPropertyFile                     PROCEDURE()
+LoadStyles                           PROCEDURE()
+SaveFilePatterns                     PROCEDURE()
+SaveKeywords                         PROCEDURE()
+SaveOptions                          PROCEDURE()
+SavePropertyFile                     PROCEDURE()
+SaveStyles                           PROCEDURE()
+SkipToNextSection                    PROCEDURE()
+SkipToStyles                         PROCEDURE()
+    END  !18 Routines Found
 RECORDSIZE     EQUATE(80)
 
 filequeueIndx  LONG
@@ -364,700 +384,6 @@ DefineListboxStyle ROUTINE
 !| It`s called after the window open
 !|
 !---------------------------------------------------------------------------
-LoadPropertyFile     ROUTINE
-   cc = kcr_fnSplit(szPropertyFile, szDrive, szDir, szName, szExtension)
-
-   AsciiFilename = szPropertyFile
-   OPEN(AsciiFile,ReadOnly+DenyNone)
-   IF ERRORCODE()
-      !error opening file
-   ELSE
-      SET(AsciiFile)
-      NEXT(AsciiFile)
-      LOOP UNTIL ERRORCODE()
-
-         filequeue.record = CLIP(AsciiFile.Buffer)
-         ADD(filequeue)
-
-         szBuffer = CLIP(LEFT(AsciiFile.Buffer))
-         IF szBuffer = ''
-            !skip
-         ELSIF szBuffer[1] = '!'
-            szBuffer[1] = ' '
-            IF szDescription = ''
-               szDescription = CLIP(LEFT(szBuffer))
-            END
-            LastComment = CLIP(LEFT(szBuffer))
-         ELSE
-            !process
-            IF UPPER(szBuffer[1 : 6]) = 'LEXER='
-               szLexer = LOWER(szBuffer[7 : LEN(szBuffer)])
-            ELSIF UPPER(szBuffer[1 : 14]) = '[FILEPATTERNS]'
-               DO LoadFilePatterns
-               CYCLE
-            ELSIF UPPER(szBuffer[1 : 9]) = '[OPTIONS]'
-               DO LoadOptions
-               CYCLE
-            ELSIF UPPER(szBuffer[1 : 9])  = '[KEYWORDS'
-               DO LoadKeywords
-               CYCLE
-            ELSIF UPPER(szBuffer[1 : 8])  = '[STYLES]'
-               DO LoadStyles
-               CYCLE
-            END
-         END
-         NEXT(AsciiFile)
-      END
-      CLOSE(AsciiFile)
-   END
-LoadFilePatterns     ROUTINE
-   NEXT(AsciiFile)
-   LOOP UNTIL ERRORCODE()
-      szBuffer = CLIP(LEFT(AsciiFile.Buffer))
-      IF szBuffer = ''
-         !skip
-      ELSIF szBuffer[1] = '!'
-         szBuffer[1] = ' '
-         LastComment = CLIP(LEFT(szBuffer))
-      ELSIF szBuffer[1] = '['
-         szFilePatterns = CLIP(LEFT(szFilePatterns))
-         BREAK
-      ELSE
-         szFilePatterns = szFilePatterns & ' ' & szBuffer
-      END
-      filequeue.record = CLIP(AsciiFile.Buffer)
-      ADD(filequeue)
-      NEXT(AsciiFile)
-   END
-LoadOptions    ROUTINE
-   DATA
-i     LONG
-j     LONG
-p     LONG
-
-   CODE
-      NEXT(AsciiFile)
-      LOOP UNTIL ERRORCODE()
-         szBuffer = CLIP(LEFT(AsciiFile.Buffer))
-         IF szBuffer = ''
-            !skip
-         ELSIF szBuffer[1] = '!'
-            lastComment = CLIP(LEFT(szBuffer[2 : LEN(szBuffer)]))
-            !skip
-         ELSIF szBuffer[1] = '['
-            BREAK
-         ELSE
-            j = INSTRING(';',szBuffer)
-            IF j = 0
-               j = LEN(szBuffer)
-            ELSE
-               j -= 1
-            END
-            i = INSTRING('=',szBuffer)
-            IF i
-               qOptions.szOption = szBuffer[1 : i-1]
-               qOptions.szOptionTip = ''
-               IF j < LEN(szBuffer)
-                  qOptions.szOptionTip = szBuffer[j+2 : LEN(szBuffer)]
-                  p = INSTRING('||',qOptions.szOptionTip,1,1)
-                  LOOP WHILE p > 0
-                     qOptions.szOptionTip[p] = '<13>'
-                     qOptions.szOptionTip[p+1] = '<10>'
-                     p = INSTRING('||',qOptions.szOptionTip,1,p+2)
-                  END
-               END
-               qOptions.szValue = szBuffer[i+1 : j]
-               IF qOptions.szOption = 'asp.default.language'
-                  CASE qOptions.szValue
-                    OF '1'
-                       qOptions.szValue = 'JavaScript'
-                    OF '2'
-                       qOptions.szValue = 'VBScript'
-                    OF '3'
-                       qOptions.szValue = 'Python'
-                  END
-                  qOptions.IsBool = FALSE
-               ELSE
-                  CASE qOptions.szValue
-                    OF '0'
-                       qOptions.szValue = 'false'
-                       qOptions.IsBool = TRUE
-                    OF '1'
-                       qOptions.szValue = 'true'
-                       qOptions.IsBool = TRUE
-                  ELSE
-                       qOptions.IsBool = FALSE
-                  END
-               END
-               ADD(qOptions)
-            END
-         END
-         filequeue.record = CLIP(AsciiFile.Buffer)
-         ADD(filequeue)
-         NEXT(AsciiFile)
-      END
-   EXIT
-LoadKeywords         ROUTINE
-   szBuffer = CLIP(LEFT(AsciiFile.Buffer))
-   qKeywords.szKeywordNumber = UPPER(szBuffer[2 : LEN(szBuffer)-1])
-   GET(qKeywords,+qKeywords.szKeywordNumber)
-   IF ERRORCODE()
-      qKeywords.szKeywordNumber = UPPER(szBuffer[2 : LEN(szBuffer)-1])
-      qKeywords.szDescription = lastComment
-      qKeywords.szKeywords = ''
-      ADD(qKeywords,+qKeywords.szDescription)
-      !ADD(qKeywords,+qKeywords.szKeywordNumber)
-   END
-   NEXT(AsciiFile)
-   LOOP UNTIL ERRORCODE()
-      szBuffer = CLIP(LEFT(AsciiFile.Buffer))
-      IF szBuffer = ''
-         !skip
-      ELSIF szBuffer[1] = '!'
-         szBuffer[1] = ' '
-         LastComment = CLIP(LEFT(szBuffer))
-      ELSIF szBuffer[1] = '['
-         qKeywords.szKeywords = CLIP(LEFT(qKeywords.szKeywords))
-         PUT(qKeywords)
-         BREAK
-      ELSE
-         qKeywords.szKeywords = qKeywords.szKeywords & ' ' & szBuffer
-      END
-      filequeue.record = CLIP(AsciiFile.Buffer)
-      ADD(filequeue)
-      NEXT(AsciiFile)
-   END
-LoadStyles           ROUTINE
-   DATA
-i           LONG
-j           LONG
-r           BYTE
-g           BYTE
-b           BYTE
-qAttribute  QUEUE,PRE(att)
-attribute      CSTRING(32)
-            END
-bDefault    BOOL
-
-   CODE
-      NEXT(AsciiFile)
-      LOOP UNTIL ERRORCODE()
-         szBuffer = CLIP(LEFT(AsciiFile.Buffer))
-         IF szBuffer = ''
-            !skip
-         ELSIF szBuffer[1] = '!'
-            szBuffer[1] = ' '
-            LastComment = CLIP(LEFT(szBuffer))
-         ELSIF szBuffer[1] = '['
-            BREAK
-         ELSE
-            !Style#=font:,size:,bold,italic,underline,fore:,back:,eolfilled,case:,hide,hotSpot
-            IF UPPER(szBuffer[1 : 5]) = 'STYLE'
-               qStyles.szSort = UPPER(lastComment)
-               j = INSTRING('=',szBuffer)
-               IF qStyles.szSort = ''
-                  IF j < 9
-                     qStyles.szSort = 'STYLE' & ALL('0',9-j) & UPPER(szBuffer[6 : j-1])
-                  ELSE
-                     qStyles.szSort = UPPER(szBuffer[1 : j-1])
-                  END
-               END
-               GET(qStyles,+qStyles.szSort)
-
-               CLEAR(qStyles)
-               IF j < 9
-                  qStyles.szStyleNumber = 'STYLE' & ALL('0',9-j) & UPPER(szBuffer[6 : j-1])
-               ELSE
-                  qStyles.szStyleNumber = UPPER(szBuffer[1 : j-1])
-
-               END
-               qStyles.szDescription = lastComment
-               qStyles.szFontName = ''
-               qStyles.nFontStyle = FONT:regular
-               qStyles.lForeColor = COLOR:NONE
-               qStyles.lBackColor = COLOR:NONE
-               qStyles.szSort = UPPER(lastComment)
-               IF qStyles.szSort = ''
-                  j = INSTRING('=',szBuffer)
-                  IF j < 9
-                     qStyles.szSort = 'STYLE' & ALL('0',9-j) & UPPER(szBuffer[6 : j-1])
-                  ELSE
-                     qStyles.szSort = UPPER(szBuffer[1 : j-1])
-                  END
-               END
-               ADD(qStyles,+qStyles.szSort,qStyles.szStyleNumber)
-
-               IF qStyles.szStyleNumber = 'STYLE032'
-                  bDefault = TRUE
-                  qStyles.nCaseOpt = 1
-               ELSE
-                  bDefault = FALSE
-               END
-
-               FREE(qAttribute)
-               j += 1
-               i = INSTRING(',',szBuffer,,j)
-               LOOP WHILE i > 0
-                  qAttribute.attribute = szBuffer[j : i-1]
-                  ADD(qAttribute)
-                  j = i+1
-                  i = INSTRING(',',szBuffer,,j)
-               END
-               qAttribute.attribute = szBuffer[j : LEN(szBuffer)]
-               ADD(qAttribute)
-
-               j = RECORDS(qAttribute)
-               LOOP i = 1 TO j
-                  GET(qAttribute,i)
-                  CASE UPPER(qAttribute.attribute[1 : 4])
-                    OF 'FONT'
-                       qStyles.szFontName = qAttribute.attribute[6 : LEN(qAttribute.attribute)]
-                    OF 'SIZE'
-                       qStyles.nFontSize = qAttribute.attribute[6 : LEN(qAttribute.attribute)]
-                    OF 'BOLD'
-                       qStyles.bBold = TRUE
-                       qStyles.nFontStyle = BXOR(qStyles.nFontStyle,FONT:regular)
-                       qStyles.nFontStyle = BOR(qStyles.nFontStyle,FONT:bold)
-                    OF 'ITAL'
-                       qStyles.bItalic = TRUE
-                       qStyles.nFontStyle = BOR(qStyles.nFontStyle,FONT:italic)
-                    OF 'UNDE'
-                       qStyles.bUnderline = TRUE
-                       qStyles.nFontStyle = BOR(qStyles.nFontStyle,FONT:underline)
-                    OF 'FORE' !fore:#rrggbb
-                       r = EVALUATE('0' & qAttribute.attribute[7  :  8] & 'h')
-                       g = EVALUATE('0' & qAttribute.attribute[9  : 10] & 'h')
-                       b = EVALUATE('0' & qAttribute.attribute[11 : 12] & 'h')
-                       qStyles.lForeColor = ColourRGB(r,g,b)
-                    OF 'BACK'
-                       r = EVALUATE('0' & qAttribute.attribute[7  :  8] & 'h')
-                       g = EVALUATE('0' & qAttribute.attribute[9  : 10] & 'h')
-                       b = EVALUATE('0' & qAttribute.attribute[11 : 12] & 'h')
-                       qStyles.lBackColor = ColourRGB(r,g,b)
-                    OF 'EOLF'
-                       qStyles.bEolFilled = TRUE
-                    OF 'HIDE'
-                       qStyles.bHide = TRUE
-                    OF 'CASE'
-                       qStyles.nCaseOpt = qAttribute.attribute[6 : LEN(qAttribute.attribute)]
-                       qStyles.nCaseOpt += 1
-                    OF 'HOTS'
-                       qStyles.bHotSpot = TRUE
-                  END
-               END
-               !look for default style
-               IF bDefault
-                  defaultFont  = qStyles.szFontName
-                  defaultSize  = qStyles.nFontSize
-                  defaultStyle = qStyles.nFontStyle
-                  defaultFore  = qStyles.lForeColor
-                  defaultBack  = qStyles.lBackColor
-                  defaultCase  = qStyles.nCaseOPt
-                  defaultHide  = qStyles.bHide
-                  defaultHot   = qStyles.bHotSpot
-                  defaultEOLF  = qStyles.bEolFilled
-               END
-               PUT(qStyles)
-            END
-         END
-         filequeue.record = CLIP(AsciiFile.Buffer)
-         ADD(filequeue)
-         NEXT(AsciiFile)
-      END
-SavePropertyFile     ROUTINE
-   ThisWindow.Update()
-
-   AsciiFilename = svSpecialFolder.GetDir(SV:CSIDL_APPDATA, 'Devuna' & '\' & 'KSS') & '\' & szName & szExtension
-   IF FILEDIALOG('Save As ...',AsciiFilename,'KSS properties files|*.properties',BOR(BOR(FILE:Save,FILE:KeepDir),FILE:LongName))
-
-      CREATE(AsciiFile)
-      OPEN(AsciiFile,ReadWrite+DenyAll)
-
-      filequeueMax = RECORDS(filequeue)
-      LOOP filequeueIndx = 1 TO filequeueMax
-         GET(filequeue,filequeueIndx)
-         szBuffer = CLIP(LEFT(filequeue.record))
-         IF szBuffer = ''
-            AsciiFile.Buffer = filequeue.record
-            ADD(AsciiFile)
-         ELSIF szBuffer[1] = '!'
-            IF filequeueIndx = 1
-               AsciiFile.Buffer = '! ' & szDescription
-               ADD(AsciiFile)
-            ELSE
-               AsciiFile.Buffer = filequeue.record
-               ADD(AsciiFile)
-            END
-         ELSIF UPPER(szBuffer[1 : 6]) = 'LEXER='
-            AsciiFile.Buffer = 'Lexer=' & szLexer
-            ADD(AsciiFile)
-         ELSIF UPPER(szBuffer[1 : 14]) = '[FILEPATTERNS]'
-            AsciiFile.Buffer = filequeue.record
-            ADD(AsciiFile)
-            DO SaveFilePatterns
-            DO SkipToNextSection
-         ELSIF UPPER(szBuffer[1 : 9]) = '[OPTIONS]'
-            AsciiFile.Buffer = filequeue.record
-            ADD(AsciiFile)
-            DO SaveOptions
-            DO SkipToNextSection
-            filequeueIndx += 1
-         ELSIF UPPER(szBuffer[1 : 9])  = '[KEYWORDS'
-            DO SaveKeywords
-            DO SkipToStyles
-            filequeueIndx += 1
-         ELSIF UPPER(szBuffer[1 : 8])  = '[STYLES]'
-            AsciiFile.Buffer = filequeue.record
-            ADD(AsciiFile)
-            DO SaveStyles
-            BREAK
-         ELSE
-            AsciiFile.Buffer = filequeue.record
-            ADD(AsciiFile)
-         END
-      END   !loop
-
-      CLOSE(AsciiFile)
-
-   END   !if filedialog
-SaveFilePatterns  ROUTINE
-   DATA
-p     LONG
-
-   CODE
-      IF ?szFilePatterns{PROP:Hide} = TRUE
-         DO LoadFilePatternsFromFilePatternQueue
-      END
-      LOOP WHILE LEN(szFilePatterns) > RECORDSIZE
-         LOOP p = RECORDSIZE TO 1 BY -1
-           IF szFilePatterns[p] = ' '
-              AsciiFile.Buffer = szFilePatterns[1 : p-1]
-              ADD(AsciiFile)
-              szFilePatterns = szFilePatterns[p+1 : LEN(szFilePatterns)]
-              BREAK
-           END
-         END
-         IF p = 0
-            BREAK
-         END
-      END
-      AsciiFile.Buffer = szFilePatterns
-      ADD(AsciiFile)
-   EXIT
-SaveOptions    ROUTINE
-   DATA
-n     LONG
-p     LONG
-
-   CODE
-      LOOP n = 1 TO RECORDS(qOptions)
-         GET(qOptions,n)
-         IF qOptions.szOption = 'asp.default.language'
-            CASE qOptions.szValue
-              OF 'JavaScript'
-                 AsciiFile.Buffer = qOptions.szOption & '=1'
-              OF 'VBScript'
-                 AsciiFile.Buffer = qOptions.szOption & '=2'
-              OF 'Python'
-                 AsciiFile.Buffer = qOptions.szOption & '=3'
-            END
-         ELSE
-            CASE qOptions.szValue
-              OF 'false'
-                 AsciiFile.Buffer = qOptions.szOption & '=0'
-              OF 'true'
-                 AsciiFile.Buffer = qOptions.szOption & '=1'
-            ELSE
-                 AsciiFile.Buffer = qOptions.szOption & '=' & qOptions.szValue
-            END
-         END
-         IF qOptions.szOptionTip <> ''
-            p = INSTRING('<13,10>',qOptions.szOptionTip,1,1)
-            LOOP WHILE p > 0
-               qOptions.szOptionTip[p] = '|'
-               qOptions.szOptionTip[p+1] = '|'
-               p = INSTRING('<13,10>',qOptions.szOptionTip,1,p+2)
-            END
-            AsciiFile.Buffer = CLIP(AsciiFile.Buffer) & ';' & qOptions.szOptionTip
-         END
-         ADD(AsciiFile)
-      END
-      AsciiFile.Buffer = ''
-      ADD(AsciiFile)
-   EXIT
-SaveKeywords      ROUTINE
-   DATA
-n     LONG
-P     LONG
-   CODE
-      IF ?kwd:szKeywords{PROP:Hide} = TRUE
-         DO LoadKeywordsFromListBoxQueue
-      END
-      !add the keyword groups
-      SORT(qKeywords,qKeywords.szKeywordNumber)
-      LOOP n = 1 TO RECORDS(qKeywords)
-         GET(qKeyWords,n)
-         AsciiFile.Buffer = '! ' & qKeywords.szDescription
-         ADD(AsciiFile)
-         AsciiFile.Buffer = '[' & qKeywords.szKeywordNumber & ']'
-         ADD(AsciiFile)
-
-         LOOP WHILE LEN(qKeywords.szKeywords) > recordSize
-            LOOP p = recordSize TO 1 BY -1
-              IF qKeywords.szKeywords[p] = ' '
-                 AsciiFile.Buffer = qKeywords.szKeywords[1 : p-1]
-                 ADD(AsciiFile)
-                 qKeywords.szKeywords = qKeywords.szKeywords[p+1 : LEN(qKeywords.szKeywords)]
-                 BREAK
-              END
-            END
-            IF p = 0
-               BREAK
-            END
-         END
-         AsciiFile.Buffer = qKeywords.szKeywords
-         ADD(AsciiFile)
-         AsciiFile.Buffer = ''
-         ADD(AsciiFile)
-      END
-   EXIT
-SaveStyles     ROUTINE
-   DATA
-n           LONG
-tempBuffer  CSTRING(SIZE(AsciiFile.Buffer)+1)
-
-   CODE
-      !write out any comments before styles
-      filequeueIndx += 1
-      GET(filequeue,filequeueIndx)
-      szBuffer = CLIP(LEFT(filequeue.record))
-      LOOP WHILE szBuffer = '' OR szBuffer[1] = '!'
-         IF szBuffer[1] = '!'
-            GET(filequeue,filequeueIndx+1)
-            tempBuffer = UPPER(CLIP(LEFT(filequeue.record)))
-            GET(filequeue,filequeueIndx)
-            IF tempBuffer[1 : 5] = 'STYLE'
-               BREAK
-            END
-         END
-         AsciiFile.Buffer = filequeue.record
-         ADD(AsciiFile)
-         filequeueIndx += 1
-         GET(filequeue,filequeueIndx)
-         szBuffer = CLIP(LEFT(filequeue.record))
-      END
-
-      !add the styles
-      !Style#=font:,size:,bold,italic,underline,fore:,back:,eolfilled,case:,hide,hotSpot
-      !get default style
-      SORT(qStyles,+qStyles.szStyleNumber)
-
-      qStyles.szStyleNumber = 'STYLE032'
-      GET(qStyles,+qStyles.szStyleNumber)
-      IF NOT ERRORCODE()
-         DO AddStyleRecord
-      END
-
-      LOOP n = 1 TO RECORDS(qStyles)
-         GET(qStyles,n)
-         IF qStyles.szStyleNumber = 'STYLE032'
-            CYCLE
-         ELSE
-            DO AddStyleRecord
-         END
-      END   !styles loop
-   EXIT
-SkipToNextSection ROUTINE
-   LOOP WHILE filequeueIndx < filequeueMax
-      GET(fileQueue,filequeueIndx+1)
-      szBuffer = CLIP(LEFT(filequeue.record))
-      IF szBuffer[1] = '['
-         filequeueIndx -= 1
-         BREAK
-      ELSE
-         filequeueIndx += 1
-      END
-   END
-SkipToStyles      ROUTINE
-   LOOP WHILE filequeueIndx < filequeueMax
-      GET(fileQueue,filequeueIndx+1)
-      szBuffer = CLIP(LEFT(filequeue.record))
-      IF UPPER(szBuffer[1 : 8])  = '[STYLES]'
-         filequeueIndx -= 1
-         BREAK
-      ELSE
-         filequeueIndx += 1
-      END
-   END
-AddStyleRecord    ROUTINE
-   DATA
-szBuffer    CSTRING(SIZE(AsciiFile.Buffer)+1)
-
-   CODE
-      AsciiFile.Buffer = '! ' & qStyles.szDescription
-      ADD(AsciiFile)
-      szBuffer = qStyles.szStyleNumber & '='
-      IF qStyles.szFontName <> ''
-         szBuffer = szBuffer & 'font:' & qStyles.szFontName & ','
-      END
-      IF qStyles.nFontSize > 0
-         szBuffer = szBuffer & 'size:' & qStyles.nFontSize & ','
-      END
-      IF qStyles.bBold = TRUE
-         szBuffer = szBuffer & 'bold' & ','
-      END
-      IF qStyles.bItalic = TRUE
-         szBuffer = szBuffer & 'italic' & ','
-      END
-      IF qStyles.bUnderline = TRUE
-         szBuffer = szBuffer & 'underline' & ','
-      END
-      IF qStyles.lForeColor <> COLOR:NONE
-         szBuffer = szBuffer & 'fore:' & srcGetRGBColorString(qStyles.lForeColor) & ','
-      END
-      IF qStyles.lBackColor <> COLOR:NONE
-         szBuffer = szBuffer & 'back:' & srcGetRGBColorString(qStyles.lBackColor) & ','
-      END
-      IF qStyles.bEolFilled = TRUE
-         szBuffer = szBuffer & 'eolfilled' & ','
-      END
-      IF qStyles.nCaseOpt > 0
-         szBuffer = szBuffer & 'case:' & qStyles.nCaseOpt-1 & ','
-      END
-      IF qStyles.bHide = TRUE
-         szBuffer = szBuffer & 'hide' & ','
-      END
-      IF qStyles.bHotSpot = TRUE
-         szBuffer = szBuffer & 'hotspot' & ','
-      END
-      IF szBuffer[LEN(szBuffer)] = ','
-         szBuffer[LEN(szBuffer)] = '<0>'
-      END
-      AsciiFile.Buffer = szBuffer
-      ADD(AsciiFile)
-   EXIT
-FillFilePatternQueue     ROUTINE
-   DATA
-i     LONG
-j     LONG
-
-   CODE
-      FREE(FilePatternQueue)
-      j = 1
-      i = INSTRING(' ',szFilePatterns,,j)
-      LOOP WHILE i > 0
-         FilePatternQueue.Pattern =szFilePatterns[j : i-1]
-         ADD(FilePatternQueue,+FilePatternQueue.Pattern)
-         j = i+1
-         i = INSTRING(' ',szFilePatterns,,j)
-      END
-      FilePatternQueue.Pattern = szFilePatterns[j : LEN(szFilePatterns)]
-      ADD(FilePatternQueue,+FilePatternQueue.Pattern)
-
-      IF RECORDS(FilePatternQueue)
-         ?ChangeFilePattern{PROP:Disable} = FALSE
-         ?DeleteFilePattern{PROP:Disable} = FALSE
-      ELSE
-         ?ChangeFilePattern{PROP:Disable} = TRUE
-         ?DeleteFilePattern{PROP:Disable} = TRUE
-      END
-      GET(FilePatternQueue,1)
-      ?lbFilePatterns{PROP:Selected} = 1
-   EXIT
-LoadFilePatternsFromFilePatternQueue     ROUTINE
-   DATA
-i     LONG
-j     LONG
-
-   CODE
-      szFilePatterns = ''
-      SORT(FilePatternQueue,+FilePatternQueue.Pattern)
-      j = RECORDS(FilePatternQueue)
-      LOOP i = 1 TO j
-         GET(FilePatternQueue,i)
-         szFilePatterns = szFilePatterns & FilePatternQueue.Pattern & ' '
-      END
-      szFilePatterns[LEN(szFilePatterns)] = '<0>'
-   EXIT
-FillListBoxQueue     ROUTINE
-   DATA
-i     LONG
-j     LONG
-
-   CODE
-      FREE(ListBoxQueue)
-
-      GET(qKeywords,CHOICE(?lbKeywords))
-      j = 1
-      i = INSTRING(' ',qKeywords.szKeywords,,j)
-      LOOP WHILE i > 0
-         ListBoxQueue.Value = qKeywords.szKeywords[j : i-1]
-         ADD(ListBoxQueue,+ListBoxQueue.Value)
-         j = i+1
-         i = INSTRING(' ',qKeywords.szKeywords,,j)
-      END
-      ListBoxQueue.Value = qKeywords.szKeywords[j : LEN(qKeywords.szKeywords)]
-      ADD(ListBoxQueue,+ListBoxQueue.Value)
-
-      IF RECORDS(ListBoxQueue)
-         ?ChangeKeyword{PROP:Disable} = FALSE
-         ?DeleteKeyword{PROP:Disable} = FALSE
-      ELSE
-         ?ChangeKeyword{PROP:Disable} = TRUE
-         ?DeleteKeyword{PROP:Disable} = TRUE
-      END
-      GET(ListBoxQueue,1)
-      ?lbKeywordValues{PROP:Selected} = 1
-   EXIT
-LoadKeywordsFromListBoxQueue     ROUTINE
-   DATA
-i     LONG
-j     LONG
-
-   CODE
-      qKeywords.szKeywords = ''
-      SORT(ListBoxQueue,+ListBoxQueue.Value)
-      j = RECORDS(ListBoxQueue)
-      LOOP i = 1 TO j
-         GET(ListBoxQueue,i)
-         qKeywords.szKeywords = qKeywords.szKeywords & ListBoxQueue.Value & ' '
-      END
-      qKeywords.szKeywords[LEN(qKeywords.szKeywords)] = '<0>'
-      PUT(qKeywords)
-   EXIT
-CheckForChanges   ROUTINE
-   IF bDirty = FALSE
-      IF saveFilePatterns <> '' AND saveFilePatterns <> szFilePatterns
-         bDirty = TRUE
-      END
-
-      IF bDirty = FALSE AND saveKeywordSet.szKeywordNumber <> ''
-         IF saveKeywordSet.szDescription <> qKeywords.szDescription     |
-         OR saveKeywordSet.szKeywordNumber <> qKeywords.szKeywordNumber |
-         OR saveKeywordSet.szKeywords <> qKeywords.szKeywords
-            bDirty = TRUE
-         END
-      END
-
-      IF bDirty = FALSE AND saveStyle.szStyleNumber <> ''
-         IF saveStyle.szDescription <> qStyles.szDescription   |
-         OR saveStyle.szStyleNumber <> qStyles.szStyleNumber   |
-         OR saveStyle.szFontName    <> qStyles.szFontName      |
-         OR saveStyle.nFontSize     <> qStyles.nFontSize       |
-         OR saveStyle.nFontStyle    <> qStyles.nFontStyle      |
-         OR saveStyle.bBold         <> qStyles.bBold           |
-         OR saveStyle.bEolFilled    <> qStyles.bEolFilled      |
-         OR saveStyle.bHide         <> qStyles.bHide           |
-         OR saveStyle.bHotSpot      <> qStyles.bHotSpot        |
-         OR saveStyle.bItalic       <> qStyles.bItalic         |
-         OR saveStyle.bUnderline    <> qStyles.bUnderline      |
-         OR saveStyle.nCaseOpt      <> qStyles.nCaseOpt        |
-         OR saveStyle.lForeColor    <> qStyles.lForeColor      |
-         OR saveStyle.lBackColor    <> qStyles.lBackColor
-            bDirty = TRUE
-         END
-      END
-   END
 
 ThisWindow.Init PROCEDURE
 
@@ -1076,7 +402,7 @@ ReturnValue          BYTE,AUTO
   CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
   CLEAR(GlobalResponse)
   SELF.AddItem(Toolbar)
-  DO LoadPropertyFile
+  DOO.LoadPropertyFile()
   SELF.Open(Window)                                        ! Open window
   Window{PROP:Text} = 'Property Editor [' & szName & szExtension & ']'
   Window{PROP:Pixels} = TRUE
@@ -1350,7 +676,7 @@ Looped BYTE
   ReturnValue = PARENT.TakeAccepted()
     CASE ACCEPTED()
     OF ?szFilePatterns
-      DO CheckForChanges
+      DOO.CheckForChanges()
     OF ?kwd:szKeywords
       SELF.Update()
       PUT(qKeywords)
@@ -1442,9 +768,9 @@ Looped BYTE
       SELF.Reset()
     OF ?cmdSave
       ThisWindow.Update()
-      DO CheckForChanges
+      DOO.CheckForChanges()
       IF bDirty = TRUE
-         DO SavePropertyFile
+         DOO.SavePropertyFile()
          bPropertiesChanged = TRUE
       END
       POST(EVENT:CloseWindow)
@@ -1613,12 +939,12 @@ Looped BYTE
   ReturnValue = PARENT.TakeEvent()
     CASE EVENT()
       OF EVENT:User
-         DO LoadKeywordsFromListBoxQueue
+         DOO.LoadKeywordsFromListBoxQueue()
          HIDE(?lbKeywordValues)
          UNHIDE(?kwd:szKeywords)
          DISPLAY(?kwd:szKeywords)
       OF EVENT:User+1
-         DO LoadFilePatternsFromFilePatternQueue
+         DOO.LoadFilePatternsFromFilePatternQueue()
          HIDE(?lbFilePatterns)
          UNHIDE(?szFilePatterns)
          DISPLAY(?szFilePatterns)
@@ -1660,7 +986,7 @@ Indx   LONG
            IF POPUP('View as List')
                SELF.Update()
                HIDE(?szFilePatterns)
-               DO FillFilePatternQueue
+               DOO.FillFilePatternQueue()
                UNHIDE(?lbFilePatterns)
            END
       END
@@ -1706,7 +1032,7 @@ Indx   LONG
                SELF.Update()
                !PUT(qKeywords)
                HIDE(?kwd:szKeywords)
-               DO FillListBoxQueue
+               DOO.FillListBoxQueue()
                UNHIDE(?lbKeywordValues)
            END
       END
@@ -1753,7 +1079,7 @@ Looped BYTE
     CASE FIELD()
     OF ?lbKeywords
       IF ?kwd:szKeywords{PROP:Hide} = TRUE
-         DO LoadKeywordsFromListBoxQueue
+         DOO.LoadKeywordsFromListBoxQueue()
       END
     END
   ReturnValue = PARENT.TakeNewSelection()
@@ -1765,17 +1091,17 @@ Looped BYTE
       GET(qOptions,CHOICE(?lbOptions))
       DISPLAY(?opt:szOptionTip)
     OF ?lbKeywords
-      DO CheckForChanges
+      DOO.CheckForChanges()
       GET(qKeywords,CHOICE(?lbKeywords))
       saveKeywordSet = qKeywords
       IF ?kwd:szKeywords{PROP:Hide} = TRUE
-         DO FillListBoxQueue
+         DOO.FillListBoxQueue()
          DISPLAY(?lbKeywordValues)
       ELSE
          DISPLAY(?kwd:szKeywords)
       END
     OF ?lbStyles
-      DO CheckForChanges
+      DOO.CheckForChanges()
       GET(qStyles,CHOICE(?lbStyles))
       saveStyle = qStyles
       SELF.Reset()
@@ -1833,6 +1159,696 @@ Looped BYTE
   ReturnValue = Level:Fatal
   RETURN ReturnValue
 
+DOO.LoadPropertyFile     PROCEDURE()
+  CODE
+   cc = kcr_fnSplit(szPropertyFile, szDrive, szDir, szName, szExtension)
+
+   AsciiFilename = szPropertyFile
+   OPEN(AsciiFile,ReadOnly+DenyNone)
+   IF ERRORCODE()
+      !error opening file
+   ELSE
+      SET(AsciiFile)
+      NEXT(AsciiFile)
+      LOOP UNTIL ERRORCODE()
+
+         filequeue.record = CLIP(AsciiFile.Buffer)
+         ADD(filequeue)
+
+         szBuffer = CLIP(LEFT(AsciiFile.Buffer))
+         IF szBuffer = ''
+            !skip
+         ELSIF szBuffer[1] = '!'
+            szBuffer[1] = ' '
+            IF szDescription = ''
+               szDescription = CLIP(LEFT(szBuffer))
+            END
+            LastComment = CLIP(LEFT(szBuffer))
+         ELSE
+            !process
+            IF UPPER(szBuffer[1 : 6]) = 'LEXER='
+               szLexer = LOWER(szBuffer[7 : LEN(szBuffer)])
+            ELSIF UPPER(szBuffer[1 : 14]) = '[FILEPATTERNS]'
+               DOO.LoadFilePatterns()
+               CYCLE
+            ELSIF UPPER(szBuffer[1 : 9]) = '[OPTIONS]'
+               DOO.LoadOptions()
+               CYCLE
+            ELSIF UPPER(szBuffer[1 : 9])  = '[KEYWORDS'
+               DOO.LoadKeywords()
+               CYCLE
+            ELSIF UPPER(szBuffer[1 : 8])  = '[STYLES]'
+               DOO.LoadStyles()
+               CYCLE
+            END
+         END
+         NEXT(AsciiFile)
+      END
+      CLOSE(AsciiFile)
+   END
+DOO.LoadFilePatterns     PROCEDURE()
+  CODE
+   NEXT(AsciiFile)
+   LOOP UNTIL ERRORCODE()
+      szBuffer = CLIP(LEFT(AsciiFile.Buffer))
+      IF szBuffer = ''
+         !skip
+      ELSIF szBuffer[1] = '!'
+         szBuffer[1] = ' '
+         LastComment = CLIP(LEFT(szBuffer))
+      ELSIF szBuffer[1] = '['
+         szFilePatterns = CLIP(LEFT(szFilePatterns))
+         BREAK
+      ELSE
+         szFilePatterns = szFilePatterns & ' ' & szBuffer
+      END
+      filequeue.record = CLIP(AsciiFile.Buffer)
+      ADD(filequeue)
+      NEXT(AsciiFile)
+   END
+DOO.LoadOptions    PROCEDURE()
+i     LONG
+j     LONG
+p     LONG
+
+   CODE
+      NEXT(AsciiFile)
+      LOOP UNTIL ERRORCODE()
+         szBuffer = CLIP(LEFT(AsciiFile.Buffer))
+         IF szBuffer = ''
+            !skip
+         ELSIF szBuffer[1] = '!'
+            lastComment = CLIP(LEFT(szBuffer[2 : LEN(szBuffer)]))
+            !skip
+         ELSIF szBuffer[1] = '['
+            BREAK
+         ELSE
+            j = INSTRING(';',szBuffer)
+            IF j = 0
+               j = LEN(szBuffer)
+            ELSE
+               j -= 1
+            END
+            i = INSTRING('=',szBuffer)
+            IF i
+               qOptions.szOption = szBuffer[1 : i-1]
+               qOptions.szOptionTip = ''
+               IF j < LEN(szBuffer)
+                  qOptions.szOptionTip = szBuffer[j+2 : LEN(szBuffer)]
+                  p = INSTRING('||',qOptions.szOptionTip,1,1)
+                  LOOP WHILE p > 0
+                     qOptions.szOptionTip[p] = '<13>'
+                     qOptions.szOptionTip[p+1] = '<10>'
+                     p = INSTRING('||',qOptions.szOptionTip,1,p+2)
+                  END
+               END
+               qOptions.szValue = szBuffer[i+1 : j]
+               IF qOptions.szOption = 'asp.default.language'
+                  CASE qOptions.szValue
+                    OF '1'
+                       qOptions.szValue = 'JavaScript'
+                    OF '2'
+                       qOptions.szValue = 'VBScript'
+                    OF '3'
+                       qOptions.szValue = 'Python'
+                  END
+                  qOptions.IsBool = FALSE
+               ELSE
+                  CASE qOptions.szValue
+                    OF '0'
+                       qOptions.szValue = 'false'
+                       qOptions.IsBool = TRUE
+                    OF '1'
+                       qOptions.szValue = 'true'
+                       qOptions.IsBool = TRUE
+                  ELSE
+                       qOptions.IsBool = FALSE
+                  END
+               END
+               ADD(qOptions)
+            END
+         END
+         filequeue.record = CLIP(AsciiFile.Buffer)
+         ADD(filequeue)
+         NEXT(AsciiFile)
+      END
+   RETURN
+DOO.LoadKeywords         PROCEDURE()
+  CODE
+   szBuffer = CLIP(LEFT(AsciiFile.Buffer))
+   qKeywords.szKeywordNumber = UPPER(szBuffer[2 : LEN(szBuffer)-1])
+   GET(qKeywords,+qKeywords.szKeywordNumber)
+   IF ERRORCODE()
+      qKeywords.szKeywordNumber = UPPER(szBuffer[2 : LEN(szBuffer)-1])
+      qKeywords.szDescription = lastComment
+      qKeywords.szKeywords = ''
+      ADD(qKeywords,+qKeywords.szDescription)
+      !ADD(qKeywords,+qKeywords.szKeywordNumber)
+   END
+   NEXT(AsciiFile)
+   LOOP UNTIL ERRORCODE()
+      szBuffer = CLIP(LEFT(AsciiFile.Buffer))
+      IF szBuffer = ''
+         !skip
+      ELSIF szBuffer[1] = '!'
+         szBuffer[1] = ' '
+         LastComment = CLIP(LEFT(szBuffer))
+      ELSIF szBuffer[1] = '['
+         qKeywords.szKeywords = CLIP(LEFT(qKeywords.szKeywords))
+         PUT(qKeywords)
+         BREAK
+      ELSE
+         qKeywords.szKeywords = qKeywords.szKeywords & ' ' & szBuffer
+      END
+      filequeue.record = CLIP(AsciiFile.Buffer)
+      ADD(filequeue)
+      NEXT(AsciiFile)
+   END
+DOO.LoadStyles           PROCEDURE()
+i           LONG
+j           LONG
+r           BYTE
+g           BYTE
+b           BYTE
+qAttribute  QUEUE,PRE(att)
+attribute      CSTRING(32)
+            END
+bDefault    BOOL
+
+   CODE
+      NEXT(AsciiFile)
+      LOOP UNTIL ERRORCODE()
+         szBuffer = CLIP(LEFT(AsciiFile.Buffer))
+         IF szBuffer = ''
+            !skip
+         ELSIF szBuffer[1] = '!'
+            szBuffer[1] = ' '
+            LastComment = CLIP(LEFT(szBuffer))
+         ELSIF szBuffer[1] = '['
+            BREAK
+         ELSE
+            !Style#=font:,size:,bold,italic,underline,fore:,back:,eolfilled,case:,hide,hotSpot
+            IF UPPER(szBuffer[1 : 5]) = 'STYLE'
+               qStyles.szSort = UPPER(lastComment)
+               j = INSTRING('=',szBuffer)
+               IF qStyles.szSort = ''
+                  IF j < 9
+                     qStyles.szSort = 'STYLE' & ALL('0',9-j) & UPPER(szBuffer[6 : j-1])
+                  ELSE
+                     qStyles.szSort = UPPER(szBuffer[1 : j-1])
+                  END
+               END
+               GET(qStyles,+qStyles.szSort)
+
+               CLEAR(qStyles)
+               IF j < 9
+                  qStyles.szStyleNumber = 'STYLE' & ALL('0',9-j) & UPPER(szBuffer[6 : j-1])
+               ELSE
+                  qStyles.szStyleNumber = UPPER(szBuffer[1 : j-1])
+
+               END
+               qStyles.szDescription = lastComment
+               qStyles.szFontName = ''
+               qStyles.nFontStyle = FONT:regular
+               qStyles.lForeColor = COLOR:NONE
+               qStyles.lBackColor = COLOR:NONE
+               qStyles.szSort = UPPER(lastComment)
+               IF qStyles.szSort = ''
+                  j = INSTRING('=',szBuffer)
+                  IF j < 9
+                     qStyles.szSort = 'STYLE' & ALL('0',9-j) & UPPER(szBuffer[6 : j-1])
+                  ELSE
+                     qStyles.szSort = UPPER(szBuffer[1 : j-1])
+                  END
+               END
+               ADD(qStyles,+qStyles.szSort,qStyles.szStyleNumber)
+
+               IF qStyles.szStyleNumber = 'STYLE032'
+                  bDefault = TRUE
+                  qStyles.nCaseOpt = 1
+               ELSE
+                  bDefault = FALSE
+               END
+
+               FREE(qAttribute)
+               j += 1
+               i = INSTRING(',',szBuffer,,j)
+               LOOP WHILE i > 0
+                  qAttribute.attribute = szBuffer[j : i-1]
+                  ADD(qAttribute)
+                  j = i+1
+                  i = INSTRING(',',szBuffer,,j)
+               END
+               qAttribute.attribute = szBuffer[j : LEN(szBuffer)]
+               ADD(qAttribute)
+
+               j = RECORDS(qAttribute)
+               LOOP i = 1 TO j
+                  GET(qAttribute,i)
+                  CASE UPPER(qAttribute.attribute[1 : 4])
+                    OF 'FONT'
+                       qStyles.szFontName = qAttribute.attribute[6 : LEN(qAttribute.attribute)]
+                    OF 'SIZE'
+                       qStyles.nFontSize = qAttribute.attribute[6 : LEN(qAttribute.attribute)]
+                    OF 'BOLD'
+                       qStyles.bBold = TRUE
+                       qStyles.nFontStyle = BXOR(qStyles.nFontStyle,FONT:regular)
+                       qStyles.nFontStyle = BOR(qStyles.nFontStyle,FONT:bold)
+                    OF 'ITAL'
+                       qStyles.bItalic = TRUE
+                       qStyles.nFontStyle = BOR(qStyles.nFontStyle,FONT:italic)
+                    OF 'UNDE'
+                       qStyles.bUnderline = TRUE
+                       qStyles.nFontStyle = BOR(qStyles.nFontStyle,FONT:underline)
+                    OF 'FORE' !fore:#rrggbb
+                       r = EVALUATE('0' & qAttribute.attribute[7  :  8] & 'h')
+                       g = EVALUATE('0' & qAttribute.attribute[9  : 10] & 'h')
+                       b = EVALUATE('0' & qAttribute.attribute[11 : 12] & 'h')
+                       qStyles.lForeColor = ColourRGB(r,g,b)
+                    OF 'BACK'
+                       r = EVALUATE('0' & qAttribute.attribute[7  :  8] & 'h')
+                       g = EVALUATE('0' & qAttribute.attribute[9  : 10] & 'h')
+                       b = EVALUATE('0' & qAttribute.attribute[11 : 12] & 'h')
+                       qStyles.lBackColor = ColourRGB(r,g,b)
+                    OF 'EOLF'
+                       qStyles.bEolFilled = TRUE
+                    OF 'HIDE'
+                       qStyles.bHide = TRUE
+                    OF 'CASE'
+                       qStyles.nCaseOpt = qAttribute.attribute[6 : LEN(qAttribute.attribute)]
+                       qStyles.nCaseOpt += 1
+                    OF 'HOTS'
+                       qStyles.bHotSpot = TRUE
+                  END
+               END
+               !look for default style
+               IF bDefault
+                  defaultFont  = qStyles.szFontName
+                  defaultSize  = qStyles.nFontSize
+                  defaultStyle = qStyles.nFontStyle
+                  defaultFore  = qStyles.lForeColor
+                  defaultBack  = qStyles.lBackColor
+                  defaultCase  = qStyles.nCaseOPt
+                  defaultHide  = qStyles.bHide
+                  defaultHot   = qStyles.bHotSpot
+                  defaultEOLF  = qStyles.bEolFilled
+               END
+               PUT(qStyles)
+            END
+         END
+         filequeue.record = CLIP(AsciiFile.Buffer)
+         ADD(filequeue)
+         NEXT(AsciiFile)
+      END
+DOO.SavePropertyFile     PROCEDURE()
+  CODE
+   ThisWindow.Update()
+
+   AsciiFilename = svSpecialFolder.GetDir(SV:CSIDL_APPDATA, 'Devuna' & '\' & 'KSS') & '\' & szName & szExtension
+   IF FILEDIALOG('Save As ...',AsciiFilename,'KSS properties files|*.properties',BOR(BOR(FILE:Save,FILE:KeepDir),FILE:LongName))
+
+      CREATE(AsciiFile)
+      OPEN(AsciiFile,ReadWrite+DenyAll)
+
+      filequeueMax = RECORDS(filequeue)
+      LOOP filequeueIndx = 1 TO filequeueMax
+         GET(filequeue,filequeueIndx)
+         szBuffer = CLIP(LEFT(filequeue.record))
+         IF szBuffer = ''
+            AsciiFile.Buffer = filequeue.record
+            ADD(AsciiFile)
+         ELSIF szBuffer[1] = '!'
+            IF filequeueIndx = 1
+               AsciiFile.Buffer = '! ' & szDescription
+               ADD(AsciiFile)
+            ELSE
+               AsciiFile.Buffer = filequeue.record
+               ADD(AsciiFile)
+            END
+         ELSIF UPPER(szBuffer[1 : 6]) = 'LEXER='
+            AsciiFile.Buffer = 'Lexer=' & szLexer
+            ADD(AsciiFile)
+         ELSIF UPPER(szBuffer[1 : 14]) = '[FILEPATTERNS]'
+            AsciiFile.Buffer = filequeue.record
+            ADD(AsciiFile)
+            DOO.SaveFilePatterns()
+            DOO.SkipToNextSection()
+         ELSIF UPPER(szBuffer[1 : 9]) = '[OPTIONS]'
+            AsciiFile.Buffer = filequeue.record
+            ADD(AsciiFile)
+            DOO.SaveOptions()
+            DOO.SkipToNextSection()
+            filequeueIndx += 1
+         ELSIF UPPER(szBuffer[1 : 9])  = '[KEYWORDS'
+            DOO.SaveKeywords()
+            DOO.SkipToStyles()
+            filequeueIndx += 1
+         ELSIF UPPER(szBuffer[1 : 8])  = '[STYLES]'
+            AsciiFile.Buffer = filequeue.record
+            ADD(AsciiFile)
+            DOO.SaveStyles()
+            BREAK
+         ELSE
+            AsciiFile.Buffer = filequeue.record
+            ADD(AsciiFile)
+         END
+      END   !loop
+
+      CLOSE(AsciiFile)
+
+   END   !if filedialog
+DOO.SaveFilePatterns  PROCEDURE()
+p     LONG
+
+   CODE
+      IF ?szFilePatterns{PROP:Hide} = TRUE
+         DOO.LoadFilePatternsFromFilePatternQueue()
+      END
+      LOOP WHILE LEN(szFilePatterns) > RECORDSIZE
+         LOOP p = RECORDSIZE TO 1 BY -1
+           IF szFilePatterns[p] = ' '
+              AsciiFile.Buffer = szFilePatterns[1 : p-1]
+              ADD(AsciiFile)
+              szFilePatterns = szFilePatterns[p+1 : LEN(szFilePatterns)]
+              BREAK
+           END
+         END
+         IF p = 0
+            BREAK
+         END
+      END
+      AsciiFile.Buffer = szFilePatterns
+      ADD(AsciiFile)
+   RETURN
+DOO.SaveOptions    PROCEDURE()
+n     LONG
+p     LONG
+
+   CODE
+      LOOP n = 1 TO RECORDS(qOptions)
+         GET(qOptions,n)
+         IF qOptions.szOption = 'asp.default.language'
+            CASE qOptions.szValue
+              OF 'JavaScript'
+                 AsciiFile.Buffer = qOptions.szOption & '=1'
+              OF 'VBScript'
+                 AsciiFile.Buffer = qOptions.szOption & '=2'
+              OF 'Python'
+                 AsciiFile.Buffer = qOptions.szOption & '=3'
+            END
+         ELSE
+            CASE qOptions.szValue
+              OF 'false'
+                 AsciiFile.Buffer = qOptions.szOption & '=0'
+              OF 'true'
+                 AsciiFile.Buffer = qOptions.szOption & '=1'
+            ELSE
+                 AsciiFile.Buffer = qOptions.szOption & '=' & qOptions.szValue
+            END
+         END
+         IF qOptions.szOptionTip <> ''
+            p = INSTRING('<13,10>',qOptions.szOptionTip,1,1)
+            LOOP WHILE p > 0
+               qOptions.szOptionTip[p] = '|'
+               qOptions.szOptionTip[p+1] = '|'
+               p = INSTRING('<13,10>',qOptions.szOptionTip,1,p+2)
+            END
+            AsciiFile.Buffer = CLIP(AsciiFile.Buffer) & ';' & qOptions.szOptionTip
+         END
+         ADD(AsciiFile)
+      END
+      AsciiFile.Buffer = ''
+      ADD(AsciiFile)
+   RETURN
+DOO.SaveKeywords      PROCEDURE()
+n     LONG
+P     LONG
+   CODE
+      IF ?kwd:szKeywords{PROP:Hide} = TRUE
+         DOO.LoadKeywordsFromListBoxQueue()
+      END
+      !add the keyword groups
+      SORT(qKeywords,qKeywords.szKeywordNumber)
+      LOOP n = 1 TO RECORDS(qKeywords)
+         GET(qKeyWords,n)
+         AsciiFile.Buffer = '! ' & qKeywords.szDescription
+         ADD(AsciiFile)
+         AsciiFile.Buffer = '[' & qKeywords.szKeywordNumber & ']'
+         ADD(AsciiFile)
+
+         LOOP WHILE LEN(qKeywords.szKeywords) > recordSize
+            LOOP p = recordSize TO 1 BY -1
+              IF qKeywords.szKeywords[p] = ' '
+                 AsciiFile.Buffer = qKeywords.szKeywords[1 : p-1]
+                 ADD(AsciiFile)
+                 qKeywords.szKeywords = qKeywords.szKeywords[p+1 : LEN(qKeywords.szKeywords)]
+                 BREAK
+              END
+            END
+            IF p = 0
+               BREAK
+            END
+         END
+         AsciiFile.Buffer = qKeywords.szKeywords
+         ADD(AsciiFile)
+         AsciiFile.Buffer = ''
+         ADD(AsciiFile)
+      END
+   RETURN
+DOO.SaveStyles     PROCEDURE()
+n           LONG
+tempBuffer  CSTRING(SIZE(AsciiFile.Buffer)+1)
+
+   CODE
+      !write out any comments before styles
+      filequeueIndx += 1
+      GET(filequeue,filequeueIndx)
+      szBuffer = CLIP(LEFT(filequeue.record))
+      LOOP WHILE szBuffer = '' OR szBuffer[1] = '!'
+         IF szBuffer[1] = '!'
+            GET(filequeue,filequeueIndx+1)
+            tempBuffer = UPPER(CLIP(LEFT(filequeue.record)))
+            GET(filequeue,filequeueIndx)
+            IF tempBuffer[1 : 5] = 'STYLE'
+               BREAK
+            END
+         END
+         AsciiFile.Buffer = filequeue.record
+         ADD(AsciiFile)
+         filequeueIndx += 1
+         GET(filequeue,filequeueIndx)
+         szBuffer = CLIP(LEFT(filequeue.record))
+      END
+
+      !add the styles
+      !Style#=font:,size:,bold,italic,underline,fore:,back:,eolfilled,case:,hide,hotSpot
+      !get default style
+      SORT(qStyles,+qStyles.szStyleNumber)
+
+      qStyles.szStyleNumber = 'STYLE032'
+      GET(qStyles,+qStyles.szStyleNumber)
+      IF NOT ERRORCODE()
+         DOO.AddStyleRecord()
+      END
+
+      LOOP n = 1 TO RECORDS(qStyles)
+         GET(qStyles,n)
+         IF qStyles.szStyleNumber = 'STYLE032'
+            CYCLE
+         ELSE
+            DOO.AddStyleRecord()
+         END
+      END   !styles loop
+   RETURN
+DOO.SkipToNextSection PROCEDURE()
+  CODE
+   LOOP WHILE filequeueIndx < filequeueMax
+      GET(fileQueue,filequeueIndx+1)
+      szBuffer = CLIP(LEFT(filequeue.record))
+      IF szBuffer[1] = '['
+         filequeueIndx -= 1
+         BREAK
+      ELSE
+         filequeueIndx += 1
+      END
+   END
+DOO.SkipToStyles      PROCEDURE()
+  CODE
+   LOOP WHILE filequeueIndx < filequeueMax
+      GET(fileQueue,filequeueIndx+1)
+      szBuffer = CLIP(LEFT(filequeue.record))
+      IF UPPER(szBuffer[1 : 8])  = '[STYLES]'
+         filequeueIndx -= 1
+         BREAK
+      ELSE
+         filequeueIndx += 1
+      END
+   END
+DOO.AddStyleRecord    PROCEDURE()
+szBuffer    CSTRING(SIZE(AsciiFile.Buffer)+1)
+
+   CODE
+      AsciiFile.Buffer = '! ' & qStyles.szDescription
+      ADD(AsciiFile)
+      szBuffer = qStyles.szStyleNumber & '='
+      IF qStyles.szFontName <> ''
+         szBuffer = szBuffer & 'font:' & qStyles.szFontName & ','
+      END
+      IF qStyles.nFontSize > 0
+         szBuffer = szBuffer & 'size:' & qStyles.nFontSize & ','
+      END
+      IF qStyles.bBold = TRUE
+         szBuffer = szBuffer & 'bold' & ','
+      END
+      IF qStyles.bItalic = TRUE
+         szBuffer = szBuffer & 'italic' & ','
+      END
+      IF qStyles.bUnderline = TRUE
+         szBuffer = szBuffer & 'underline' & ','
+      END
+      IF qStyles.lForeColor <> COLOR:NONE
+         szBuffer = szBuffer & 'fore:' & srcGetRGBColorString(qStyles.lForeColor) & ','
+      END
+      IF qStyles.lBackColor <> COLOR:NONE
+         szBuffer = szBuffer & 'back:' & srcGetRGBColorString(qStyles.lBackColor) & ','
+      END
+      IF qStyles.bEolFilled = TRUE
+         szBuffer = szBuffer & 'eolfilled' & ','
+      END
+      IF qStyles.nCaseOpt > 0
+         szBuffer = szBuffer & 'case:' & qStyles.nCaseOpt-1 & ','
+      END
+      IF qStyles.bHide = TRUE
+         szBuffer = szBuffer & 'hide' & ','
+      END
+      IF qStyles.bHotSpot = TRUE
+         szBuffer = szBuffer & 'hotspot' & ','
+      END
+      IF szBuffer[LEN(szBuffer)] = ','
+         szBuffer[LEN(szBuffer)] = '<0>'
+      END
+      AsciiFile.Buffer = szBuffer
+      ADD(AsciiFile)
+   RETURN
+DOO.FillFilePatternQueue     PROCEDURE()
+i     LONG
+j     LONG
+
+   CODE
+      FREE(FilePatternQueue)
+      j = 1
+      i = INSTRING(' ',szFilePatterns,,j)
+      LOOP WHILE i > 0
+         FilePatternQueue.Pattern =szFilePatterns[j : i-1]
+         ADD(FilePatternQueue,+FilePatternQueue.Pattern)
+         j = i+1
+         i = INSTRING(' ',szFilePatterns,,j)
+      END
+      FilePatternQueue.Pattern = szFilePatterns[j : LEN(szFilePatterns)]
+      ADD(FilePatternQueue,+FilePatternQueue.Pattern)
+
+      IF RECORDS(FilePatternQueue)
+         ?ChangeFilePattern{PROP:Disable} = FALSE
+         ?DeleteFilePattern{PROP:Disable} = FALSE
+      ELSE
+         ?ChangeFilePattern{PROP:Disable} = TRUE
+         ?DeleteFilePattern{PROP:Disable} = TRUE
+      END
+      GET(FilePatternQueue,1)
+      ?lbFilePatterns{PROP:Selected} = 1
+   RETURN
+DOO.LoadFilePatternsFromFilePatternQueue     PROCEDURE()
+i     LONG
+j     LONG
+
+   CODE
+      szFilePatterns = ''
+      SORT(FilePatternQueue,+FilePatternQueue.Pattern)
+      j = RECORDS(FilePatternQueue)
+      LOOP i = 1 TO j
+         GET(FilePatternQueue,i)
+         szFilePatterns = szFilePatterns & FilePatternQueue.Pattern & ' '
+      END
+      szFilePatterns[LEN(szFilePatterns)] = '<0>'
+   RETURN
+DOO.FillListBoxQueue     PROCEDURE()
+i     LONG
+j     LONG
+
+   CODE
+      FREE(ListBoxQueue)
+
+      GET(qKeywords,CHOICE(?lbKeywords))
+      j = 1
+      i = INSTRING(' ',qKeywords.szKeywords,,j)
+      LOOP WHILE i > 0
+         ListBoxQueue.Value = qKeywords.szKeywords[j : i-1]
+         ADD(ListBoxQueue,+ListBoxQueue.Value)
+         j = i+1
+         i = INSTRING(' ',qKeywords.szKeywords,,j)
+      END
+      ListBoxQueue.Value = qKeywords.szKeywords[j : LEN(qKeywords.szKeywords)]
+      ADD(ListBoxQueue,+ListBoxQueue.Value)
+
+      IF RECORDS(ListBoxQueue)
+         ?ChangeKeyword{PROP:Disable} = FALSE
+         ?DeleteKeyword{PROP:Disable} = FALSE
+      ELSE
+         ?ChangeKeyword{PROP:Disable} = TRUE
+         ?DeleteKeyword{PROP:Disable} = TRUE
+      END
+      GET(ListBoxQueue,1)
+      ?lbKeywordValues{PROP:Selected} = 1
+   RETURN
+DOO.LoadKeywordsFromListBoxQueue     PROCEDURE()
+i     LONG
+j     LONG
+
+   CODE
+      qKeywords.szKeywords = ''
+      SORT(ListBoxQueue,+ListBoxQueue.Value)
+      j = RECORDS(ListBoxQueue)
+      LOOP i = 1 TO j
+         GET(ListBoxQueue,i)
+         qKeywords.szKeywords = qKeywords.szKeywords & ListBoxQueue.Value & ' '
+      END
+      qKeywords.szKeywords[LEN(qKeywords.szKeywords)] = '<0>'
+      PUT(qKeywords)
+   RETURN
+DOO.CheckForChanges   PROCEDURE()
+  CODE
+   IF bDirty = FALSE
+      IF saveFilePatterns <> '' AND saveFilePatterns <> szFilePatterns
+         bDirty = TRUE
+      END
+
+      IF bDirty = FALSE AND saveKeywordSet.szKeywordNumber <> ''
+         IF saveKeywordSet.szDescription <> qKeywords.szDescription     |
+         OR saveKeywordSet.szKeywordNumber <> qKeywords.szKeywordNumber |
+         OR saveKeywordSet.szKeywords <> qKeywords.szKeywords
+            bDirty = TRUE
+         END
+      END
+
+      IF bDirty = FALSE AND saveStyle.szStyleNumber <> ''
+         IF saveStyle.szDescription <> qStyles.szDescription   |
+         OR saveStyle.szStyleNumber <> qStyles.szStyleNumber   |
+         OR saveStyle.szFontName    <> qStyles.szFontName      |
+         OR saveStyle.nFontSize     <> qStyles.nFontSize       |
+         OR saveStyle.nFontStyle    <> qStyles.nFontStyle      |
+         OR saveStyle.bBold         <> qStyles.bBold           |
+         OR saveStyle.bEolFilled    <> qStyles.bEolFilled      |
+         OR saveStyle.bHide         <> qStyles.bHide           |
+         OR saveStyle.bHotSpot      <> qStyles.bHotSpot        |
+         OR saveStyle.bItalic       <> qStyles.bItalic         |
+         OR saveStyle.bUnderline    <> qStyles.bUnderline      |
+         OR saveStyle.nCaseOpt      <> qStyles.nCaseOpt        |
+         OR saveStyle.lForeColor    <> qStyles.lForeColor      |
+         OR saveStyle.lBackColor    <> qStyles.lBackColor
+            bDirty = TRUE
+         END
+      END
+   END
 QEIP2:EM.AddControl            PROCEDURE(<EditClass E>,UNSIGNED Column,BYTE AutoFree)
   CODE
   PARENT.AddControl(E,Column,AutoFree)
