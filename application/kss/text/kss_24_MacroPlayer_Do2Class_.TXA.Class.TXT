@@ -1,0 +1,59 @@
+- Paste Class Declaration into Data Section -----
+DOO CLASS                      !Created 05/24/20  3:16PM by Do2Class by Carl Barnes
+FillLocalQueue    PROCEDURE()
+FormatQueueRecord PROCEDURE()
+SaveMacroQueue    PROCEDURE()
+    END  !3 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\kss_24_MacroPlayer_Do2Class_.TXA                                                                                                                                                                                              
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\kss_24_MacroPlayer.txa                                                                                                                                                                                                        
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/24/20  3:16PM by Do2Class by Carl Barnes
+FillLocalQueue    PROCEDURE()
+FormatQueueRecord PROCEDURE()
+SaveMacroQueue    PROCEDURE()
+    END  !3 Routines Found
+!=======================================================
+
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+FillLocalQueue                               833  FillLocalQueue    ROUTINE
+           *PROCEDURE*                       564  DOO.FillLocalQueue()
+FormatQueueRecord                            848  FormatQueueRecord ROUTINE
+           FillLocalQueue                    843  DOO.FormatQueueRecord()
+SaveMacroQueue                               892  SaveMacroQueue ROUTINE
+           *PROCEDURE*                       718  DOO.SaveMacroQueue()
+           *PROCEDURE*                       735  DOO.SaveMacroQueue()
+           *PROCEDURE*                       752  DOO.SaveMacroQueue()
+           *PROCEDURE*                       821  DOO.SaveMacroQueue()
+           *PROCEDURE*                       943  DOO.SaveMacroQueue()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                  525  MacroPlayer   Procedure()
+           FillLocalQueue                    564  DOO.FillLocalQueue()
+           SaveMacroQueue                    718  DOO.SaveMacroQueue()
+           SaveMacroQueue                    735  DOO.SaveMacroQueue()
+           SaveMacroQueue                    752  DOO.SaveMacroQueue()
+           SaveMacroQueue                    821  DOO.SaveMacroQueue()
+           SaveMacroQueue                    943  DOO.SaveMacroQueue()
+FillLocalQueue                               833  FillLocalQueue    ROUTINE
+           FormatQueueRecord                 843  DOO.FormatQueueRecord()
+FormatQueueRecord                            848  FormatQueueRecord ROUTINE
+SaveMacroQueue                               892  SaveMacroQueue ROUTINE
+========================================  ======  ==============================
+
