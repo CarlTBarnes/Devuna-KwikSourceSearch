@@ -1,0 +1,471 @@
+ -----
+DOO CLASS                      !Created 05/25/20 12:12PM by Do2Class by Carl Barnes
+SetupResultListMenu      PROCEDURE()
+AddSearchQueueRecord     PROCEDURE()
+GetSearchQueueRecord     PROCEDURE()
+UpdateLocalSearchOptions PROCEDURE()
+UpdateSearchQueueRecord  PROCEDURE()
+SaveSearchParameters     PROCEDURE()
+HandleCloseTab           PROCEDURE()
+CloseTab                 PROCEDURE()
+CheckEditor              PROCEDURE()
+HandleEdit               PROCEDURE()
+HandleUnDo               PROCEDURE()
+HandleNewSelection       PROCEDURE()
+RefreshEditPane          PROCEDURE()
+HandleOrientationChange  PROCEDURE()
+HandleCenterBar          PROCEDURE()
+HandleHideResults        PROCEDURE()
+HandleHideEdit           PROCEDURE()
+HandleResize             PROCEDURE()
+Handle_FileModified      PROCEDURE()
+UpdateMatchCount         PROCEDURE()
+PreDelete                PROCEDURE()
+PostDelete               PROCEDURE()
+ProcessDeleteQueue       PROCEDURE()
+DeleteLine               PROCEDURE()
+DeletePath               PROCEDURE()
+DeleteFilename           PROCEDURE()
+DeleteExtension          PROCEDURE()
+DeleteCommentLines       PROCEDURE()
+DeleteLabelLines         PROCEDURE()
+DeleteCodeMatches        PROCEDURE()
+DeleteDataMatches        PROCEDURE()
+FindAndDelete            PROCEDURE()
+MoveToNextLine           PROCEDURE()
+MoveToPreviousLine       PROCEDURE()
+MoveToNextFile           PROCEDURE()
+MoveToPreviousFile       PROCEDURE()
+MoveToNextFolder         PROCEDURE()
+MoveToPreviousFolder     PROCEDURE()
+SaveViewerStyles         PROCEDURE()
+UpdateStatusBar          PROCEDURE()
+FillListFormatQueue      PROCEDURE()
+SetNewTabFont            PROCEDURE()
+SetTabFont               PROCEDURE()
+AdjustFontColour         PROCEDURE()
+SearchReplaceAll         PROCEDURE()
+CreateRestorePoint       PROCEDURE()
+    END  !46 Routines Found
+!=======================================================
+
+Click to Save to TXA, then import that TXA into your APP.
+Output File: E:\GitDevuna\KSS\application\kss\text\KSS_01_Main_Do2Class_.TXA                                                                                                                                                                                                     
+
+You will need to add to a DATA Section the above Class Declaration.
+If a DOO..Xxx() throws error "Unknown Procedure Label" you probably forgot to paste the Class Declaration.
+
+Do2Class: E:\Dev10Carl\Cwa_Tools2Add\DO_2_Class\Do2Class.exe
+Input File: E:\GitDevuna\KSS\application\kss\text\KSS_01_Main.txa                                                                                                                                                                                                               
+
+
+!-----  Class Declaration Sorted by Name ----- 
+
+DOO CLASS                      !Created 05/25/20 12:12PM by Do2Class by Carl Barnes
+AddSearchQueueRecord     PROCEDURE()
+AdjustFontColour         PROCEDURE()
+CheckEditor              PROCEDURE()
+CloseTab                 PROCEDURE()
+CreateRestorePoint       PROCEDURE()
+DeleteCodeMatches        PROCEDURE()
+DeleteCommentLines       PROCEDURE()
+DeleteDataMatches        PROCEDURE()
+DeleteExtension          PROCEDURE()
+DeleteFilename           PROCEDURE()
+DeleteLabelLines         PROCEDURE()
+DeleteLine               PROCEDURE()
+DeletePath               PROCEDURE()
+FillListFormatQueue      PROCEDURE()
+FindAndDelete            PROCEDURE()
+GetSearchQueueRecord     PROCEDURE()
+HandleCenterBar          PROCEDURE()
+HandleCloseTab           PROCEDURE()
+HandleEdit               PROCEDURE()
+HandleHideEdit           PROCEDURE()
+HandleHideResults        PROCEDURE()
+HandleNewSelection       PROCEDURE()
+HandleOrientationChange  PROCEDURE()
+HandleResize             PROCEDURE()
+HandleUnDo               PROCEDURE()
+Handle_FileModified      PROCEDURE()
+MoveToNextFile           PROCEDURE()
+MoveToNextFolder         PROCEDURE()
+MoveToNextLine           PROCEDURE()
+MoveToPreviousFile       PROCEDURE()
+MoveToPreviousFolder     PROCEDURE()
+MoveToPreviousLine       PROCEDURE()
+PostDelete               PROCEDURE()
+PreDelete                PROCEDURE()
+ProcessDeleteQueue       PROCEDURE()
+RefreshEditPane          PROCEDURE()
+SaveSearchParameters     PROCEDURE()
+SaveViewerStyles         PROCEDURE()
+SearchReplaceAll         PROCEDURE()
+SetNewTabFont            PROCEDURE()
+SetTabFont               PROCEDURE()
+SetupResultListMenu      PROCEDURE()
+UpdateLocalSearchOptions PROCEDURE()
+UpdateMatchCount         PROCEDURE()
+UpdateSearchQueueRecord  PROCEDURE()
+UpdateStatusBar          PROCEDURE()
+    END  !46 Routines Found
+!=======================================================
+
+X-Reference of Procedure and Who Calls Proc 
+Callee  /  Caller Name                    LineNo  Code
+========================================  ======  ==============================
+AddSearchQueueRecord                       3,093  AddSearchQueueRecord    ROUTINE
+           *PROCEDURE*                     1,222  DOO.AddSearchQueueRecord()
+           *PROCEDURE*                     1,991  DOO.AddSearchQueueRecord()
+           *PROCEDURE*                     2,396  DOO.AddSearchQueueRecord()
+           *PROCEDURE*                     2,509  DOO.AddSearchQueueRecord()
+           *PROCEDURE*                     2,555  DOO.AddSearchQueueRecord()
+AdjustFontColour                           4,618  AdjustFontColour  ROUTINE
+           *PROCEDURE*                     1,153  DOO.AdjustFontColour()   !adjust some font colours based on brightness of toolba
+           *PROCEDURE*                     2,799  DOO.AdjustFontColour()   !adjust some font colours based on brightness of toolba
+CheckEditor                                3,358  CheckEditor ROUTINE
+           *PROCEDURE*                     2,245  DOO.CheckEditor()
+           *PROCEDURE*                     2,322  DOO.CheckEditor()
+           *PROCEDURE*                     2,665  DOO.CheckEditor()
+           *PROCEDURE*                     2,679  DOO.CheckEditor()
+CloseTab                                   3,302  CloseTab    ROUTINE
+           *PROCEDURE*                     2,535  DOO.CloseTab()
+           *PROCEDURE*                     2,582  DOO.CloseTab()
+           *PROCEDURE*                     2,602  DOO.CloseTab()
+           HandleCloseTab                  3,283  DOO.CloseTab()
+CreateRestorePoint                         4,645  CreateRestorePoint   ROUTINE
+           *PROCEDURE*                     1,487  DOO.CreateRestorePoint()
+DeleteCodeMatches                          4,130  DeleteCodeMatches    ROUTINE
+           *PROCEDURE*                     2,222  DOO.DeleteCodeMatches()
+           *PROCEDURE*                     2,701  DOO.DeleteCodeMatches()
+DeleteCommentLines                         4,061  DeleteCommentLines      ROUTINE
+           *PROCEDURE*                     2,216  DOO.DeleteCommentLines()
+           *PROCEDURE*                     2,723  DOO.DeleteCommentLines()
+DeleteDataMatches                          4,158  DeleteDataMatches    ROUTINE
+           *PROCEDURE*                     2,220  DOO.DeleteDataMatches()
+           *PROCEDURE*                     2,712  DOO.DeleteDataMatches()
+DeleteExtension                            4,025  DeleteExtension   ROUTINE
+           *PROCEDURE*                     1,895  DOO.DeleteExtension()
+           *PROCEDURE*                     2,214  DOO.DeleteExtension()
+DeleteFilename                             3,988  DeleteFilename ROUTINE
+           *PROCEDURE*                     1,873  DOO.DeleteFilename()
+           *PROCEDURE*                     2,212  DOO.DeleteFilename()
+DeleteLabelLines                           4,100  DeleteLabelLines     ROUTINE
+           *PROCEDURE*                     2,218  DOO.DeleteLabelLines()
+           *PROCEDURE*                     2,734  DOO.DeleteLabelLines()
+DeleteLine                                 3,919  DeleteLine  ROUTINE
+           *PROCEDURE*                     1,884  DOO.DeleteLine()
+           *PROCEDURE*                     2,208  DOO.DeleteLine()
+           *PROCEDURE*                     2,314  DOO.DeleteLine()
+DeletePath                                 3,952  DeletePath  ROUTINE
+           *PROCEDURE*                     1,862  DOO.DeletePath()
+           *PROCEDURE*                     2,210  DOO.DeletePath()
+FillListFormatQueue                        4,542  FillListFormatQueue     ROUTINE
+           *PROCEDURE*                     1,182  DOO.FillListFormatQueue()
+           *PROCEDURE*                     2,155  DOO.FillListFormatQueue()
+           *PROCEDURE*                     2,273  DOO.FillListFormatQueue()
+FindAndDelete                              4,186  FindAndDelete     ROUTINE
+           *PROCEDURE*                     1,851  DOO.FindAndDelete()
+           *PROCEDURE*                     2,224  DOO.FindAndDelete()
+GetSearchQueueRecord                       3,146  GetSearchQueueRecord    ROUTINE
+           *PROCEDURE*                     2,003  DOO.GetSearchQueueRecord()
+HandleCenterBar                            3,602  HandleCenterBar   ROUTINE
+           *PROCEDURE*                     2,279  DOO.HandleCenterBar()
+           *PROCEDURE*                     5,290  DOO.HandleCenterBar()
+HandleCloseTab                             3,281  HandleCloseTab ROUTINE
+           *PROCEDURE*                     2,129  DOO.HandleCloseTab()
+           *PROCEDURE*                     2,206  DOO.HandleCloseTab()
+           *PROCEDURE*                     2,856  DOO.HandleCloseTab()
+HandleEdit                                 3,374  HandleEdit  ROUTINE
+           CheckEditor                     3,362  DOO.HandleEdit()
+           CheckEditor                     3,367  DOO.HandleEdit()
+HandleHideEdit                             3,637  HandleHideEdit    ROUTINE
+           *PROCEDURE*                     2,305  DOO.HandleHideEdit()
+HandleHideResults                          3,616  HandleHideResults ROUTINE
+           *PROCEDURE*                     5,769  DOO.HandleHideResults()
+HandleNewSelection                         3,475  HandleNewSelection   ROUTINE
+           *PROCEDURE*                     2,108  DOO.HandleNewSelection()
+           *PROCEDURE*                     2,343  DOO.HandleNewSelection()
+           *PROCEDURE*                     2,867  DOO.HandleNewSelection()
+           PostDelete                      3,871  DOO.HandleNewSelection()
+HandleOrientationChange                    3,567  HandleOrientationChange ROUTINE
+           *PROCEDURE*                     1,241  DOO.HandleOrientationChange()
+           *PROCEDURE*                     2,782  DOO.HandleOrientationChange()
+           *PROCEDURE*                     2,913  DOO.HandleOrientationChange()
+HandleResize                               3,666  HandleResize      ROUTINE
+           *PROCEDURE*                     1,937  DOO.HandleResize()
+           HandleOrientationChange         3,597  DOO.HandleResize()
+           HandleCenterBar                 3,611  DOO.HandleResize()
+           HandleHideResults               3,632  DOO.HandleResize()
+           HandleHideEdit                  3,661  DOO.HandleResize()
+           *PROCEDURE*                     5,304  DOO.HandleResize()
+HandleUnDo                                 3,433  HandleUnDo  ROUTINE
+           *PROCEDURE*                     2,226  DOO.HandleUnDo()
+           *PROCEDURE*                     2,330  DOO.HandleUnDo()
+           *PROCEDURE*                     2,690  DOO.HandleUndo()
+Handle_FileModified                        3,789  Handle_FileModified  ROUTINE
+           *PROCEDURE*                     1,401  DOO.Handle_FileModified()
+           *PROCEDURE*                     2,375  DOO.Handle_FileModified()
+           RefreshEditPane                 3,511  DOO.Handle_FileModified()
+           RefreshEditPane                 3,525  DOO.Handle_FileModified()
+           *PROCEDURE*                     5,712  DOO.Handle_FileModified()
+           *PROCEDURE*                     6,814  DOO.Handle_FileModified()
+MoveToNextFile                             4,371  MoveToNextFile    ROUTINE
+           *PROCEDURE*                     2,265  DOO.MoveToNextFile()
+           *PROCEDURE*                     2,617  DOO.MoveToNextFile()
+MoveToNextFolder                           4,438  MoveToNextFolder     ROUTINE
+           *PROCEDURE*                     2,261  DOO.MoveToNextFolder()
+           *PROCEDURE*                     2,639  DOO.MoveToNextFolder()
+MoveToNextLine                             4,323  MoveToNextLine    ROUTINE
+           *PROCEDURE*                     2,269  DOO.MoveToNextLine()
+           *PROCEDURE*                     2,946  DOO.MoveToNextLine()
+MoveToPreviousFile                         4,400  MoveToPreviousFile    ROUTINE
+           *PROCEDURE*                     2,263  DOO.MoveToPreviousFile()
+           *PROCEDURE*                     2,650  DOO.MoveToPreviousFile()
+MoveToPreviousFolder                       4,464  MoveToPreviousFolder     ROUTINE
+           *PROCEDURE*                     2,259  DOO.MoveToPreviousFolder()
+           *PROCEDURE*                     2,628  DOO.MoveToPreviousFolder()
+MoveToPreviousLine                         4,347  MoveToPreviousLine   ROUTINE
+           *PROCEDURE*                     2,267  DOO.MoveToPreviousLine()
+           *PROCEDURE*                     2,935  DOO.MoveToPreviousLine()
+PostDelete                                 3,854  PostDelete  ROUTINE
+           DeleteLine                      3,946  DOO.PostDelete()
+           DeletePath                      3,983  DOO.PostDelete()
+           DeleteFilename                  4,020  DOO.PostDelete()
+           DeleteExtension                 4,056  DOO.PostDelete()
+           DeleteCommentLines              4,094  DOO.PostDelete()
+           DeleteLabelLines                4,124  DOO.PostDelete()
+           DeleteCodeMatches               4,153  DOO.PostDelete()
+           DeleteDataMatches               4,181  DOO.PostDelete()
+           FindAndDelete                   4,317  DOO.PostDelete()
+PreDelete                                  3,837  PreDelete   ROUTINE
+           DeleteLine                      3,924  DOO.PreDelete()
+           DeletePath                      3,959  DOO.PreDelete()
+           DeleteFilename                  3,995  DOO.PreDelete()
+           DeleteExtension                 4,032  DOO.PreDelete()
+           DeleteCommentLines              4,069  DOO.PreDelete()
+           DeleteLabelLines                4,107  DOO.PreDelete()
+           DeleteCodeMatches               4,136  DOO.PreDelete()
+           DeleteDataMatches               4,164  DOO.PreDelete()
+           FindAndDelete                   4,245  DOO.PreDelete()
+ProcessDeleteQueue                         3,883  ProcessDeleteQueue      ROUTINE
+           PostDelete                      3,862  DOO.ProcessDeleteQueue()
+           PostDelete                      3,866  DOO.ProcessDeleteQueue()
+RefreshEditPane                            3,489  RefreshEditPane   ROUTINE
+           *PROCEDURE*                     1,248  DOO.RefreshEditPane()
+           HandleNewSelection              3,485  DOO.RefreshEditPane()
+           *PROCEDURE*                     5,354  DOO.RefreshEditPane()
+SaveSearchParameters                       3,189  SaveSearchParameters ROUTINE
+           *PROCEDURE*                       873  DOO.SaveSearchParameters()
+           *PROCEDURE*                     2,450  DOO.SaveSearchParameters()
+SaveViewerStyles                           4,499  SaveViewerStyles    ROUTINE
+           *PROCEDURE*                       874  DOO.SaveViewerStyles()
+SearchReplaceAll                           4,640  SearchReplaceAll  ROUTINE
+SetNewTabFont                              4,600  SetNewTabFont  ROUTINE
+           *PROCEDURE*                     1,231  DOO.SetNewTabFont()
+           *PROCEDURE*                     1,993  DOO.SetNewTabFont()
+           *PROCEDURE*                     2,400  DOO.SetNewTabFont()
+           *PROCEDURE*                     2,512  DOO.SetNewTabFont()
+           *PROCEDURE*                     2,558  DOO.SetNewTabFont()
+SetTabFont                                 4,609  SetTabFont  ROUTINE
+           *PROCEDURE*                     1,988  DOO.SetTabFont()
+           *PROCEDURE*                     2,394  DOO.SetTabFont()
+           *PROCEDURE*                     2,507  DOO.SetTabFont()
+           *PROCEDURE*                     2,553  DOO.SetTabFont()
+SetupResultListMenu                        3,012  SetupResultListMenu  ROUTINE
+           *PROCEDURE*                     1,236  DOO.SetupResultListMenu()
+           *PROCEDURE*                     2,835  DOO.SetupResultListMenu()
+UpdateLocalSearchOptions                   3,156  UpdateLocalSearchOptions   ROUTINE
+           *PROCEDURE*                     2,391  DOO.UpdateLocalSearchOptions()
+           GetSearchQueueRecord            3,150  DOO.UpdateLocalSearchOptions()
+UpdateMatchCount                           3,812  UpdateMatchCount     ROUTINE
+           *PROCEDURE*                     2,087  DOO.UpdateMatchCount()
+           HandleUnDo                      3,469  DOO.UpdateMatchCount()
+           PostDelete                      3,870  DOO.UpdateMatchCount()
+UpdateSearchQueueRecord                    3,181  UpdateSearchQueueRecord    ROUTINE
+           *PROCEDURE*                     1,974  DOO.UpdateSearchQueueRecord()
+           *PROCEDURE*                     1,987  DOO.UpdateSearchQueueRecord()
+UpdateStatusBar                            4,525  UpdateStatusBar   ROUTINE
+           *PROCEDURE*                     1,458  DOO.UpdateStatusBar()
+========================================  ======  ==============================
+
+
+X-Reference of Procedure and What Procs it Calls 
+Caller  /  Callee Name                    LineNo  Code
+========================================  ======  ==============================
+*PROCEDURE*                                1,851  Main   Procedure()
+           SaveSearchParameters              873  DOO.SaveSearchParameters()
+           SaveViewerStyles                  874  DOO.SaveViewerStyles()
+           AdjustFontColour                1,153  DOO.AdjustFontColour()   !adjust some font colours based on brightness of toolba
+           FillListFormatQueue             1,182  DOO.FillListFormatQueue()
+           AddSearchQueueRecord            1,222  DOO.AddSearchQueueRecord()
+           SetNewTabFont                   1,231  DOO.SetNewTabFont()
+           SetupResultListMenu             1,236  DOO.SetupResultListMenu()
+           HandleOrientationChange         1,241  DOO.HandleOrientationChange()
+           RefreshEditPane                 1,248  DOO.RefreshEditPane()
+           Handle_FileModified             1,401  DOO.Handle_FileModified()
+           UpdateStatusBar                 1,458  DOO.UpdateStatusBar()
+           CreateRestorePoint              1,487  DOO.CreateRestorePoint()
+           FindAndDelete                   1,851  DOO.FindAndDelete()
+           DeletePath                      1,862  DOO.DeletePath()
+           DeleteFilename                  1,873  DOO.DeleteFilename()
+           DeleteLine                      1,884  DOO.DeleteLine()
+           DeleteExtension                 1,895  DOO.DeleteExtension()
+           HandleResize                    1,937  DOO.HandleResize()
+           UpdateSearchQueueRecord         1,974  DOO.UpdateSearchQueueRecord()
+           UpdateSearchQueueRecord         1,987  DOO.UpdateSearchQueueRecord()
+           SetTabFont                      1,988  DOO.SetTabFont()
+           AddSearchQueueRecord            1,991  DOO.AddSearchQueueRecord()
+           SetNewTabFont                   1,993  DOO.SetNewTabFont()
+           GetSearchQueueRecord            2,003  DOO.GetSearchQueueRecord()
+           UpdateMatchCount                2,087  DOO.UpdateMatchCount()
+           HandleNewSelection              2,108  DOO.HandleNewSelection()
+           HandleCloseTab                  2,129  DOO.HandleCloseTab()
+           FillListFormatQueue             2,155  DOO.FillListFormatQueue()
+           HandleCloseTab                  2,206  DOO.HandleCloseTab()
+           DeleteLine                      2,208  DOO.DeleteLine()
+           DeletePath                      2,210  DOO.DeletePath()
+           DeleteFilename                  2,212  DOO.DeleteFilename()
+           DeleteExtension                 2,214  DOO.DeleteExtension()
+           DeleteCommentLines              2,216  DOO.DeleteCommentLines()
+           DeleteLabelLines                2,218  DOO.DeleteLabelLines()
+           DeleteDataMatches               2,220  DOO.DeleteDataMatches()
+           DeleteCodeMatches               2,222  DOO.DeleteCodeMatches()
+           FindAndDelete                   2,224  DOO.FindAndDelete()
+           HandleUnDo                      2,226  DOO.HandleUnDo()
+           CheckEditor                     2,245  DOO.CheckEditor()
+           MoveToPreviousFolder            2,259  DOO.MoveToPreviousFolder()
+           MoveToNextFolder                2,261  DOO.MoveToNextFolder()
+           MoveToPreviousFile              2,263  DOO.MoveToPreviousFile()
+           MoveToNextFile                  2,265  DOO.MoveToNextFile()
+           MoveToPreviousLine              2,267  DOO.MoveToPreviousLine()
+           MoveToNextLine                  2,269  DOO.MoveToNextLine()
+           FillListFormatQueue             2,273  DOO.FillListFormatQueue()
+           HandleCenterBar                 2,279  DOO.HandleCenterBar()
+           HandleHideEdit                  2,305  DOO.HandleHideEdit()
+           DeleteLine                      2,314  DOO.DeleteLine()
+           CheckEditor                     2,322  DOO.CheckEditor()
+           HandleUnDo                      2,330  DOO.HandleUnDo()
+           HandleNewSelection              2,343  DOO.HandleNewSelection()
+           Handle_FileModified             2,375  DOO.Handle_FileModified()
+           UpdateLocalSearchOptions        2,391  DOO.UpdateLocalSearchOptions()
+           SetTabFont                      2,394  DOO.SetTabFont()
+           AddSearchQueueRecord            2,396  DOO.AddSearchQueueRecord()
+           SetNewTabFont                   2,400  DOO.SetNewTabFont()
+           SaveSearchParameters            2,450  DOO.SaveSearchParameters()
+           SetTabFont                      2,507  DOO.SetTabFont()
+           AddSearchQueueRecord            2,509  DOO.AddSearchQueueRecord()
+           SetNewTabFont                   2,512  DOO.SetNewTabFont()
+           CloseTab                        2,535  DOO.CloseTab()
+           SetTabFont                      2,553  DOO.SetTabFont()
+           AddSearchQueueRecord            2,555  DOO.AddSearchQueueRecord()
+           SetNewTabFont                   2,558  DOO.SetNewTabFont()
+           CloseTab                        2,582  DOO.CloseTab()
+           CloseTab                        2,602  DOO.CloseTab()
+           MoveToNextFile                  2,617  DOO.MoveToNextFile()
+           MoveToPreviousFolder            2,628  DOO.MoveToPreviousFolder()
+           MoveToNextFolder                2,639  DOO.MoveToNextFolder()
+           MoveToPreviousFile              2,650  DOO.MoveToPreviousFile()
+           CheckEditor                     2,665  DOO.CheckEditor()
+           CheckEditor                     2,679  DOO.CheckEditor()
+           HandleUnDo                      2,690  DOO.HandleUndo()
+           DeleteCodeMatches               2,701  DOO.DeleteCodeMatches()
+           DeleteDataMatches               2,712  DOO.DeleteDataMatches()
+           DeleteCommentLines              2,723  DOO.DeleteCommentLines()
+           DeleteLabelLines                2,734  DOO.DeleteLabelLines()
+           HandleOrientationChange         2,782  DOO.HandleOrientationChange()
+           AdjustFontColour                2,799  DOO.AdjustFontColour()   !adjust some font colours based on brightness of toolba
+           SetupResultListMenu             2,835  DOO.SetupResultListMenu()
+           HandleCloseTab                  2,856  DOO.HandleCloseTab()
+           HandleNewSelection              2,867  DOO.HandleNewSelection()
+           HandleOrientationChange         2,913  DOO.HandleOrientationChange()
+           MoveToPreviousLine              2,935  DOO.MoveToPreviousLine()
+           MoveToNextLine                  2,946  DOO.MoveToNextLine()
+           HandleCenterBar                 5,290  DOO.HandleCenterBar()
+           HandleResize                    5,304  DOO.HandleResize()
+           RefreshEditPane                 5,354  DOO.RefreshEditPane()
+           Handle_FileModified             5,712  DOO.Handle_FileModified()
+           HandleHideResults               5,769  DOO.HandleHideResults()
+           Handle_FileModified             6,814  DOO.Handle_FileModified()
+AddSearchQueueRecord                       3,093  AddSearchQueueRecord    ROUTINE
+AdjustFontColour                           4,618  AdjustFontColour  ROUTINE
+CheckEditor                                3,358  CheckEditor ROUTINE
+           HandleEdit                      3,362  DOO.HandleEdit()
+           HandleEdit                      3,367  DOO.HandleEdit()
+CloseTab                                   3,302  CloseTab    ROUTINE
+CreateRestorePoint                         4,645  CreateRestorePoint   ROUTINE
+DeleteCodeMatches                          4,130  DeleteCodeMatches    ROUTINE
+           PreDelete                       4,136  DOO.PreDelete()
+           PostDelete                      4,153  DOO.PostDelete()
+DeleteCommentLines                         4,061  DeleteCommentLines      ROUTINE
+           PreDelete                       4,069  DOO.PreDelete()
+           PostDelete                      4,094  DOO.PostDelete()
+DeleteDataMatches                          4,158  DeleteDataMatches    ROUTINE
+           PreDelete                       4,164  DOO.PreDelete()
+           PostDelete                      4,181  DOO.PostDelete()
+DeleteExtension                            4,025  DeleteExtension   ROUTINE
+           PreDelete                       4,032  DOO.PreDelete()
+           PostDelete                      4,056  DOO.PostDelete()
+DeleteFilename                             3,988  DeleteFilename ROUTINE
+           PreDelete                       3,995  DOO.PreDelete()
+           PostDelete                      4,020  DOO.PostDelete()
+DeleteLabelLines                           4,100  DeleteLabelLines     ROUTINE
+           PreDelete                       4,107  DOO.PreDelete()
+           PostDelete                      4,124  DOO.PostDelete()
+DeleteLine                                 3,919  DeleteLine  ROUTINE
+           PreDelete                       3,924  DOO.PreDelete()
+           PostDelete                      3,946  DOO.PostDelete()
+DeletePath                                 3,952  DeletePath  ROUTINE
+           PreDelete                       3,959  DOO.PreDelete()
+           PostDelete                      3,983  DOO.PostDelete()
+FillListFormatQueue                        4,542  FillListFormatQueue     ROUTINE
+FindAndDelete                              4,186  FindAndDelete     ROUTINE
+           PreDelete                       4,245  DOO.PreDelete()
+           PostDelete                      4,317  DOO.PostDelete()
+GetSearchQueueRecord                       3,146  GetSearchQueueRecord    ROUTINE
+           UpdateLocalSearchOptions        3,150  DOO.UpdateLocalSearchOptions()
+HandleCenterBar                            3,602  HandleCenterBar   ROUTINE
+           HandleResize                    3,611  DOO.HandleResize()
+HandleCloseTab                             3,281  HandleCloseTab ROUTINE
+           CloseTab                        3,283  DOO.CloseTab()
+HandleEdit                                 3,374  HandleEdit  ROUTINE
+HandleHideEdit                             3,637  HandleHideEdit    ROUTINE
+           HandleResize                    3,661  DOO.HandleResize()
+HandleHideResults                          3,616  HandleHideResults ROUTINE
+           HandleResize                    3,632  DOO.HandleResize()
+HandleNewSelection                         3,475  HandleNewSelection   ROUTINE
+           RefreshEditPane                 3,485  DOO.RefreshEditPane()
+HandleOrientationChange                    3,567  HandleOrientationChange ROUTINE
+           HandleResize                    3,597  DOO.HandleResize()
+HandleResize                               3,666  HandleResize      ROUTINE
+HandleUnDo                                 3,433  HandleUnDo  ROUTINE
+           UpdateMatchCount                3,469  DOO.UpdateMatchCount()
+Handle_FileModified                        3,789  Handle_FileModified  ROUTINE
+MoveToNextFile                             4,371  MoveToNextFile    ROUTINE
+MoveToNextFolder                           4,438  MoveToNextFolder     ROUTINE
+MoveToNextLine                             4,323  MoveToNextLine    ROUTINE
+MoveToPreviousFile                         4,400  MoveToPreviousFile    ROUTINE
+MoveToPreviousFolder                       4,464  MoveToPreviousFolder     ROUTINE
+MoveToPreviousLine                         4,347  MoveToPreviousLine   ROUTINE
+PostDelete                                 3,854  PostDelete  ROUTINE
+           ProcessDeleteQueue              3,862  DOO.ProcessDeleteQueue()
+           ProcessDeleteQueue              3,866  DOO.ProcessDeleteQueue()
+           UpdateMatchCount                3,870  DOO.UpdateMatchCount()
+           HandleNewSelection              3,871  DOO.HandleNewSelection()
+PreDelete                                  3,837  PreDelete   ROUTINE
+ProcessDeleteQueue                         3,883  ProcessDeleteQueue      ROUTINE
+RefreshEditPane                            3,489  RefreshEditPane   ROUTINE
+           Handle_FileModified             3,511  DOO.Handle_FileModified()
+           Handle_FileModified             3,525  DOO.Handle_FileModified()
+SaveSearchParameters                       3,189  SaveSearchParameters ROUTINE
+SaveViewerStyles                           4,499  SaveViewerStyles    ROUTINE
+SearchReplaceAll                           4,640  SearchReplaceAll  ROUTINE
+SetNewTabFont                              4,600  SetNewTabFont  ROUTINE
+SetTabFont                                 4,609  SetTabFont  ROUTINE
+SetupResultListMenu                        3,012  SetupResultListMenu  ROUTINE
+UpdateLocalSearchOptions                   3,156  UpdateLocalSearchOptions   ROUTINE
+UpdateMatchCount                           3,812  UpdateMatchCount     ROUTINE
+UpdateSearchQueueRecord                    3,181  UpdateSearchQueueRecord    ROUTINE
+UpdateStatusBar                            4,525  UpdateStatusBar   ROUTINE
+========================================  ======  ==============================
+

@@ -48,6 +48,56 @@ feqResultList           LONG
 !!! </summary>
 Main PROCEDURE 
 
+DOO CLASS                      !Created 05/25/20 12:12PM by Do2Class by Carl Barnes
+AddSearchQueueRecord     PROCEDURE()
+AdjustFontColour         PROCEDURE()
+CheckEditor              PROCEDURE()
+CloseTab                 PROCEDURE()
+CreateRestorePoint       PROCEDURE()
+DeleteCodeMatches        PROCEDURE()
+DeleteCommentLines       PROCEDURE()
+DeleteDataMatches        PROCEDURE()
+DeleteExtension          PROCEDURE()
+DeleteFilename           PROCEDURE()
+DeleteLabelLines         PROCEDURE()
+DeleteLine               PROCEDURE()
+DeletePath               PROCEDURE()
+FillListFormatQueue      PROCEDURE()
+FindAndDelete            PROCEDURE()
+GetSearchQueueRecord     PROCEDURE()
+HandleCenterBar          PROCEDURE()
+HandleCloseTab           PROCEDURE()
+HandleEdit               PROCEDURE()
+HandleHideEdit           PROCEDURE()
+HandleHideResults        PROCEDURE()
+HandleNewSelection       PROCEDURE()
+HandleOrientationChange  PROCEDURE()
+HandleResize             PROCEDURE()
+HandleUnDo               PROCEDURE()
+Handle_FileModified      PROCEDURE()
+MoveToNextFile           PROCEDURE()
+MoveToNextFolder         PROCEDURE()
+MoveToNextLine           PROCEDURE()
+MoveToPreviousFile       PROCEDURE()
+MoveToPreviousFolder     PROCEDURE()
+MoveToPreviousLine       PROCEDURE()
+PostDelete               PROCEDURE()
+PreDelete                PROCEDURE()
+ProcessDeleteQueue       PROCEDURE()
+RefreshEditPane          PROCEDURE()
+SaveSearchParameters     PROCEDURE()
+SaveViewerStyles         PROCEDURE()
+SearchReplaceAll         PROCEDURE()
+SetNewTabFont            PROCEDURE()
+SetTabFont               PROCEDURE()
+SetupResultListMenu      PROCEDURE()
+UpdateLocalSearchOptions PROCEDURE()
+UpdateMatchCount         PROCEDURE()
+UpdateSearchQueueRecord  PROCEDURE()
+UpdateStatusBar          PROCEDURE()
+    END  !46 Routines Found
+
+
 !region Notices
 ! ================================================================================
 ! Notice : Copyright (C) 2017, Devuna
@@ -359,7 +409,8 @@ DefineListboxStyle ROUTINE
 !| It`s called after the window open
 !|
 !---------------------------------------------------------------------------
-SetupResultListMenu  ROUTINE
+DOO.SetupResultListMenu  PROCEDURE()
+  CODE
    ResultListMenu.AddItem('Search<9>Ctrl+F','Search')
    ResultListMenu.AddItem('Redo Search<9>F5','RedoSearch')
    ResultListMenu.AddItem('Show Match Summary','Summary')
@@ -436,7 +487,8 @@ SetupResultListMenu  ROUTINE
    END
    ResultListMenu.SetItemEnable('Cancel',FALSE)
    ResultListMenu.SetItemEnable('HideEdit',CHOOSE(glo:bHideResultsPanel=FALSE,TRUE,FALSE))
-AddSearchQueueRecord    ROUTINE
+DOO.AddSearchQueueRecord    PROCEDURE()
+  CODE
   SearchQueue.tabNumber = NewTab
   SearchQueue.bMatchPatternStartOfLine = bMatchPatternStartOfLine
   SearchQueue.bMatchPatternEndOfLine   = bMatchPatternEndOfLine
@@ -485,13 +537,15 @@ AddSearchQueueRecord    ROUTINE
   SearchQueue.FindGroup.bWordWrap = TRUE
 
   ADD(SearchQueue,SearchQueue.tabNumber)
-GetSearchQueueRecord    ROUTINE
+DOO.GetSearchQueueRecord    PROCEDURE()
+  CODE
   SearchQueue.tabNumber = ?CurrentSearch{PROP:ChoiceFeq}
   GET(SearchQueue,SearchQueue.tabNumber)
   IF NOT ERRORCODE()
-     DO UpdateLocalSearchOptions
+     DOO.UpdateLocalSearchOptions()
   END
-UpdateLocalSearchOptions   ROUTINE
+DOO.UpdateLocalSearchOptions   PROCEDURE()
+  CODE
      bMatchPatternStartOfLine = SearchQueue.bMatchPatternStartOfLine
      bMatchPatternEndOfLine   = SearchQueue.bMatchPatternEndOfLine
      bUseRegularExpressions   = SearchQueue.bUseRegularExpressions
@@ -512,12 +566,12 @@ UpdateLocalSearchOptions   ROUTINE
      szFileListFilename       = SearchQueue.szFileListFilename
      bSearchStringsFromFile   = SearchQueue.bSearchStringsFromFile
      szSearchStringFilename   = SearchQueue.szSearchStringFilename
-UpdateSearchQueueRecord    ROUTINE
+DOO.UpdateSearchQueueRecord    PROCEDURE()
+  CODE
   GET(SearchQueue.ResultQueue,?ResultList{PROP:Selected})
   SearchQueue.lPointer        = POINTER(SearchQueue.ResultQueue)
   PUT(SearchQueue)
-SaveSearchParameters ROUTINE
-   DATA
+DOO.SaveSearchParameters PROCEDURE()
 n                 LONG
 LocationColWidth  LONG
 
@@ -603,10 +657,11 @@ LocationColWidth  LONG
       END
 
       INIMgr.UpdateQueue('Macro Queue','Macro',MacroQueue,MacroQueue.feqButton,MacroQueue.szField1,MacroQueue.szField2,MacroQueue.szField3)
-   EXIT
-HandleCloseTab ROUTINE
+   RETURN
+DOO.HandleCloseTab PROCEDURE()
+  CODE
       IF ?CurrentSearch{PROP:ChoiceFEQ} <> ?Search1
-         DO CloseTab
+         DOO.CloseTab()
       ELSE
          (?CurrentSearch{PROP:ChoiceFEQ}){PROP:Text} = 'New Search'
          SearchQueue.szMatchesFound = ''
@@ -625,8 +680,7 @@ HandleCloseTab ROUTINE
          POST(EVENT:Accepted,?cmdSearch)
       END
 
-CloseTab    ROUTINE
-   DATA
+DOO.CloseTab    PROCEDURE()
 i                    LONG
 j                    LONG
 p                    LONG
@@ -677,20 +731,20 @@ thisProcInfo         &PROCESS_INFORMATION
       END
       POST(EVENT:NewSelection,?CurrentSearch)
 
-CheckEditor ROUTINE
+DOO.CheckEditor PROCEDURE()
+  CODE
       IF RECORDS(EditorQueue) > 1 AND glo:PromptForEditor = TRUE
          IF SelectSendToCommand() = Level:Benign
             IF glo:szEditorCommand <> ''
-               DO HandleEdit
+               DOO.HandleEdit()
             END
          END
       ELSE
          IF glo:szEditorCommand <> ''
-            DO HandleEdit
+            DOO.HandleEdit()
          END
       END
-HandleEdit  ROUTINE
-   DATA
+DOO.HandleEdit  PROCEDURE()
 szURL                CSTRING(1024)
 szFilename           CSTRING(MAXPATH)
 i                    LONG
@@ -744,8 +798,7 @@ j                    LONG
             MESSAGE('An unexpected error has occurred.|' & ERROR() & '|attempting to run ' & szURL,'Error',ICON:Exclamation)
          END
       END
-HandleUnDo  ROUTINE
-   DATA
+DOO.HandleUnDo  PROCEDURE()
 indx     LONG
 
    CODE
@@ -780,9 +833,10 @@ indx     LONG
       END
       ?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
 
-      DO UpdateMatchCount
+      DOO.UpdateMatchCount()
       POST(EVENT:NewSelection,?ResultList)
-HandleNewSelection   ROUTINE
+DOO.HandleNewSelection   PROCEDURE()
+  CODE
   ListWithFocus = ?ResultList
   Window{Prop:StatusText,2} = 'RESULTS LIST'
 
@@ -792,19 +846,18 @@ HandleNewSelection   ROUTINE
         LastNavTime = CLOCK()
         EditPaneRefreshPending = TRUE
   ELSE
-        DO RefreshEditPane
+        DOO.RefreshEditPane()
   END
 
 
-RefreshEditPane   ROUTINE
-   DATA
+DOO.RefreshEditPane   PROCEDURE()
 p              LONG
 targetLine     LONG
 scrollDelta    LONG
 
    CODE
       IF SearchQueue.feqSearchProgress{PROP:Hide} = FALSE
-         EXIT
+         RETURN
       END
 
       EditPaneRefreshPending = FALSE
@@ -818,7 +871,7 @@ scrollDelta    LONG
       IF RECORDS(SearchQueue.ResultQueue) = 0
          IF ViewerActive
             IF SciControl.GetModify() AND szTitle <> ''
-               DO Handle_FileModified
+               DOO.Handle_FileModified()
             END
             SciControl.SetDefaultStyles()
             ViewerActive = FALSE
@@ -832,7 +885,7 @@ scrollDelta    LONG
          END
          IF ViewerActive AND CurrentFilename <> SearchQueue.ResultQueue.SortName
             IF SciControl.GetModify() AND szTitle <> ''
-               DO Handle_FileModified
+               DOO.Handle_FileModified()
             END
             ViewerActive = FALSE
          END
@@ -870,7 +923,8 @@ scrollDelta    LONG
          END
          POST(EVENT:GOTONEWLINE)
       END
-HandleOrientationChange ROUTINE
+DOO.HandleOrientationChange PROCEDURE()
+  CODE
    IF glo:SplitterOrientation = SplitterOrientation:Vertical
       ResultListMenu.SetIcon('Layout','SplitH.ico')
       ?cmdLayout{PROP:Icon} = '~SplitH.ico'
@@ -900,8 +954,9 @@ HandleOrientationChange ROUTINE
       END
       SETPOSITION(?SplitterBar,0,glo:SplitY,Window{PROP:Width}+1,SplitterBarSize)
    END
-   DO HandleResize
-HandleCenterBar   ROUTINE
+   DOO.HandleResize()
+DOO.HandleCenterBar   PROCEDURE()
+  CODE
    CASE glo:SplitterOrientation
      OF SplitterOrientation:Vertical
         glo:SplitX = (Window{PROP:Width}/2)
@@ -910,8 +965,9 @@ HandleCenterBar   ROUTINE
         glo:SplitY = (Window{PROP:Height}/2)
         SETPOSITION(?SplitterBar,0,glo:SplitY,Window{PROP:Width}+1,SplitterBarSize)
    END
-   DO HandleResize
-HandleHideResults ROUTINE
+   DOO.HandleResize()
+DOO.HandleHideResults PROCEDURE()
+  CODE
       IF glo:bHideResultsPanel = TRUE
          HIDE(?Application:Box)
          HIDE(?CurrentSearch)
@@ -927,8 +983,9 @@ HandleHideResults ROUTINE
          UNHIDE(?ResultList)
          UNHIDE(?SplitterBar)
       END
-      DO HandleResize
-HandleHideEdit    ROUTINE
+      DOO.HandleResize()
+DOO.HandleHideEdit    PROCEDURE()
+  CODE
       IF glo:bHideEditPanel = TRUE
          CASE glo:SplitterOrientation
            OF SplitterOrientation:Vertical
@@ -952,9 +1009,8 @@ HandleHideEdit    ROUTINE
          UNHIDE(?SplitterBar)
          SciControl.SetHide(FALSE)
       END
-      DO HandleResize
-HandleResize      ROUTINE
-   DATA
+      DOO.HandleResize()
+DOO.HandleResize      PROCEDURE()
 X        LONG
 Y        LONG
 W        LONG
@@ -1072,7 +1128,8 @@ Hpixels  LONG
          END
          ?Application:Box{PROP:Width} = ?CurrentSearch{PROP:Width}
       END
-Handle_FileModified  ROUTINE
+DOO.Handle_FileModified  PROCEDURE()
+  CODE
    IF glo:bAutoSave = TRUE
       IF glo:bShowAutoSaveWarning = TRUE
          CASE ConfirmAutoSave()
@@ -1090,9 +1147,8 @@ Handle_FileModified  ROUTINE
         OF BUTTON:NO
       END
    END
-   EXIT
-UpdateMatchCount     ROUTINE
-   DATA
+   RETURN
+DOO.UpdateMatchCount     PROCEDURE()
 Matches        LONG
 Deletes        LONG
 Remaining      LONG
@@ -1112,7 +1168,8 @@ Remaining      LONG
          END
 
          DISPLAY(?szMatchesFound)
-PreDelete   ROUTINE
+DOO.PreDelete   PROCEDURE()
+  CODE
    GET(SearchQueue.UndoQueue,RECORDS(SearchQueue.UndoQueue))
    IF ERRORCODE()
       thisDeleteInstance = 1
@@ -1125,7 +1182,8 @@ PreDelete   ROUTINE
    saveFilename = SearchQueue.ResultQueue.SortName
    saveLineNo   = SearchQueue.ResultQueue.LineNo
    savePosition = POINTER(SearchQueue.ResultQueue)
-PostDelete  ROUTINE
+DOO.PostDelete  PROCEDURE()
+  CODE
    ResultCount = RECORDS(SearchQueue.ResultQueue)
    DeleteCount = RECORDS(DeleteQueue)
    RemainingCount = ResultCount - DeleteCount
@@ -1133,25 +1191,24 @@ PostDelete  ROUTINE
       IF glo:nDeleteWarningCount > 0 AND DeleteCount >= glo:nDeleteWarningCount
          CASE MESSAGE(DeleteCount & ' record' & CHOOSE(DeleteCount > 1,'s','') & ' out of ' & ResultCount & ' will be deleted leaving ' & RemainingCount & ' record' & CHOOSE(RemainingCount > 1,'s','') & '.|Do you want to continue?','Confirm Delete',ICON:Question,BUTTON:YES+BUTTON:NO,BUTTON:YES)
            OF BUTTON:YES
-              DO ProcessDeleteQueue
+              DOO.ProcessDeleteQueue()
            OF BUTTON:NO
          END
       ELSE
-         DO ProcessDeleteQueue
+         DOO.ProcessDeleteQueue()
       END
       FREE(DeleteQueue)
       DISPLAY(?ResultList)
-      DO UpdateMatchCount
-      DO HandleNewSelection
+      DOO.UpdateMatchCount()
+      DOO.HandleNewSelection()
       IF bPlaying
          MacroQueue.mark = FALSE
          PUT(MacroQueue)
          POST(EVENT:PLAYNEXTSELECTION)
       END
    END
-   EXIT
-ProcessDeleteQueue      ROUTINE
-   DATA
+   RETURN
+DOO.ProcessDeleteQueue      PROCEDURE()
 indx        LONG
 
    CODE
@@ -1181,13 +1238,12 @@ indx        LONG
          GET(SearchQueue.ResultQueue,savePosition)
       END
       ?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
-   EXIT
-DeleteLine  ROUTINE
-   DATA
+   RETURN
+DOO.DeleteLine  PROCEDURE()
 errFlag        BOOL(FALSE)
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       IF bPlaying > 0
          SearchQueue.ResultQueue.SortName = MacroQueue.szField1
@@ -1209,16 +1265,15 @@ errFlag        BOOL(FALSE)
             MacroQueue.szField2   = SearchQueue.ResultQueue.LineNo
          END
 
-         DO PostDelete
+         DOO.PostDelete()
       END
-DeletePath  ROUTINE
-   DATA
+DOO.DeletePath  PROCEDURE()
 thisPath             LIKE(SearchQueue.ResultQueue.Path)
 i                    LONG
 j                    LONG
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       IF bPlaying > 0
          thisPath = MacroQueue.szField1
@@ -1242,15 +1297,14 @@ j                    LONG
          MacroQueue.szField2   = ''
       END
 
-      DO PostDelete
-DeleteFilename ROUTINE
-   DATA
+      DOO.PostDelete()
+DOO.DeleteFilename PROCEDURE()
 thisSortname         LIKE(SearchQueue.ResultQueue.SortName)
 i                    LONG
 j                    LONG
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       IF bPlaying > 0
          thisSortname = UPPER(MacroQueue.szField3) & UPPER(MacroQueue.szField2) & UPPER(MacroQueue.szField3)
@@ -1275,15 +1329,14 @@ j                    LONG
          MacroQueue.szField3    = SearchQueue.ResultQueue.Path
       END
 
-      DO PostDelete
-DeleteExtension   ROUTINE
-   DATA
+      DOO.PostDelete()
+DOO.DeleteExtension   PROCEDURE()
 thisExtension        LIKE(SearchQueue.ResultQueue.szExtension)
 i                    LONG
 j                    LONG
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       IF bPlaying > 0
         thisExtension = MacroQueue.szField1
@@ -1307,16 +1360,15 @@ j                    LONG
          MacroQueue.szField2    = ''
       END
 
-      DO PostDelete
-DeleteCommentLines      ROUTINE
-   DATA
+      DOO.PostDelete()
+DOO.DeleteCommentLines      PROCEDURE()
 i           LONG
 j           LONG
 bMatchMode  BYTE
 thisText    LIKE(SearchQueue.ResultQueue.Text)
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       j = RECORDS(SearchQueue.ResultQueue)
       LOOP i = j TO 1 BY -1
@@ -1341,16 +1393,15 @@ thisText    LIKE(SearchQueue.ResultQueue.Text)
          MacroQueue.szField2    = ''
       END
 
-      DO PostDelete
-   EXIT
-DeleteLabelLines     ROUTINE
-   DATA
+      DOO.PostDelete()
+   RETURN
+DOO.DeleteLabelLines     PROCEDURE()
 i        LONG
 j        LONG
 thisText LIKE(SearchQueue.ResultQueue.Text)
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       j = RECORDS(SearchQueue.ResultQueue)
       LOOP i = j TO 1 BY -1
@@ -1367,15 +1418,14 @@ thisText LIKE(SearchQueue.ResultQueue.Text)
          MacroQueue.szField2    = ''
       END
 
-      DO PostDelete
-   EXIT
-DeleteCodeMatches    ROUTINE
-   DATA
+      DOO.PostDelete()
+   RETURN
+DOO.DeleteCodeMatches    PROCEDURE()
 i                    LONG
 j                    LONG
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       j = RECORDS(SearchQueue.ResultQueue)
       LOOP i = j TO 1 BY -1
@@ -1392,14 +1442,13 @@ j                    LONG
          MacroQueue.szField2    = ''
       END
 
-      DO PostDelete
-DeleteDataMatches    ROUTINE
-   DATA
+      DOO.PostDelete()
+DOO.DeleteDataMatches    PROCEDURE()
 i                    LONG
 j                    LONG
 
    CODE
-      DO PreDelete
+      DOO.PreDelete()
 
       j = RECORDS(SearchQueue.ResultQueue)
       LOOP i = j TO 1 BY -1
@@ -1416,9 +1465,8 @@ j                    LONG
          MacroQueue.szField2    = ''
       END
 
-      DO PostDelete
-FindAndDelete     ROUTINE
-   DATA
+      DOO.PostDelete()
+DOO.FindAndDelete     PROCEDURE()
 i              LONG
 j              LONG
 cc             LONG
@@ -1476,7 +1524,7 @@ szOption       CSTRING(256)
 
       IF cc = Level:Benign    !NOT GetFindDeleteOptions(SearchFindOptions)
          !do search and delete
-         DO PreDelete
+         DOO.PreDelete()
 
          CASE SearchFindOptions.SearchLocation
            OF Search:Path
@@ -1548,10 +1596,9 @@ szOption       CSTRING(256)
             END
          END
 
-         DO PostDelete
+         DOO.PostDelete()
       END
-MoveToNextLine    ROUTINE
-   DATA
+DOO.MoveToNextLine    PROCEDURE()
 
 i     LONG
 j     LONG
@@ -1570,8 +1617,7 @@ j     LONG
 
        !?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
        !POST(EVENT:NewSelection,?ResultList)
-MoveToPreviousLine   ROUTINE
-   DATA
+DOO.MoveToPreviousLine   PROCEDURE()
 
 i     LONG
 j     LONG
@@ -1590,8 +1636,7 @@ j     LONG
 
        !?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
        !POST(EVENT:NewSelection,?ResultList)
-MoveToNextFile    ROUTINE
-   DATA
+DOO.MoveToNextFile    PROCEDURE()
 thisFile       LIKE(SearchQueue.ResultQueue.Filename)
 thisExtension  LIKE(SearchQueue.ResultQueue.szExtension)
 i              LONG
@@ -1615,8 +1660,7 @@ j              LONG
 
        ?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
        POST(EVENT:NewSelection,?ResultList)
-MoveToPreviousFile    ROUTINE
-   DATA
+DOO.MoveToPreviousFile    PROCEDURE()
 thisFile       LIKE(SearchQueue.ResultQueue.Filename)
 thisExtension  LIKE(SearchQueue.ResultQueue.szExtension)
 i              LONG
@@ -1649,8 +1693,7 @@ i              LONG
 
        ?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
        POST(EVENT:NewSelection,?ResultList)
-MoveToNextFolder     ROUTINE
-   DATA
+DOO.MoveToNextFolder     PROCEDURE()
 thisFolder  LIKE(SearchQueue.ResultQueue.Path)
 i           LONG
 j           LONG
@@ -1671,8 +1714,7 @@ j           LONG
 
        ?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
        POST(EVENT:NewSelection,?ResultList)
-MoveToPreviousFolder     ROUTINE
-   DATA
+DOO.MoveToPreviousFolder     PROCEDURE()
 thisFolder    LIKE(SearchQueue.ResultQueue.Path)
 i           LONG
 
@@ -1702,8 +1744,7 @@ i           LONG
 
        ?ResultList{PROP:Selected} = POINTER(SearchQueue.ResultQueue)
        POST(EVENT:NewSelection,?ResultList)
-SaveViewerStyles    ROUTINE
-   DATA
+DOO.SaveViewerStyles    PROCEDURE()
 K                    LONG
 loc:szViewerStyle    CSTRING(256)
 
@@ -1723,8 +1764,9 @@ loc:szViewerStyle    CSTRING(256)
                              glo:ViewerStyles.StyleGroup[K].HotSpot
          INIMgr.Update('Viewer Styles','ViewerStyle'& FORMAT(K-1,@n02),loc:szViewerStyle)
       END
-   EXIT
-UpdateStatusBar   ROUTINE
+   RETURN
+DOO.UpdateStatusBar   PROCEDURE()
+  CODE
       IF ListWithFocus = ?ResultList
          Window{Prop:StatusText,2} = 'RESULTS LIST'
       ELSE
@@ -1736,9 +1778,8 @@ UpdateStatusBar   ROUTINE
          Window{Prop:StatusText,3} = 'This product is registered to ' & RegisteredTo
       END
       Window{Prop:StatusText,4} = 'Version ' & glo:szVersion
-   EXIT
-FillListFormatQueue     ROUTINE
-   DATA
+   RETURN
+DOO.FillListFormatQueue     PROCEDURE()
 i     LONG
 j     LONG
 n     LONG
@@ -1790,18 +1831,21 @@ delimiter STRING(1)
             i = INSTRING(delimiter,szListBoxFormat,1,j)
          END
       END
-   EXIT
-SetNewTabFont  ROUTINE
+   RETURN
+DOO.SetNewTabFont  PROCEDURE()
+  CODE
   NewTab{PROP:FontName}  = szNewTabFontName
   NewTab{PROP:FontSize}  = szNewTabFontSize
   NewTab{PROP:FontColor} = szNewTabFontColor
   NewTab{PROP:FontStyle} = szNewTabFontStyle
-SetTabFont  ROUTINE
+DOO.SetTabFont  PROCEDURE()
+  CODE
   NewTab{PROP:FontName}  = szTabFontName
   NewTab{PROP:FontSize}  = szTabFontSize
   NewTab{PROP:FontColor} = szTabFontColor
   NewTab{PROP:FontStyle} = szTabFontStyle
-AdjustFontColour  ROUTINE
+DOO.AdjustFontColour  PROCEDURE()
+  CODE
   IF ColourBrightness(glo:ApplicationColor) > 130
      !black
      ?szTitle:2{PROP:FontColor} = COLOR:Black
@@ -1819,9 +1863,9 @@ AdjustFontColour  ROUTINE
      ?cmdSearch{PROP:FontColor} = COLOR:White
      ?szTitle{PROP:FontColor} = COLOR:White
   END
-SearchReplaceAll  ROUTINE
-CreateRestorePoint   ROUTINE
-   DATA
+DOO.SearchReplaceAll  PROCEDURE()
+  CODE
+DOO.CreateRestorePoint   PROCEDURE()
 i           LONG
 p           LONG
 szFilename  CSTRING(261)
@@ -1853,12 +1897,12 @@ rrlQueue    QUEUE(ff_:queue),PRE(RRL)
          CreateRestorePoint(Options, szFilename)
       END
       GET(SearchQueue,p)
-   EXIT
+   RETURN
 
 ThisWindow.Ask PROCEDURE
 
   CODE
-  DO UpdateStatusBar
+  DOO.UpdateStatusBar()
   PARENT.Ask
 
 
@@ -1950,9 +1994,9 @@ newH                 LONG
   SELF.FirstField = ?sciControl:Region
   SELF.VCRRequest &= VCRRequest
   SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
+  SELF.AddItem(Toolbar)
   CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
   CLEAR(GlobalResponse)
-  SELF.AddItem(Toolbar)
   StartMinute = ''
   SELF.Open(Window)                                        ! Open window
   Window{PROP:Timer} = 0
@@ -2115,7 +2159,7 @@ newH                 LONG
   INIMgr.Fetch('Global','ToolbarColor',glo:ToolbarColor)
   ?Toolbar1{PROP:Color} = glo:ToolbarColor
   
-  DO AdjustFontColour   !adjust some font colours based on brightness of toolbar and application colours
+  DOO.AdjustFontColour()   !adjust some font colours based on brightness of toolbar and application colours
   
   INIMgr.Fetch('Global','SelectedBack',glo:SelectedBack)
   INIMgr.Fetch('Global','BookmarkBack',glo:BookmarkBack)
@@ -2144,7 +2188,7 @@ newH                 LONG
   END
   !--------------------------------------
   ?ResultList{PROP:Format} = szListBoxFormat
-  DO FillListFormatQueue
+  DOO.FillListFormatQueue()
   
   INIMgr.FetchQueue('ClarionExtensions Queue','ClarionExtension',ClarionExtensionsQueue,ClarionExtensionsQueue.FileExtension)
   IF RECORDS(ClarionExtensionsQueue) = 0
@@ -2184,7 +2228,7 @@ newH                 LONG
   
   NewTab = ?Search1
   LastTabNumber = 1
-  DO AddSearchQueueRecord
+  DOO.AddSearchQueueRecord()
   SearchQueue.bSearchPressed = TRUE
   ?ResultList{PROP:From} = SearchQueue.ResultQueue
   ?ResultList{PROP:Format} = SearchQueue.szListBoxFormat
@@ -2193,20 +2237,20 @@ newH                 LONG
   
   NewTab = CREATE(0,CREATE:tab,?CurrentSearch)
   NewTab{PROP:Text} = NewSearchText
-  DO SetNewTabFont
+  DOO.SetNewTabFont()
   UNHIDE(NewTab)
   bAutoSearch = TRUE
   
   ResultListMenu.Init(INIMgr)
-  DO SetupResultListMenu
+  DOO.SetupResultListMenu()
   SELF.SetAlerts()
-  DO HandleOrientationChange
+  DOO.HandleOrientationChange()
   oHH &= NEW tagHTMLHelp
   oHH.Init( 'kss.chm' )
   oHH.SetTopic('Main.htm')
   ListWithFocus = ?ResultList
   Window{Prop:StatusText,2} = 'RESULTS LIST'
-  DO RefreshEditPane
+  DOO.RefreshEditPane()
   RETURN ReturnValue
 
 
@@ -2247,8 +2291,8 @@ szDirPath            CSTRING(261)
   IF SELF.Opened
     INIMgr.Update('Main',Window)                           ! Save window data to non-volatile store
   END
-  DO SaveSearchParameters
-  DO SaveViewerStyles
+  DOO.SaveSearchParameters()
+  DOO.SaveViewerStyles()
   
   ResultListMenu.Kill()
   
@@ -2405,7 +2449,7 @@ Looped BYTE
        UPDATE()
       
        IF SciControl.GetModify() AND szTitle <> ''
-          DO Handle_FileModified
+          DOO.Handle_FileModified()
        END
       
        findStrOptions = SearchQueue
@@ -2421,16 +2465,16 @@ Looped BYTE
             SearchQueue = findStrOptions
       
             IF glo:NewSearchAction = 1 AND (?CurrentSearch{PROP:ChoiceFEQ}){PROP:Text} <> 'New Search'
-               DO UpdateLocalSearchOptions
+               DOO.UpdateLocalSearchOptions()
       
                LastTabNumber += 1
-               DO SetTabFont
+               DOO.SetTabFont()
                NewTab{PROP:Text} = 'New Search'
-               DO AddSearchQueueRecord
+               DOO.AddSearchQueueRecord()
                SELECT(NewTab)
                NewTab = CREATE(0,CREATE:tab,?CurrentSearch)
                NewTab{PROP:Text} = NewSearchText
-               DO SetNewTabFont
+               DOO.SetNewTabFont()
                NewTab{PROP:Hide} = FALSE
       
                ?ResultList{PROP:From} = SearchQueue.ResultQueue
@@ -2480,7 +2524,7 @@ Looped BYTE
             SearchQueue.feqSearchProgress{PROP:Progress} = 0
             UNHIDE(SearchQueue.feqSearchProgress)
       
-            DO SaveSearchParameters
+            DOO.SaveSearchParameters()
       
             CurrentFilename = ''
             IF ViewerActive
@@ -2537,12 +2581,12 @@ Looped BYTE
          OF Level:User    !reload saved
             IF glo:NewSearchAction = 1
                LastTabNumber += 1
-               DO SetTabFont
+               DOO.SetTabFont()
                NewTab{PROP:Text} = 'New Search'
-               DO AddSearchQueueRecord
+               DOO.AddSearchQueueRecord()
                SELECT(NewTab)
                NewTab = CREATE(0,CREATE:tab,?CurrentSearch)
-               DO SetNewTabFont
+               DOO.SetNewTabFont()
                NewTab{PROP:Text} = NewSearchText
                NewTab{PROP:Hide} = FALSE
             END
@@ -2565,7 +2609,7 @@ Looped BYTE
                IF ?CurrentSearch{PROP:ChoiceFEQ} <> ?Search1 AND glo:NewSearchAction = 1
                   !DO HandleCloseTab
                   MESSAGE((?CurrentSearch{PROP:ChoiceFEQ}){PROP:Text})
-                  DO CloseTab
+                  DOO.CloseTab()
                END
             END
       
@@ -2583,12 +2627,12 @@ Looped BYTE
                IF i > 1
                !IF glo:NewSearchAction = 1
                   LastTabNumber += 1
-                  DO SetTabFont
+                  DOO.SetTabFont()
                   NewTab{PROP:Text} = 'New Search'
-                  DO AddSearchQueueRecord
+                  DOO.AddSearchQueueRecord()
                   SELECT(NewTab)
                   NewTab = CREATE(0,CREATE:tab,?CurrentSearch)
-                  DO SetNewTabFont
+                  DOO.SetNewTabFont()
                   NewTab{PROP:Text} = NewSearchText
                   NewTab{PROP:Hide} = FALSE
                END
@@ -2612,7 +2656,7 @@ Looped BYTE
                ELSE
                   IF ?CurrentSearch{PROP:ChoiceFEQ} <> ?Search1 AND glo:NewSearchAction = 1
                      !DO HandleCloseTab
-                     DO CloseTab
+                     DOO.CloseTab()
                   END
                END
             END
@@ -2632,7 +2676,7 @@ Looped BYTE
          OF Level:Cancel
             IF ?CurrentSearch{PROP:ChoiceFEQ} <> ?Search1 AND glo:NewSearchAction = 1
                IF (?CurrentSearch{PROP:ChoiceFEQ}){PROP:Text} = 'New Search'
-                  DO CloseTab
+                  DOO.CloseTab()
                ELSE
                END
             END
@@ -2643,52 +2687,52 @@ Looped BYTE
       POST(EVENT:Accepted,?cmdSearch)
     OF ?cmdPreviousFolder
       ThisWindow.Update()
-      DO MoveToPreviousFolder
+      DOO.MoveToPreviousFolder()
     OF ?cmdPreviousFile
       ThisWindow.Update()
-      DO MoveToPreviousFile
+      DOO.MoveToPreviousFile()
     OF ?cmdPreviousLine
       ThisWindow.Update()
-      DO MoveToPreviousLine
+      DOO.MoveToPreviousLine()
     OF ?cmdNextLine
       ThisWindow.Update()
-      DO MoveToNextLine
+      DOO.MoveToNextLine()
     OF ?cmdNextFile
       ThisWindow.Update()
-      DO MoveToNextFile
+      DOO.MoveToNextFile()
     OF ?cmdNextFolder
       ThisWindow.Update()
-      DO MoveToNextFolder
+      DOO.MoveToNextFolder()
     OF ?cmdDeleteLine
       ThisWindow.Update()
-      DO DeleteLine
+      DOO.DeleteLine()
     OF ?cmdDeleteFile
       ThisWindow.Update()
-      DO DeleteFilename
+      DOO.DeleteFilename()
     OF ?cmdDeleteExtension
       ThisWindow.Update()
-      DO DeleteExtension
+      DOO.DeleteExtension()
     OF ?cmdDeletePath
       ThisWindow.Update()
-      DO DeletePath
+      DOO.DeletePath()
     OF ?cmdDeleteComments
       ThisWindow.Update()
-      DO DeleteCommentLines
+      DOO.DeleteCommentLines()
     OF ?cmdDeleteLabels
       ThisWindow.Update()
-      DO DeleteLabelLines
+      DOO.DeleteLabelLines()
     OF ?cmdDeleteCode
       ThisWindow.Update()
-      DO DeleteCodeMatches
+      DOO.DeleteCodeMatches()
     OF ?cmdDeleteData
       ThisWindow.Update()
-      DO DeleteDataMatches
+      DOO.DeleteDataMatches()
     OF ?cmdFindAndDelete
       ThisWindow.Update()
-      DO FindAndDelete
+      DOO.FindAndDelete()
     OF ?cmdUndoDelete
       ThisWindow.Update()
-      DO HandleUndo
+      DOO.HandleUndo()
     OF ?cmdReplaceResults
       ThisWindow.Update()
       SciControl.ReplaceAsk()
@@ -2698,13 +2742,13 @@ Looped BYTE
       IF SaveResults(findStrOptions, szSendToFilename)
          !SendTo
          !POST(EVENT:Accepted,?cmdEdit)
-         DO CheckEditor
+         DOO.CheckEditor()
       END
     OF ?cmdEdit
       ThisWindow.Update()
       GET(SearchQueue.ResultQueue,CHOICE(?ResultList))
       szSendToFilename = SearchQueue.ResultQueue.SortName
-      DO CheckEditor
+      DOO.CheckEditor()
     OF ?cmdUserOptions
       ThisWindow.Update()
       szInstallProgram = ''
@@ -2733,7 +2777,7 @@ Looped BYTE
                END
             END
          END
-         DO HandleOrientationChange
+         DOO.HandleOrientationChange()
       END
       
       IF PropertiesChanged
@@ -2750,7 +2794,7 @@ Looped BYTE
       
          ?Toolbar1{PROP:Color} = glo:ToolbarColor
       
-         DO AdjustFontColour   !adjust some font colours based on brightness of toolbar and application colours
+         DOO.AdjustFontColour()   !adjust some font colours based on brightness of toolbar and application colours
       
          ?ResultList{PROP:FontName}   = glo:ResultListFontName
          ?ResultList{PROP:FontSize}   = glo:ResultListFontSize
@@ -2759,9 +2803,9 @@ Looped BYTE
          ?ResultList{PROP:LineHeight} = glo:ResultListFontSize
       
          IF glo:OldMinusKey <> glo:MinusKey
-            LOOP I# = 1 TO 255
-               IF SELF.MyWindow{Prop:ALRT,I#} = glo:OldMinusKey
-                  SELF.MyWindow{Prop:ALRT,I#} = glo:MinusKey
+            LOOP I# = 1 TO 255  !#$"
+               IF SELF.MyWindow{Prop:ALRT,I#} = glo:OldMinusKey  !#$"
+                  SELF.MyWindow{Prop:ALRT,I#} = glo:MinusKey  !#$"
                   BREAK
                 END
             END
@@ -2771,9 +2815,9 @@ Looped BYTE
          END
       
          IF glo:OldPlusKey <> glo:PlusKey
-            LOOP I# = 1 TO 255
-               IF SELF.MyWindow{Prop:ALRT,I#} = glo:OldPlusKey
-                  SELF.MyWindow{Prop:ALRT,I#} = glo:PlusKey
+            LOOP I# = 1 TO 255  !#$"
+               IF SELF.MyWindow{Prop:ALRT,I#} = glo:OldPlusKey  !#$"
+                  SELF.MyWindow{Prop:ALRT,I#} = glo:PlusKey  !#$"
                   BREAK
                 END
             END
@@ -2786,7 +2830,7 @@ Looped BYTE
             bRebuildResultListMenu = FALSE
             ResultListMenu.Kill()
             ResultListMenu.Init(INIMgr)
-            DO SetupResultListMenu
+            DOO.SetupResultListMenu()
          END
       
       END
@@ -2800,7 +2844,7 @@ Looped BYTE
     OF ?cmdLayout
       ThisWindow.Update()
       glo:SplitterOrientation = 1 - glo:SplitterOrientation
-      DO HandleOrientationChange
+      DOO.HandleOrientationChange()
     OF ?cmdHelp
       ThisWindow.Update()
       PRESSKEY(F1Key)
@@ -2809,7 +2853,7 @@ Looped BYTE
       SciControl.SaveFileAs(szTitle)
     OF ?cmdCloseTab
       ThisWindow.Update()
-      DO HandleCloseTab
+      DOO.HandleCloseTab()
     OF ?cmdCancelSearch
       ThisWindow.Update()
       cs.Wait()
@@ -2854,7 +2898,7 @@ ReturnValue          BYTE,AUTO
 
   CODE
   IF SciControl.GetModify() AND szTitle <> ''
-     DO Handle_FileModified
+     DOO.Handle_FileModified()
   END
   ReturnValue = PARENT.TakeCloseEvent()
   RETURN ReturnValue
@@ -3016,7 +3060,7 @@ Looped BYTE
   OF ?CurrentSearch
     CASE EVENT()
     OF EVENT:TabChanging
-      DO UpdateSearchQueueRecord
+      DOO.UpdateSearchQueueRecord()
     END
   OF ?ResultList
     CASE EVENT()
@@ -3031,7 +3075,7 @@ Looped BYTE
            ?CurrentSearch{PROP:ChoiceFEQ} = NewTab
            POST(EVENT:NewSelection,?CurrentSearch)
         OF CtrlF4 OROF CtrlW
-           DO HandleCloseTab
+           DOO.HandleCloseTab()
         OF EnterKey
            IF RECORDS(SearchQueue.ResultQueue) = 0
               POST(EVENT:Accepted,?cmdSearch)
@@ -3057,7 +3101,7 @@ Looped BYTE
            Window{Prop:StatusText,2} = 'RESULTS LIST'
            IF ?ResultList{PROPLIST:MouseDownZone} = LISTZONE:Header
               IF POPUP('Results List Formatter')
-                 DO FillListFormatQueue
+                 DOO.FillListFormatQueue()
                  szListBoxFormat = ListBoxFormatter(ListFormatQueue)
                  ?ResultList{PROP:Format} = szListBoxFormat
               END
@@ -3108,27 +3152,27 @@ Looped BYTE
                 OF 'Cancel'
                    POST(EVENT:Accepted,?cmdCancelSearch)
                 OF 'Close'
-                   DO HandleCloseTab
+                   DOO.HandleCloseTab()
                 OF 'Line'
-                   DO DeleteLine
+                   DOO.DeleteLine()
                 OF 'Path'
-                   DO DeletePath
+                   DOO.DeletePath()
                 OF 'Filename'
-                   DO DeleteFilename
+                   DOO.DeleteFilename()
                 OF 'Extension'
-                   DO DeleteExtension
+                   DOO.DeleteExtension()
                 OF 'CommentLines'
-                   DO DeleteCommentLines
+                   DOO.DeleteCommentLines()
                 OF 'LabelLines'
-                   DO DeleteLabelLines
+                   DOO.DeleteLabelLines()
                 OF 'MatchesinDATA'
-                   DO DeleteDataMatches
+                   DOO.DeleteDataMatches()
                 OF 'MatchesinCODE'
-                   DO DeleteCodeMatches
+                   DOO.DeleteCodeMatches()
                 OF 'FindandDelete'
-                   DO FindAndDelete
+                   DOO.FindAndDelete()
                 OF 'Undo'
-                   DO HandleUnDo
+                   DOO.HandleUnDo()
                 OF 'Search'
                    POST(EVENT:Accepted,?cmdSearch)
                 OF 'RedoSearch'
@@ -3147,7 +3191,7 @@ Looped BYTE
                 OF 'SendTo'
                    GET(SearchQueue.ResultQueue,CHOICE(?ResultList))
                    szSendToFilename = SearchQueue.ResultQueue.SortName
-                   DO CheckEditor
+                   DOO.CheckEditor()
                 OF 'Replace'
                    SciControl.ReplaceAsk()
                 OF 'Save'
@@ -3161,27 +3205,27 @@ Looped BYTE
                 OF 'ExplorePath'
                    RUN('explorer.exe /select,"' & SearchQueue.ResultQueue.SortName & '"')
                 OF 'PreviousFolder'
-                   DO MoveToPreviousFolder
+                   DOO.MoveToPreviousFolder()
                 OF 'NextFolder'
-                   DO MoveToNextFolder
+                   DOO.MoveToNextFolder()
                 OF 'PreviousFile'
-                   DO MoveToPreviousFile
+                   DOO.MoveToPreviousFile()
                 OF 'NextFile'
-                   DO MoveToNextFile
+                   DOO.MoveToNextFile()
                 OF 'PreviousLine' & keyCodeName.ToName(glo:MinusKey)
-                   DO MoveToPreviousLine
+                   DOO.MoveToPreviousLine()
                 OF 'NextLine' & keyCodeName.ToName(glo:PlusKey)
-                   DO MoveToNextLine
+                   DOO.MoveToNextLine()
                 OF 'Options'
                    POST(EVENT:Accepted,?cmdUserOptions)
                 OF 'Format'
-                   DO FillListFormatQueue
+                   DOO.FillListFormatQueue()
                    szListBoxFormat = ListBoxFormatter(ListFormatQueue)
                    ?ResultList{PROP:Format} = szListBoxFormat
                 OF 'Layout'
                    POST(EVENT:Accepted,?cmdLayout)
                 OF 'CenterBar'
-                   DO HandleCenterBar
+                   DOO.HandleCenterBar()
                 OF 'AutoSizeColumns'
                    i = POINTER(SearchQueue.ResultQueue)
                    AutoSizer.ResizeAll(?ResultList)
@@ -3207,7 +3251,7 @@ Looped BYTE
                 OF 'HideEdit'
                    glo:bHideEditPanel = 1 - glo:bHideEditPanel
                    ResultListMenu.SetIcon('HideEdit',CHOOSE(glo:bHideEditPanel,'Checkbox_on.ico','Checkbox_off.ico'))
-                   DO HandleHideEdit
+                   DOO.HandleHideEdit()
               ELSE
                  IF MenuSelection
                     MESSAGE(MenuSelection)
@@ -3216,7 +3260,7 @@ Looped BYTE
            END
         OF DeleteKey
            IF RECORDS(SearchQueue.ResultQueue)
-              DO DeleteLine
+              DOO.DeleteLine()
            END
         OF CtrlE
            IF RECORDS(SearchQueue.ResultQueue)
@@ -3224,7 +3268,7 @@ Looped BYTE
               GET(SearchQueue.ResultQueue,CHOICE(?ResultList))
               szSendToFilename = SearchQueue.ResultQueue.SortName
               SETKEYCODE(0)
-              DO CheckEditor
+              DOO.CheckEditor()
            END
         OF CtrlF
            IF ListWithFocus = ?ResultList
@@ -3232,7 +3276,7 @@ Looped BYTE
            END
         OF CtrlZ
            IF RECORDS(SearchQueue.UndoQueue)
-              DO HandleUnDo
+              DOO.HandleUnDo()
            END
       END
     END
@@ -3245,7 +3289,7 @@ Looped BYTE
       SETKEYCODE(0)
       !message(?SplitterBar{PROP:xpos} & ', ' & ?SplitterBar{PROP:ypos} & ', ' & window{PROP:Width} & ', ' & Window{PROP:Height})
       ?SplitterBar{PROP:Fill} = 00B48246h
-      DO HandleResize
+      DOO.HandleResize()
       bTrackMouse = FALSE
       SELF.Reset(TRUE)
     OF EVENT:MouseIn
@@ -3311,13 +3355,13 @@ Looped BYTE
       ELSE
          IF ?CurrentSearch{PROP:ChoiceFEQ} = NewTab
             !dbx.debugout('Current Search Choice is New Tab')
-            DO UpdateSearchQueueRecord
-            DO SetTabFont
+            DOO.UpdateSearchQueueRecord()
+            DOO.SetTabFont()
             NewTab{PROP:Text} = 'New Search'
             LastTabNumber += 1
-            DO AddSearchQueueRecord
+            DOO.AddSearchQueueRecord()
             NewTab = CREATE(0,CREATE:tab,?CurrentSearch)
-            DO SetNewTabFont
+            DOO.SetNewTabFont()
             NewTab{PROP:Text} = NewSearchText
             NewTab{PROP:Hide} = FALSE
             IF ViewerActive
@@ -3327,7 +3371,7 @@ Looped BYTE
             END
             bAutoSearch = TRUE
          ELSE
-            DO GetSearchQueueRecord
+            DOO.GetSearchQueueRecord()
          END
       
          ?ResultList{PROP:Format} = SearchQueue.szListBoxFormat
@@ -3411,7 +3455,7 @@ Looped BYTE
             END
       
             IF SearchQueue.bSearchPressed
-               DO UpdateMatchCount
+               DOO.UpdateMatchCount()
                IF glo:bDontShowSubdirectoryWarning = FALSE
                   IF RECORDS(SearchQueue.ResultQueue) = 0 AND SearchQueue.bSearchSubdirectories = FALSE
                      CASE GetSearchSubdirectories()
@@ -3432,14 +3476,14 @@ Looped BYTE
          PUT(SearchQueue)
          cs.Release()
       
-         DO HandleNewSelection
+         DOO.HandleNewSelection()
          DISPLAY()
       END
     OF ?ResultList
        IF bClosingDown = TRUE
           CYCLE
        ELSE
-          DO HandleNewSelection
+          DOO.HandleNewSelection()
        END
     END
     RETURN ReturnValue
@@ -3465,7 +3509,7 @@ Looped BYTE
       IF bShowEvalMessage = TRUE
          MESSAGE('Usage of this ' & RegisteredTo & ' will expire on ' & FORMAT(ExpiryDate,@D4),'Kwik Source Search Evaluation Copy',ICON:Exclamation)
          bShowEvalMessage = FALSE
-         DO HandleNewSelection
+         DOO.HandleNewSelection()
       END
     END
   ReturnValue = PARENT.TakeSelected()
@@ -3590,7 +3634,7 @@ buttonPressed        LONG
          OF glo:MinusKey
             POST(EVENT:Accepted,?cmdPreviousLine)
          OF CtrlShiftBar
-            DO HandleCenterBar
+            DOO.HandleCenterBar()
       !  OF ShiftF11
       !     DO CreateRestorePoint
        END
@@ -3598,7 +3642,7 @@ buttonPressed        LONG
        IF glo:bHideEditPanel = TRUE
           SciControl.SetHide(TRUE)
        END
-       DO HandleResize
+       DOO.HandleResize()
     OF EVENT:GainFocus
       !dbx.debugout('ListWithFocus = ' & ListWithFocus)
       !IF ListWithFocus = -1
@@ -3610,11 +3654,11 @@ buttonPressed        LONG
        IF ListWithFocus = ?ResultList
           IF EditPaneRefreshPending AND NOT INRANGE(CLOCK(), LastNavTime, LastNavTime + 15)
              Window{PROP:Timer} = 0
-             DO RefreshEditPane
+             DOO.RefreshEditPane()
           END
        END
     OF EVENT:CreateRestorePoint
-       DO CreateRestorePoint
+       DOO.CreateRestorePoint()
     ELSE
     END
     RETURN ReturnValue
@@ -4456,7 +4500,7 @@ ReplaceOptions WINDOW('Replace'),AT(,,285,86),CENTER,GRAY,IMM,SYSTEM,HLP('Replac
 
                     !if current buffer has been modified, offer to save it first
                     IF SciControl.GetModify() AND szTitle <> ''
-                       DO Handle_FileModified
+                       DOO.Handle_FileModified()
                     END
 
                     !search and replace in result list lines

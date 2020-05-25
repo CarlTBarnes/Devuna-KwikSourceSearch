@@ -135,9 +135,9 @@ ReturnValue          BYTE,AUTO
   SELF.FirstField = ?sciControl:Region
   SELF.VCRRequest &= VCRRequest
   SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
+  SELF.AddItem(Toolbar)
   CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
   CLEAR(GlobalResponse)
-  SELF.AddItem(Toolbar)
   SELF.Open(Window)                                        ! Open window
   Window{PROP:Hide} = TRUE
   !Setting the LineHeight for every control of type LIST/DROP or COMBO in the window using the global setting.
