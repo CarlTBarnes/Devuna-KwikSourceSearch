@@ -1,3 +1,31 @@
+# Carl Barnes Fork Changes to Devuna-KwikSourceSearch #
+
+I created this fork to show the changes made by my [Do2Class Utility](https://github.com/CarlTBarnes/Do2Class) to convert from ROUTINE code to a Local CLASS. The only fixes needed after conversion were for duplicate symbols, the compiler ignores duplicates for local routines but not for local class code. 
+
+One benefit is the Class Declaration acts as a sort of Table of Contents to local routines which can make it easier to understand and a place to record comments about the purpose of each routine which will appear in the intellisense. With 46 routines in the Main search procedure there is a good amount of this code. Do2Class also has an XREF tab showing both Callee/Caller and Caller/Callee to help understand the code (see below).
+
+To see the changes made look in the [Application KSS folder](https://github.com/CarlTBarnes/Devuna-KwikSourceSearch/tree/master/application/kss) repo folder at the CLW files and their change history commits tagged as "Do2Class". The number of changed lines will usually require clicking on **"Load Diff - Large diffs are not rendered by default"** to view the details.
+
+Below is a list of the most interesting files. Open the link and search for DOO, then look at History:
+
+| Module File | Procedure Name | Count | Link - Click on History for Changes|
+|---|---|---|---|
+| Kss001.CLW | Main            | 46 Routines | [Kss001.CLW](https://github.com/CarlTBarnes/Devuna-KwikSourceSearch/blob/master/application/kss/kss001.clw) |
+| Kss020.CLW | PropertyEditor  | 18 Routines | [Kss020.CLW](https://github.com/CarlTBarnes/Devuna-KwikSourceSearch/blob/master/application/kss/kss020.clw) |
+| Kss004.CLW | FillResultQueue | 9 Routines  | [Kss004.CLW](https://github.com/CarlTBarnes/Devuna-KwikSourceSearch/blob/master/application/kss/kss004.clw) |
+| Kss006.CLW | UserOptions     | 6 Routines  | [Kss006.CLW](https://github.com/CarlTBarnes/Devuna-KwikSourceSearch/blob/master/application/kss/kss006.clw) |
+
+For the Main procedure with 46 routines there were 210 lines changes noted. There were 46 simply to change `ROUTINE` to `PROCEDURE`. The other 164 would be mostly to change `DO RoutineName` to `DOO.RoutineName()`. There were about 10-15 changes of `EXIT` to `RETURN`, and to remove `DATA`. Not counted was in data adding `DOO CLASS` with 46 `RoutineName PROCEDURE()` lines  and `END`, plus a `CODE` line was added to all 46 routines. Very simple changes but tedious to make about 300 by hand.
+
+## Do2Class Cross Reference ##
+
+Screen capture of the Do2Clss XREF of the Main procedure with 46 routines. When the DO Routine occurs in the Procedure it appears as \*PROCEDURE\* in the Tree. In the right-side Caller/Callee list the \*PROCEDURE\* has been contracted because it is two pages long.
+
+![Do2Class XREF](Do2ClassXREF.png)
+
+---
+... below is the original readme ...
+---
 # Devuna-KwikSourceSearch #
 
 **February 18, 2019 Release**
