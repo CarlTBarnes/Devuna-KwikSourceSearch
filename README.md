@@ -19,7 +19,7 @@ For the Main procedure with 46 routines there were 210 lines changes noted. Ther
 
 ## Do2Class Cross Reference ##
 
-Screen capture of the Do2Clss XREF of the Main procedure with 46 routines. When the DO Routine occurs in the Procedure it appears as \*PROCEDURE\* in the Tree. In the right-side Caller/Callee list the \*PROCEDURE\* has been contracted because it is two pages long.
+Screen capture of the Do2Clss XREF of the Main procedure with 46 routines. When the DO Routine occurs in the Procedure it appears as \*PROCEDURE\* in the Tree. In the right-side Caller/Callee list the \*PROCEDURE\* has been contracted because it is two pages long. You can double click (or right click) on these lines and view the complete source code surrounding the call to aid in understanding. 
 
 ![Do2Class XREF](Do2ClassXREF.png)
 
